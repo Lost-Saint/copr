@@ -1,0 +1,235 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'github>scottames/renovate:default.json5',
+  ],
+  schedule: [
+    '* * * * *', // explicitly unrestricted
+  ],
+  minimumReleaseAge: null,
+  automerge: true,
+  customManagers: [
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^ghostty/ghostty\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'ghostty-org/ghostty',
+      datasourceTemplate: 'github-tags',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^ghostty/gtk4-layer-shell\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'wmww/gtk4-layer-shell',
+      datasourceTemplate: 'github-tags',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/aquamarine\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/aquamarine',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hypridle\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hypridle',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprgraphics\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprgraphics',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprlang\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprlang',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprland-protocols\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprland-protocols',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprlock\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprlock',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprpaper\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprpaper',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprpicker\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprpicker',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprtoolkit\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprtoolkit',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprutils\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprutils',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprwayland-scanner\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprwayland-scanner',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^hypr/hyprwire\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'hyprwm/hyprwire',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^awww/awww\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'LGFae/awww',
+      datasourceTemplate: 'forgejo-releases',
+      registryUrlTemplate: 'https://codeberg.org',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^mise/mise\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'jdx/mise',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^vicinae/cmark-gfm\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'github/cmark-gfm',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^vicinae/glaze\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'stephenberry/glaze',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^vicinae/vicinae\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'vicinaehq/vicinae',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^zen-browser/.*\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'zen-browser/desktop',
+      datasourceTemplate: 'github-releases',
+      versioningTemplate: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?b?$',
+    },
+  ],
+}

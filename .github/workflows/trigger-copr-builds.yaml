@@ -1,0 +1,185 @@
+---
+name: trigger package copr builds
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*/*.spec"
+  workflow_dispatch:
+    inputs:
+      # checkov:skip=CKV_GHA_7:arg passed to env
+      spec_file:
+        description: "Spec file to build (format: project/package.spec)"
+        required: false
+        type: string
+permissions:
+  contents: read # required for actions/checkout
+env:
+  COPR_OWNER: scottames
+jobs:
+  matrix_from_changed_specs:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix_from_changed_spec_files.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Get changed spec files
+        id: changed_specs
+        # yamllint disable rule:line-length
+        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
+        with:
+          files: |
+            */*.spec
+      - name: Create package matrix
+        id: matrix_from_changed_spec_files
+        # yamllint disable rule:line-length
+        run: |
+          set -euo pipefail
+          BUILD_TARGETS_JSON=$(jq -c . .github/spec-build-targets.json)
+          FEDORA_VERSIONS=$(jq -r '.default_fedora_versions | join(" ")' <<< "$BUILD_TARGETS_JSON")
+          SPEC_FEDORA_VERSIONS_JSON=$(jq -c '.spec_overrides' <<< "$BUILD_TARGETS_JSON")
+          INCLUDE_ARRAY='[]'
+          # used to ensure unique spec file paths, newline-separated
+          SEEN_SPEC_FILES=""
+
+          # Check if manual spec file was provided via workflow_dispatch
+          MANUAL_SPEC_FILE="${{ github.event.inputs.spec_file }}"
+
+          if [ -n "${MANUAL_SPEC_FILE}" ]; then
+            echo "::notice::Using manually specified spec file: ${MANUAL_SPEC_FILE}"
+            # Use the manually specified spec file instead of changed files
+            SPEC_FILES="${MANUAL_SPEC_FILE}"
+          else
+            # Use the detected changed files
+            SPEC_FILES="${{ steps.changed_specs.outputs.all_changed_files }}"
+          fi
+
+          for COPR_SPEC_FILE in ${SPEC_FILES}; do
+            # Skip if spec_file is empty (e.g. if there were extra spaces in the input)
+            if [ -z "$COPR_SPEC_FILE" ]; then
+              continue
+            fi
+
+            if echo "${SEEN_SPEC_FILES}" | grep -qxF "$COPR_SPEC_FILE"; then
+              continue
+            fi
+
+            SEEN_SPEC_FILES="${SEEN_SPEC_FILES}${COPR_SPEC_FILE}"$'\n'
+
+            COPR_PROJECT="$(dirname "$COPR_SPEC_FILE")"
+            # Remove potential ./ prefix if present
+            #   (e.g. if find results included it)
+            COPR_PROJECT="${COPR_PROJECT#./}"
+
+            # Extract package name from the 'Name:' field in the spec file
+            # Using grep -Po for Perl-compatible regex to get only the matched
+            # group. Assumes 'Name:' is at the beginning of a line.
+            COPR_PACKAGE_NAME="$(grep -Po '^Name:\s*\K[^[:space:]]+' "$COPR_SPEC_FILE")"
+
+            if [ -z "${COPR_PACKAGE_NAME}" ]; then
+              echo "::warning file=$COPR_SPEC_FILE::Could not extract package name from $COPR_SPEC_FILE"
+              continue # Skip this file if package name couldn't be extracted
+            fi
+
+            FEDORA_BUILD_VERSIONS="$FEDORA_VERSIONS"
+            OVERRIDE_VERSIONS=$(jq -r --arg spec "$COPR_SPEC_FILE" '.[$spec] // empty | join(" ")' <<< "$SPEC_FEDORA_VERSIONS_JSON")
+            if [ -n "$OVERRIDE_VERSIONS" ]; then
+              FEDORA_BUILD_VERSIONS="$OVERRIDE_VERSIONS"
+            fi
+
+            SPEC_EXCLUSIVE_ARCHES="$(grep -Pom1 '^ExclusiveArch:\s*\K.*' "$COPR_SPEC_FILE" || true)"
+            SPEC_BUILD_ARCH="$(grep -Pom1 '^BuildArch:\s*\K[^[:space:]]+' "$COPR_SPEC_FILE" || true)"
+            SPEC_IFARCH_ARCHES="$(grep -Po '^%ifarch\s+\K.*' "$COPR_SPEC_FILE" | tr ' ' '\n' | grep -E '^(x86_64|aarch64)$' | sort -u | xargs || true)"
+
+            SPEC_ARCHES="x86_64"
+            if [ "$SPEC_BUILD_ARCH" = "noarch" ]; then
+              SPEC_ARCHES="x86_64"
+            elif [ -n "$SPEC_EXCLUSIVE_ARCHES" ]; then
+              SPEC_ARCHES=""
+              if [[ "$SPEC_EXCLUSIVE_ARCHES" == *x86_64* ]]; then
+                SPEC_ARCHES="${SPEC_ARCHES} x86_64"
+              fi
+              if [[ "$SPEC_EXCLUSIVE_ARCHES" == *aarch64* ]]; then
+                SPEC_ARCHES="${SPEC_ARCHES} aarch64"
+              fi
+              SPEC_ARCHES="$(xargs <<< "$SPEC_ARCHES")"
+            elif [ -n "$SPEC_IFARCH_ARCHES" ]; then
+              SPEC_ARCHES="$SPEC_IFARCH_ARCHES"
+            fi
+
+            if [ -z "$SPEC_ARCHES" ]; then
+              echo "::warning file=$COPR_SPEC_FILE::Could not determine supported chroot architectures from spec file"
+              continue
+            fi
+
+            CHROOTS=""
+            for FEDORA_VERSION in $FEDORA_BUILD_VERSIONS; do
+              for SPEC_ARCH in $SPEC_ARCHES; do
+                CHROOTS="${CHROOTS} fedora-${FEDORA_VERSION}-${SPEC_ARCH}"
+              done
+            done
+            CHROOTS="$(xargs <<< "$CHROOTS")"
+
+            INCLUDE_ARRAY=$(echo "$INCLUDE_ARRAY" | jq -c \
+              --arg project "$COPR_PROJECT" \
+              --arg package "$COPR_PACKAGE_NAME" \
+              --arg chroots "$CHROOTS" \
+              '. += [{"project": $project, "package": $package, "chroots": $chroots}]')
+          done
+
+          echo "::group::Generated build matrix"
+          echo "$INCLUDE_ARRAY" | jq .
+          echo "::endgroup::"
+
+          MATRIX_JSON=$(jq -cn --argjson include "$INCLUDE_ARRAY" '{"include": $include}')
+          # shellcheck disable=SC2086
+          echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
+        # yamllint enable rule:line-length
+  trigger-package-build:
+    needs: matrix_from_changed_specs
+    if: |
+      needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
+      || github.event.inputs.spec_file != ''
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.matrix_from_changed_specs.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - name: Install copr-cli
+        run: |
+          set -euo pipefail
+          echo "::group::Installing system dependencies"
+          sudo apt-get update
+          sudo apt-get install -y python3-dev libkrb5-dev
+          echo "::endgroup::"
+
+          echo "::group::Installing COPR CLI dependencies"
+          python3 -m pip install copr-cli requests_gssapi
+          echo "::endgroup::"
+      - name: Configure copr-cli authentication
+        env:
+          COPR_CONFIG: ${{ secrets.COPR_CONFIG }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.config
+          touch ~/.config/copr
+          chmod 600 ~/.config/copr
+          echo "${COPR_CONFIG}" > ~/.config/copr
+      - name: Build ${{ matrix.package }}
+        # yamllint disable rule:line-length
+        run: |
+          set -euo pipefail
+          declare -a CHROOT_ARGS=()
+          for CHROOT in ${{ matrix.chroots }}; do
+            CHROOT_ARGS+=(--chroot "$CHROOT")
+          done
+
+          echo "::notice file=${{ matrix.project }}/${{ matrix.package }}.spec::Building package ${{ matrix.package }} in project ${{ matrix.project }}"
+          copr-cli build-package \
+            "${CHROOT_ARGS[@]}" \
+            --name ${{ matrix.package }} \
+            "${COPR_OWNER}/${{ matrix.project }}"
+        # yamllint enable rule:line-length
+      - name: Cleanup configuration
+        if: always()
+        run: rm -f ~/.config/copr
