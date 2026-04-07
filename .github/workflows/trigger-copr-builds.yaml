@@ -15,7 +15,7 @@ on:
 permissions:
   contents: read # required for actions/checkout
 env:
-  COPR_OWNER: scottames
+  COPR_OWNER: myriad-sun
 jobs:
   matrix_from_changed_specs:
     runs-on: ubuntu-latest
