@@ -68,7 +68,7 @@ DESTDIR=%{buildroot} zig build \
     -Demit-docs \
     -Demit-themes=true
 
-%if 0%{?fedora} >= 42
+%if 0%{?fedora} >= 43
     rm -f "%{buildroot}%{_prefix}/share/terminfo/g/ghostty"
 %endif
 
@@ -111,7 +111,7 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/lib/libghostty-vt.so.0.1.0
 
 %{_prefix}/share/terminfo/x/xterm-ghostty
-%if 0%{?fedora} < 42
+%if 0%{?fedora} < 43
     %{_prefix}/share/terminfo/g/ghostty
 %endif
 
