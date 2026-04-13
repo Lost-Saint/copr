@@ -7,6 +7,8 @@ License:        MIT
 URL:            https://github.com/karlstav/cava
 Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
+ExclusiveArch: x86_64 aarch64
+
 BuildRequires:  alsa-lib-devel
 BuildRequires:  fftw-devel
 BuildRequires:  pulseaudio-libs-devel
@@ -16,7 +18,7 @@ BuildRequires:  iniparser-devel
 BuildRequires: make
 
 %description
-C.A.V.A. is a bar spectrum analyzer for audio using ALSA for input.
+%{summary}.
 
 %prep
 %autosetup -p1
@@ -42,9 +44,4 @@ rm -f %{buildroot}%{_libdir}/libiniparser.{a,la,so}
 
 
 %changelog
-* Mon Apr 13 2026 Myriad Sun <lost-saint@users.noreply.github.com> - 0.10.7-1
-- fixed various PipeWire issues (#688 #699)
-- fixed device issues on Windows (#696 #713 #712)
-- improved memory handling in config reloading (#698)
-- added live config auto-reload (#718)
-- adjusted default EQ and frequency bandwidth (commit 724c694)
+%autochangelog
