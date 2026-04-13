@@ -7,33 +7,37 @@ License:        MIT
 URL:            https://github.com/karlstav/cava
 Source0:        %{url}/archive/%{version}/cava-%{version}.tar.gz
 
+ExclusiveArch: x86_64 aarch64
+
 BuildRequires:  gcc
-BuildRequires:  gcc-c++
-BuildRequires:  meson
-BuildRequires:  ninja-build
+BuildRequires:  make
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  libtool
+BuildRequires:  pkgconfig
 
-BuildRequires:  fftw-devel
-BuildRequires:  ncurses-devel
+BuildRequires:  pkgconfig(fftw3)
+BuildRequires:  pkgconfig(ncurses)
 BuildRequires:  iniparser-devel
-BuildRequires:  libconfig-devel
+BuildRequires:  pkgconfig(libconfig)
 
-BuildRequires:  alsa-lib-devel
-BuildRequires:  pulseaudio-libs-devel
-BuildRequires:  pipewire-devel
+BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libpipewire-0.3)
 
 %description
-CAVA (Console-based Audio Visualizer for ALSA/PulseAudio/PipeWire)
-is a terminal-based spectrum visualizer using FFT audio analysis.
+%{summary}.
 
 %prep
 %autosetup -n cava-%{version}
+./autogen.sh
 
 %build
-%meson
-%meson_build
+%configure
+%make_build
 
 %install
-%meson_install
+%make_install
 
 %files
 %license LICENSE
@@ -41,6 +45,7 @@ is a terminal-based spectrum visualizer using FFT audio analysis.
 %{_bindir}/cava
 %{_datadir}/cava/
 %{_mandir}/man1/cava.1*
+%{_datadir}/consolefonts/cava.psf
 
 %changelog
 %autochangelog
