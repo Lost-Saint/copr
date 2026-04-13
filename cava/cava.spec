@@ -1,49 +1,60 @@
 Name:           cava
 Version:        0.10.7
 Release:        1%{?dist}
-Summary:        Console-based audio visualizer for ALSA/PulseAudio/PipeWire
-
+Summary:        Cross-platform Audio Visualizer for terminal or desktop
 License:        MIT
 URL:            https://github.com/karlstav/cava
 Source0:        %{url}/archive/%{version}/cava-%{version}.tar.gz
-
-ExclusiveArch: x86_64 aarch64
 
 BuildRequires:  gcc
 BuildRequires:  make
 BuildRequires:  autoconf
 BuildRequires:  automake
 BuildRequires:  libtool
+BuildRequires:  autoconf-archive
 BuildRequires:  pkgconfig
-
-BuildRequires:  pkgconfig(fftw3)
-BuildRequires:  pkgconfig(ncurses)
+BuildRequires:  fftw-devel
+BuildRequires:  ncurses-devel
+BuildRequires:  alsa-lib-devel
 BuildRequires:  iniparser-devel
-BuildRequires:  pkgconfig(libconfig)
+BuildRequires:  SDL2-devel
+BuildRequires:  portaudio-devel
+BuildRequires:  pulseaudio-libs-devel
+BuildRequires:  pipewire-devel
+BuildRequires:  pipewire-jack-audio-connection-kit-devel
 
-BuildRequires:  pkgconfig(alsa)
-BuildRequires:  pkgconfig(libpulse)
-BuildRequires:  pkgconfig(libpipewire-0.3)
+Requires:       fftw
+Requires:       ncurses-libs
+Requires:       alsa-lib
+Requires:       iniparser
+Requires:       SDL2
+Requires:       portaudio
+Requires:       pulseaudio-libs
+Requires:       pipewire
+Requires:       pipewire-jack-audio-connection-kit
 
 %description
-%{summary}.
+Cava is a bar spectrum audio visualizer for terminal or desktop (SDL).
+
+Supports the following audio backends: PipeWire, PulseAudio, ALSA,
+JACK, PortAudio, sndio, and FIFO input.
 
 %prep
 %autosetup -n cava-%{version}
-./autogen.sh
 
 %build
+./autogen.sh
 %configure
 %make_build
 
 %install
 %make_install
+install -Dm644 LICENSE -t %{buildroot}%{_datadir}/licenses/%{name}/
 
 %files
 %license LICENSE
 %doc README.md
 %{_bindir}/cava
-%{_datadir}/cava/
 %{_mandir}/man1/cava.1*
 %{_datadir}/consolefonts/cava.psf
 
