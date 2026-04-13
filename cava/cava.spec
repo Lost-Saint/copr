@@ -1,4 +1,3 @@
-
 Name:           cava
 Version:        0.10.7
 Release:        1%{?dist}
@@ -18,8 +17,8 @@ BuildRequires:  fftw-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  iniparser-devel
-BuildRequires:  libglvnd-devel
 BuildRequires:  SDL2-devel
+BuildRequires:  portaudio-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  pipewire-devel
 BuildRequires:  pipewire-jack-audio-connection-kit-devel
@@ -28,8 +27,8 @@ Requires:       fftw
 Requires:       ncurses-libs
 Requires:       alsa-lib
 Requires:       iniparser
-Requires:       libglvnd
 Requires:       SDL2
+Requires:       portaudio
 Requires:       pulseaudio-libs
 Requires:       pipewire
 Requires:       pipewire-jack-audio-connection-kit
@@ -38,14 +37,14 @@ Requires:       pipewire-jack-audio-connection-kit
 Cava is a bar spectrum audio visualizer for terminal or desktop (SDL).
 
 Supports the following audio backends: PipeWire, PulseAudio, ALSA,
-JACK, and FIFO input.
+JACK, PortAudio, and FIFO input.
 
 %prep
 %autosetup -n cava-%{version}
 
 %build
 ./autogen.sh
-%configure
+%configure --without-glsl
 %make_build
 
 %install
@@ -60,6 +59,6 @@ install -Dm644 LICENSE -t %{buildroot}%{_datadir}/licenses/%{name}/
 %{_datadir}/consolefonts/cava.psf
 
 %changelog
-
-%changelog
-%autochangelog
+* Mon Apr 13 2026 Your Name <you@example.com> - 0.10.7-1
+- Update to latest upstream release 0.10.7
+- Disable GLSL output to avoid AX_CHECK_GL macro incompatibility
