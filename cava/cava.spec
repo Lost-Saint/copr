@@ -1,3 +1,4 @@
+
 Name:           cava
 Version:        0.10.7
 Release:        1%{?dist}
@@ -17,8 +18,8 @@ BuildRequires:  fftw-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  iniparser-devel
+BuildRequires:  libglvnd-devel
 BuildRequires:  SDL2-devel
-BuildRequires:  portaudio-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  pipewire-devel
 BuildRequires:  pipewire-jack-audio-connection-kit-devel
@@ -27,8 +28,8 @@ Requires:       fftw
 Requires:       ncurses-libs
 Requires:       alsa-lib
 Requires:       iniparser
+Requires:       libglvnd
 Requires:       SDL2
-Requires:       portaudio
 Requires:       pulseaudio-libs
 Requires:       pipewire
 Requires:       pipewire-jack-audio-connection-kit
@@ -37,7 +38,7 @@ Requires:       pipewire-jack-audio-connection-kit
 Cava is a bar spectrum audio visualizer for terminal or desktop (SDL).
 
 Supports the following audio backends: PipeWire, PulseAudio, ALSA,
-JACK, PortAudio, sndio, and FIFO input.
+JACK, and FIFO input.
 
 %prep
 %autosetup -n cava-%{version}
@@ -57,6 +58,8 @@ install -Dm644 LICENSE -t %{buildroot}%{_datadir}/licenses/%{name}/
 %{_bindir}/cava
 %{_mandir}/man1/cava.1*
 %{_datadir}/consolefonts/cava.psf
+
+%changelog
 
 %changelog
 %autochangelog
