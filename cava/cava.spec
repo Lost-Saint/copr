@@ -6,29 +6,31 @@ License:        MIT
 URL:            https://github.com/karlstav/cava
 Source0:        %{url}/archive/%{version}/cava-%{version}.tar.gz
 
+%global _lto_cflags %nil
+
 BuildRequires:  gcc
-BuildRequires:  make
-BuildRequires:  autoconf
-BuildRequires:  automake
-BuildRequires:  libtool
+BuildRequires:  gcc-c++
+BuildRequires:  meson
+BuildRequires:  cmake
 BuildRequires:  autoconf-archive
-BuildRequires:  pkgconfig
 BuildRequires:  fftw-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  alsa-lib-devel
 BuildRequires:  iniparser-devel
+BuildRequires:  libglvnd-devel
 BuildRequires:  SDL2-devel
-BuildRequires:  portaudio-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  pipewire-devel
 BuildRequires:  pipewire-jack-audio-connection-kit-devel
 
 Requires:       fftw
-Requires:       ncurses-libs
+Requires:       ncurses
 Requires:       alsa-lib
 Requires:       iniparser
+Requires:       libglvnd
 Requires:       SDL2
 Requires:       portaudio
+Requires:       sndio
 Requires:       pulseaudio-libs
 Requires:       pipewire
 Requires:       pipewire-jack-audio-connection-kit
@@ -43,13 +45,13 @@ JACK, PortAudio, and FIFO input.
 %autosetup -n cava-%{version}
 
 %build
-./autogen.sh
-%configure --without-glsl
-%make_build
+%meson -Dcava_font=false
+%meson_build
 
 %install
-%make_install
+%meson_install
 install -Dm644 LICENSE -t %{buildroot}%{_datadir}/licenses/%{name}/
+
 
 %files
 %license LICENSE
