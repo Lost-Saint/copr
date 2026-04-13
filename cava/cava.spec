@@ -1,47 +1,46 @@
 Name:           cava
 Version:        0.10.7
 Release:        1%{?dist}
-Summary:        Console-based Audio Visualizer for Alsa
+Summary:        Console-based audio visualizer for ALSA/PulseAudio/PipeWire
 
 License:        MIT
 URL:            https://github.com/karlstav/cava
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/%{version}/cava-%{version}.tar.gz
 
-ExclusiveArch: x86_64 aarch64
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
+BuildRequires:  meson
+BuildRequires:  ninja-build
 
-BuildRequires:  alsa-lib-devel
 BuildRequires:  fftw-devel
-BuildRequires:  pulseaudio-libs-devel
-BuildRequires:  libtool
 BuildRequires:  ncurses-devel
 BuildRequires:  iniparser-devel
-BuildRequires: make
+BuildRequires:  libconfig-devel
+
+BuildRequires:  alsa-lib-devel
+BuildRequires:  pulseaudio-libs-devel
+BuildRequires:  pipewire-devel
 
 %description
-%{summary}.
+CAVA (Console-based Audio Visualizer for ALSA/PulseAudio/PipeWire)
+is a terminal-based spectrum visualizer using FFT audio analysis.
 
 %prep
-%autosetup -p1
-./autogen.sh
-
+%autosetup -n cava-%{version}
 
 %build
-%configure FONT_DIR=/lib/kbd/consolefonts LIBS=-lrt
-make %{?_smp_mflags} \
-    cava_LDFLAGS=
-
+%meson
+%meson_build
 
 %install
-%make_install
-rm -f %{buildroot}%{_libdir}/libiniparser.{a,la,so}
+%meson_install
 
 %files
 %license LICENSE
 %doc README.md
-%doc example_files
 %{_bindir}/cava
-/lib/kbd/consolefonts/cava.psf
-
+%{_datadir}/cava/
+%{_mandir}/man1/cava.1*
 
 %changelog
 %autochangelog
