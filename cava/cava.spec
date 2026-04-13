@@ -45,13 +45,13 @@ JACK, PortAudio, and FIFO input.
 %autosetup -n cava-%{version}
 
 %build
-%meson -Dcava_font=false
-%meson_build
+./autogen.sh
+%configure
+%make_build
 
 %install
-%meson_install
+%make_install
 install -Dm644 LICENSE -t %{buildroot}%{_datadir}/licenses/%{name}/
-
 
 %files
 %license LICENSE
