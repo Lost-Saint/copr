@@ -59,7 +59,7 @@ This package provides the development files for libghostty-vt.
 
 %prep
 /usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
-%autosetup -n ghostty-%{version}
+%setup -n ghostty-%{version}
 
 %build
 DESTDIR=%{buildroot} zig build \
