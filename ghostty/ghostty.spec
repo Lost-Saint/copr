@@ -31,7 +31,7 @@ BuildRequires: pandoc-cli
 BuildRequires: pixman-devel
 BuildRequires: pkg-config
 BuildRequires: wayland-protocols-devel
-BuildRequires:  zig >= 0.14.0
+BuildRequires: zig >= 0.14.0
 BuildRequires: zlib-ng-devel
 
 
@@ -102,8 +102,8 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/share/icons/hicolor/512x512/apps/%{appid}.png
 %{_prefix}/share/icons/hicolor/1024x1024/apps/%{appid}.png
 %{_prefix}/share/kio/servicemenus/%{appid}.desktop
-%{_mandir}/man1/%{name}.1.gz
-%{_mandir}/man5/%{name}.5.gz
+%{_prefix}/share/man/man1/ghostty.1
+%{_prefix}/share/man/man5/ghostty.5
 %{_prefix}/share/nautilus-python/extensions/ghostty.py
 %{_prefix}/share/nvim/site/compiler/ghostty.vim
 %{_prefix}/share/nvim/site/ftdetect/ghostty.vim
@@ -118,8 +118,7 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/share/locale/*/LC_MESSAGES/%{appid}.mo
 %{_prefix}/share/metainfo/%{appid}.metainfo.xml
 %{_prefix}/share/systemd/user/app-%{appid}.service
-%{_prefix}/lib/libghostty-vt.so.0
-%{_prefix}/lib/libghostty-vt.so.0.1.0
+%{_libdir}/libghostty-vt.so.*
 
 %{_prefix}/share/terminfo/x/xterm-ghostty
 %if 0%{?fedora} < 42
@@ -129,8 +128,8 @@ DESTDIR=%{buildroot} zig build \
 %files devel
 %{_prefix}/include/ghostty/vt.h
 %{_prefix}/include/ghostty/vt/
-%{_prefix}/lib/libghostty-vt.so
-%{_prefix}/share/pkgconfig/libghostty-vt.pc
+%{_libdir}/libghostty-vt.so
+%{_datadir}/pkgconfig/libghostty-vt.pc
 
 %changelog
 %autochangelog
