@@ -17,7 +17,6 @@ ExclusiveArch: x86_64 aarch64
 
 BuildRequires: blueprint-compiler
 BuildRequires: fontconfig-devel
-BuildRequires: gettext
 BuildRequires: freetype-devel
 BuildRequires: glib2-devel
 BuildRequires: gtk4-devel
@@ -80,9 +79,7 @@ DESTDIR=%{buildroot} zig build \
     rm -f "%{buildroot}%{_prefix}/share/terminfo/g/ghostty"
 %endif
 
-%find_lang %{appid}
-
-%files -f %{appid}.lang
+%files
 %doc README.md
 %license LICENSE
 %{_bindir}/%{name}
