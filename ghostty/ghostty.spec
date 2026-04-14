@@ -10,7 +10,6 @@ License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.
 URL:            https://ghostty.org/
 Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
 Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
-BuildRequires:  anda-srpm-macros >= 0.2.15
 BuildRequires:  gettext
 BuildRequires:  gtk4-devel
 BuildRequires:  libadwaita-devel
@@ -174,9 +173,10 @@ ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
 
 %install
 DESTDIR="%{buildroot}" \
-%{zig_build_target -r fast} \
+zig build install \
     --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
     --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
+    -Doptimize=ReleaseFast \
     -Dversion-string="%{version}" \
     -Dstrip=false \
     -Dpie=true \
