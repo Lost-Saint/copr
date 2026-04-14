@@ -68,7 +68,7 @@ DESTDIR=%{buildroot} zig build \
     -Doptimize=ReleaseFast \
     -Dpie=true \
     -Demit-docs \
-    -Demit-themes=true
+    -Demit-themes=false
 
 %if 0%{?fedora} >= 42
     rm -f "%{buildroot}%{_datadir}/terminfo/g/%{name}"
