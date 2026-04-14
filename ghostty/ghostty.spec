@@ -6,12 +6,15 @@ Name:           ghostty
 Version:        1.3.1
 Release:        1%{?dist}
 Summary:        A fast, native terminal emulator written in Zig.
+
 License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.0
 URL:            https://ghostty.org/
 Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
 Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
 
+
 ExclusiveArch: x86_64 aarch64
+
 
 BuildRequires:  gettext
 BuildRequires:  gtk4-devel
@@ -36,6 +39,7 @@ BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(oniguruma)
 BuildRequires:  pkgconfig(zlib)
+
 Requires:       %{name}-terminfo = %{evr}
 Requires:       (%{name}-kio = %{evr} if kf5-kio-core)
 Requires:       (%{name}-kio = %{evr} if kf6-kio-core)
@@ -44,152 +48,27 @@ Requires:       gtk4-layer-shell
 Requires:       libadwaita
 Conflicts:      ghostty-nightly
 
+
 %description
 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
 
-%package        bash-completion
-Summary:        Ghostty Bash completion
-Requires:       %{name}
-Requires:       bash-completion
-Supplements:    (%{name} and bash-completion)
-BuildArch:      noarch
-
-%description    bash-completion
-Bash shell completion for Ghostty.
-
-%package        fish-completion
-Summary:        Ghostty Fish completion
-Requires:       %{name}
-Requires:       fish
-Supplements:    (%{name} and fish)
-BuildArch:      noarch
-
-%description    fish-completion
-Fish shell completion for Ghostty.
-
-%package        zsh-completion
-Summary:        Ghostty Zsh completion
-Requires:       %{name}
-Requires:       zsh
-Supplements:    (%{name} and zsh)
-BuildArch:      noarch
-
-%description    zsh-completion
-Zsh shell completion for Ghostty.
-
-%package        devel
-Summary:        Development files for Ghostty.
-Requires:       %{name} = %{evr}
-
-%description    devel
-This package includes the development files for Ghostty.
-
-%package        kio
-Summary:        KIO support for Ghostty
-Requires:       %{name} = %{evr}
-BuildArch:      noarch
-
-%description    kio
-This package allows Ghostty to interact with KIO.
-
-%package        nautilus
-Summary:        Nautilus menu support for Ghostty
-Supplements:    (%{name} and nautilus)
-Requires:       %{name} = %{evr}
-Requires:       nautilus-python
-BuildArch:      noarch
-
-%description    nautilus
-This package enables Nautilus integration for Ghostty.
-
-%package        vim
-Summary:        Vim plugins for Ghostty
-Supplements:    (%{name} and vim-filesystem)
-Requires:       %{name} = %{evr}
-Requires:       vim-enhanced
-Requires:       vim-filesystem
-BuildArch:      noarch
-
-%description    vim
-This package provides the Ghostty Vim plugins.
-
-%package        neovim
-Summary:        Neovim plugins for Ghostty
-Supplements:    (%{name} and neovim)
-Requires:       %{name} = %{evr}
-Requires:       neovim
-BuildArch:      noarch
-
-%description    neovim
-This package provides the Neovim plugins for Ghostty.
-
-%package        bat-syntax
-Summary:        Bat syntax for Ghostty
-Supplements:    (%{name} and bat)
-Requires:       %{name} = %{evr}
-Requires:       bat
-BuildArch:      noarch
-
-%description    bat-syntax
-This package provides the Bat syntax files for Ghostty.
-
-%package        shell-integration
-Summary:        Ghostty shell integration
-Supplements:    %{name}
-BuildArch:      noarch
-
-%description    shell-integration
-This package contains files allowing Ghostty to integrate with various shells.
-
-%package        terminfo
-Summary:        Ghostty terminfo
-%if 0%{?fedora} >= 42
-Requires:       ncurses-term >= 6.5-5.20250125
-%endif
-Supplements:    %{name}
-Obsoletes:      %{name}-terminfo-source < %{evr}
-BuildArch:      noarch
-
-%description    terminfo
-Ghostty's terminfo. Needed for basic terminal function.
-
-%package -n     libghostty-vt
-Summary:        The libghostty-vt libraries
-
-%description -n libghostty-vt
-This package contains the libghostty-vt libraries, the first of many libghostty libaries in development.
-
-%package -n     libghostty-vt-devel
-Summary:        Development files for libghostty-vt
-Requires:       libghostty-vt = %{evr}
-
-%description -n libghostty-vt-devel
-This package contains the libraries and header files that are needed for developing with libghostty-vt.
-
 %prep
-/usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
-%autosetup
+%setup -q -n ghostty-%{version}
 
-ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
 
 %build
-
-%install
-DESTDIR="%{buildroot}" \
-zig build install \
-    --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
-    --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
+DESTDIR=%{buildroot} zig build \
+    --summary all \
+    --prefix "%{_prefix}" \
+    -Dversion-string=%{version}-%{release} \
     -Doptimize=ReleaseFast \
     -Dcpu=baseline \
-    -Dversion-string="%{version}" \
-    -Dstrip=false \
     -Dpie=true \
     -Demit-docs \
-    -Demit-themes=false
+    -Demit-themes=true
 
-# Don't conflict with ncurses-term on F42 and up
 %if 0%{?fedora} >= 42
-rm -rf %{buildroot}%{_datadir}/terminfo/g/%{name}
+    rm -f "%{buildroot}%{_prefix}/share/terminfo/g/ghostty"
 %endif
 
 %find_lang %{appid}
@@ -216,49 +95,6 @@ rm -rf %{buildroot}%{_datadir}/terminfo/g/%{name}
 %{_mandir}/man1/%{name}.1.gz
 %{_mandir}/man5/%{name}.5.gz
 %{_userunitdir}/app-%{appid}.service
-
-%files bash-completion
-%{bash_completions_dir}/%{name}.bash
-
-%files fish-completion
-%{fish_completions_dir}/%{name}.fish
-
-%files zsh-completion
-%{zsh_completions_dir}/_%{name}
-
-%files devel
-%{_includedir}/ghostty/
-
-%files kio
-%{_datadir}/kio/servicemenus/%{appid}.desktop
-
-%files nautilus
-%{_datadir}/nautilus-python/extensions/%{name}.py
-
-%files vim
-%{_datadir}/vim/vimfiles/compiler/%{name}.vim
-%{_datadir}/vim/vimfiles/ftdetect/%{name}.vim
-%{_datadir}/vim/vimfiles/ftplugin/%{name}.vim
-%{_datadir}/vim/vimfiles/syntax/%{name}.vim
-
-%files neovim
-%{_datadir}/nvim/site/compiler/%{name}.vim
-%{_datadir}/nvim/site/ftdetect/%{name}.vim
-%{_datadir}/nvim/site/ftplugin/%{name}.vim
-%{_datadir}/nvim/site/syntax/%{name}.vim
-
-%files bat-syntax
-%{_datadir}/bat/syntaxes/%{name}.sublime-syntax
-
-%files shell-integration
-%dir %{_datadir}/%{name}/shell-integration
-%{_datadir}/%{name}/shell-integration/bash/bash-preexec.sh
-%{_datadir}/%{name}/shell-integration/bash/%{name}.bash
-%{_datadir}/%{name}/shell-integration/elvish/lib/%{name}-integration.elv
-%{_datadir}/%{name}/shell-integration/fish/vendor_conf.d/%{name}-shell-integration.fish
-%{_datadir}/%{name}/shell-integration/nushell/vendor/autoload/%{name}.nu
-%{_datadir}/%{name}/shell-integration/zsh/.zshenv
-%{_datadir}/%{name}/shell-integration/zsh/%{name}-integration
 
 %files terminfo
 %if 0%{?fedora} < 42
