@@ -10,6 +10,9 @@ License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.
 URL:            https://ghostty.org/
 Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
 Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
+
+ExclusiveArch: x86_64 aarch64
+
 BuildRequires:  gettext
 BuildRequires:  gtk4-devel
 BuildRequires:  libadwaita-devel
@@ -177,6 +180,7 @@ zig build install \
     --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
     --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
     -Doptimize=ReleaseFast \
+    -Dcpu=baseline \
     -Dversion-string="%{version}" \
     -Dstrip=false \
     -Dpie=true \
