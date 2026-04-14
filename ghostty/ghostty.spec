@@ -67,8 +67,7 @@ DESTDIR=%{buildroot} zig build \
     -Dstrip=false \
     -Doptimize=ReleaseFast \
     -Dpie=true \
-    -Demit-docs \
-    -Demit-themes=false
+    -Demit-themes=true
 
 %if 0%{?fedora} >= 42
     rm -f "%{buildroot}%{_datadir}/terminfo/g/%{name}"
@@ -79,8 +78,7 @@ DESTDIR=%{buildroot} zig build \
 %license LICENSE
 %{_bindir}/%{name}
 %{_datadir}/applications/%{appid}.desktop
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/doc
+%{_datadir}/%{name}
 %{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_datadir}/bash-completion/completions/ghostty.bash
 %{_datadir}/bat/syntaxes/ghostty.sublime-syntax
