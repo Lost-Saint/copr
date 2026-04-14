@@ -17,6 +17,7 @@ ExclusiveArch: x86_64 aarch64
 
 BuildRequires: blueprint-compiler
 BuildRequires: fontconfig-devel
+BuildRequires: gettext
 BuildRequires: freetype-devel
 BuildRequires: glib2-devel
 BuildRequires: gtk4-devel
@@ -30,7 +31,7 @@ BuildRequires: pandoc-cli
 BuildRequires: pixman-devel
 BuildRequires: pkg-config
 BuildRequires: wayland-protocols-devel
-BuildRequires: zig
+BuildRequires:  zig >= 0.14.0
 BuildRequires: zlib-ng-devel
 
 
@@ -79,6 +80,8 @@ DESTDIR=%{buildroot} zig build \
     rm -f "%{buildroot}%{_prefix}/share/terminfo/g/ghostty"
 %endif
 
+%find_lang %{appid}
+
 %files -f %{appid}.lang
 %doc README.md
 %license LICENSE
@@ -88,16 +91,16 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/share/bat/syntaxes/ghostty.sublime-syntax
 %{_prefix}/share/fish/vendor_completions.d/ghostty.fish
 %{_prefix}/share/ghostty
-%{_prefix}/share/icons/hicolor/1024x1024/apps/%{appid}.png
-%{_prefix}/share/icons/hicolor/128x128/apps/%{appid}.png
-%{_prefix}/share/icons/hicolor/128x128@2/apps/%{appid}.png
 %{_prefix}/share/icons/hicolor/16x16/apps/%{appid}.png
 %{_prefix}/share/icons/hicolor/16x16@2/apps/%{appid}.png
-%{_prefix}/share/icons/hicolor/256x256/apps/%{appid}.png
-%{_prefix}/share/icons/hicolor/256x256@2/apps/%{appid}.png
 %{_prefix}/share/icons/hicolor/32x32/apps/%{appid}.png
 %{_prefix}/share/icons/hicolor/32x32@2/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/128x128/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/128x128@2/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/256x256/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/256x256@2/apps/%{appid}.png
 %{_prefix}/share/icons/hicolor/512x512/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/1024x1024/apps/%{appid}.png
 %{_prefix}/share/kio/servicemenus/%{appid}.desktop
 %{_mandir}/man1/%{name}.1.gz
 %{_mandir}/man5/%{name}.5.gz
