@@ -1,6 +1,6 @@
 # Signing key from https://github.com/ghostty-org/ghostty/blob/main/PACKAGING.md
 %global public_key RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV
-%global appid %{appid}
+%global appid com.mitchellh.ghostty
 
 Name:           ghostty
 Version:        1.3.1
