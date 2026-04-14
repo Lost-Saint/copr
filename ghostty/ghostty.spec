@@ -68,8 +68,9 @@ DESTDIR=%{buildroot} zig build \
     --summary all \
     --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
     --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
-    -Dversion-string="%{version}" \
+    -Dversion-string="%{version}-%{release}" \
     -Dstrip=false \
+    -Doptimize=ReleaseFast \
     -Dpie=true \
     -Demit-docs \
     -Demit-themes=true
