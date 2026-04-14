@@ -59,15 +59,17 @@ This package provides the development files for libghostty-vt.
 
 %prep
 /usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
-%setup -n ghostty-%{version}
+%autosetup -n ghostty-%{version}
+
+ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
 
 %build
 DESTDIR=%{buildroot} zig build \
     --summary all \
-    --prefix "%{_prefix}" \
-    -Dversion-string=%{version}-%{release} \
-    -Doptimize=ReleaseFast \
-    -Dcpu=baseline \
+    --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
+    --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
+    -Dversion-string="%{version}" \
+    -Dstrip=false \
     -Dpie=true \
     -Demit-docs \
     -Demit-themes=true
