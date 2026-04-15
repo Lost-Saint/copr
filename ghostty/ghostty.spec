@@ -59,21 +59,20 @@ This package provides the development files for libghostty-vt.
 
 %prep
 /usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
-%autosetup -n ghostty-%{version}
+%setup -n ghostty-%{version}
 
 ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
 
 %build
-DESTDIR=%{buildroot} zig build \
-    --summary all \
+DESTDIR="%{buildroot}" \
+%{zig_build_target -r fast} \
     --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
     --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
-    -Dversion-string="%{version}-%{release}" \
+    -Dversion-string="%{version}" \
     -Dstrip=false \
-    -Doptimize=ReleaseFast \
     -Dpie=true \
     -Demit-docs \
-    -Demit-themes=true
+    -Demit-themes=false
 
 # Don't conflict with ncurses-term on F42 and up
 %if 0%{?fedora} >= 42
