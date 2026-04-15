@@ -13,44 +13,61 @@ Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.
 
 ExclusiveArch: x86_64 aarch64
 
-BuildRequires: blueprint-compiler
-BuildRequires: fontconfig-devel
-BuildRequires: freetype-devel
-BuildRequires: glib2-devel
-BuildRequires: gtk4-devel
-BuildRequires: minisign
-BuildRequires: gtk4-layer-shell-devel
-BuildRequires: harfbuzz-devel
-BuildRequires: libadwaita-devel
-BuildRequires: libpng-devel
-BuildRequires: oniguruma-devel
-BuildRequires: pandoc-cli
-BuildRequires: pixman-devel
-BuildRequires: pkg-config
-BuildRequires: wayland-protocols-devel
-BuildRequires: zig >= 0.14.0
-BuildRequires: zlib-ng-devel
-
-Requires: fontconfig
-Requires: freetype
-Requires: glib2
+BuildRequires:  glib2-devel
+BuildRequires:  gtk4-devel
+BuildRequires:  minisign
+BuildRequires:  libadwaita-devel
+BuildRequires:  libX11-devel
+BuildRequires:  pandoc-cli
+BuildRequires:  wayland-protocols-devel
+BuildRequires:  zig >= 0.14.0
+BuildRequires:  zig-rpm-macros
+BuildRequires:  pkgconfig(blueprint-compiler)
+BuildRequires:  pkgconfig(freetype2)
+BuildRequires:  pkgconfig(fontconfig)
+BuildRequires:  pkgconfig(gtk4)
+BuildRequires:  pkgconfig(gtk4-layer-shell-0)
+BuildRequires:  pkgconfig(harfbuzz)
+BuildRequires:  pkgconfig(libadwaita-1)
+BuildRequires:  pkgconfig(libpng)
+BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(oniguruma)
+BuildRequires:  pkgconfig(zlib)
 Requires: gtk4
-Requires: harfbuzz
+Requires: gtk4-layer-shell
 Requires: libadwaita
-Requires: libpng
-Requires: oniguruma
-Requires: pixman
-Requires: zlib-ng
+Conflicts: ghostty-nightly
 
 %description
 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
 
-%package        devel
-Summary:        Development files for libghostty-vt
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+%package devel
+Summary: Development files for libghostty-vt
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description    devel
-This package provides the development files for libghostty-vt.
+This package includes the development files for Ghostty.
+
+%package        shell-integration
+Summary:        Ghostty shell integration
+Supplements:    %{name}
+BuildArch:      noarch
+
+%description    shell-integration
+This package contains files allowing Ghostty to integrate with various shells.
+
+%package -n     libghostty-vt
+Summary:        The libghostty-vt libraries
+
+%description -n libghostty-vt
+This package contains the libghostty-vt libraries, the first of many libghostty libaries in development.
+
+%package -n     libghostty-vt-devel
+Summary:        Development files for libghostty-vt
+Requires:       libghostty-vt = %{version}-%{release}
+
+%description -n libghostty-vt-devel
+This package contains the libraries and header files that are needed for developing with libghostty-vt.
 
 %prep
 /usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
@@ -67,18 +84,20 @@ DESTDIR=%{buildroot} zig build \
     -Dstrip=false \
     -Doptimize=ReleaseFast \
     -Dpie=true \
-    -Demit-themes=true
+    -Demit-docs \
+    -Demit-themes=false
 
+# Don't conflict with ncurses-term on F42 and up
 %if 0%{?fedora} >= 42
-    rm -f "%{buildroot}%{_datadir}/terminfo/g/%{name}"
+    rm -rf %{buildroot}%{_datadir}/terminfo/g/%{name}
 %endif
 
 %files
-%doc README.md
 %license LICENSE
 %{_bindir}/%{name}
 %{_datadir}/applications/%{appid}.desktop
-%{_datadir}/%{name}
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/doc
 %{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_datadir}/bash-completion/completions/ghostty.bash
 %{_datadir}/bat/syntaxes/ghostty.sublime-syntax
@@ -109,16 +128,22 @@ DESTDIR=%{buildroot} zig build \
 %{_datadir}/dbus-1/services/%{appid}.service
 %{_datadir}/locale/*/LC_MESSAGES/%{appid}.mo
 %{_datadir}/systemd/user/app-%{appid}.service
-%{_libdir}/libghostty-vt.so.*
 
-%{_datadir}/terminfo/x/xterm-ghostty
+%files devel
+%{_includedir}/ghostty/
+
+%files shell-integration
+%{_datadir}/%{name}/shell-integration/
+
 %if 0%{?fedora} < 42
     %{_datadir}/terminfo/g/%{name}
 %endif
+%{_datadir}/terminfo/x/xterm-ghostty
 
-%files devel
-%{_prefix}/include/ghostty/vt.h
-%{_prefix}/include/ghostty/vt/
+%files -n libghostty-vt
+%{_libdir}/libghostty-vt.so.*
+
+%files -n libghostty-vt-devel
 %{_libdir}/libghostty-vt.so
 %{_datadir}/pkgconfig/libghostty-vt.pc
 
