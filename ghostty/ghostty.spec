@@ -1,40 +1,35 @@
-# Signing key from https://github.com/ghostty-org/ghostty/blob/main/PACKAGING.md
-%global public_key RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV
-%global appid com.mitchellh.ghostty
-
 Name:           ghostty
 Version:        1.3.1
 Release:        1%{?dist}
-Summary:        A fast, native terminal emulator written in Zig.
-License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.0
-URL:            https://ghostty.org/
-Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
-Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
+Summary:        Fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration
+
+
+License:        MIT
+URL:            https://github.com/ghostty-org/ghostty
+Source0:        https://github.com/ghostty-org/ghostty/archive/refs/tags/v%{version}.tar.gz
+
 
 ExclusiveArch: x86_64 aarch64
 
-BuildRequires:  glib2-devel
-BuildRequires:  gtk4-devel
-BuildRequires:  gtk4-layer-shell-devel
-BuildRequires:  minisign
-BuildRequires:  libadwaita-devel
-BuildRequires:  pandoc-cli
-BuildRequires:  systemd-rpm-macros
-BuildRequires:  zig >= 0.14.0
-BuildRequires:  zig-rpm-macros
-BuildRequires:  wayland-protocols-devel
-BuildRequires:  zlib-ng-devel
-BuildRequires:  pkgconfig(blueprint-compiler)
-BuildRequires:  pkgconfig(freetype2)
-BuildRequires:  pkgconfig(fontconfig)
-BuildRequires:  pkgconfig(gtk4)
-BuildRequires:  pkgconfig(gtk4-layer-shell-0)
-BuildRequires:  pkgconfig(harfbuzz)
-BuildRequires:  pkgconfig(libadwaita-1)
-BuildRequires:  pkgconfig(libpng)
-BuildRequires:  pkgconfig(libxml-2.0)
-BuildRequires:  pkgconfig(oniguruma)
-BuildRequires:  pkgconfig(zlib)
+
+BuildRequires: blueprint-compiler
+BuildRequires: fontconfig-devel
+BuildRequires: freetype-devel
+BuildRequires: glib2-devel
+BuildRequires: gtk4-devel
+BuildRequires: gtk4-layer-shell-devel
+BuildRequires: harfbuzz-devel
+BuildRequires: libadwaita-devel
+BuildRequires: libpng-devel
+BuildRequires: oniguruma-devel
+BuildRequires: pandoc-cli
+BuildRequires: pixman-devel
+BuildRequires: pkg-config
+BuildRequires: wayland-protocols-devel
+BuildRequires: zig
+BuildRequires: zlib-ng-devel
+
+
 Requires: fontconfig
 Requires: freetype
 Requires: glib2
@@ -45,10 +40,10 @@ Requires: libpng
 Requires: oniguruma
 Requires: pixman
 Requires: zlib-ng
-Conflicts: ghostty-nightly
+
 
 %description
-👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
+%{summary}.
 
 %package        devel
 Summary:        Development files for libghostty-vt
@@ -57,76 +52,74 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 %description    devel
 This package provides the development files for libghostty-vt.
 
-%prep
-/usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
-%setup -n ghostty-%{version}
 
-ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
+%prep
+%setup -q -n ghostty-%{version}
+
 
 %build
-DESTDIR="%{buildroot}" \
-%{zig_build_target -r fast} \
-    --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
-    --prefix-exe-dir "%{_bindir}" --prefix-include-dir "%{_includedir}" \
-    -Dversion-string="%{version}" \
-    -Dstrip=false \
+DESTDIR=%{buildroot} zig build \
+    --summary all \
+    --prefix "%{_prefix}" \
+    -Dversion-string=%{version}-%{release} \
+    -Doptimize=ReleaseFast \
+    -Dcpu=baseline \
     -Dpie=true \
     -Demit-docs \
-    -Demit-themes=false
+    -Demit-themes=true
 
-# Don't conflict with ncurses-term on F42 and up
-%if 0%{?fedora} >= 42
-    rm -rf %{buildroot}%{_datadir}/terminfo/g/%{name}
+%if 0%{?fedora} >= 43
+    rm -f "%{buildroot}%{_prefix}/share/terminfo/g/ghostty"
 %endif
 
 %files
 %license LICENSE
-%{_bindir}/%{name}
-%{_datadir}/applications/%{appid}.desktop
-%{_datadir}/%{name}
-%{_datadir}/metainfo/%{appid}.metainfo.xml
-%{_datadir}/metainfo/%{appid}.metainfo.xml
-%{_datadir}/bash-completion/completions/ghostty.bash
-%{_datadir}/bat/syntaxes/ghostty.sublime-syntax
-%{_datadir}/fish/vendor_completions.d/ghostty.fish
-%{_iconsdir}/hicolor/16x16/apps/%{appid}.png
-%{_iconsdir}/hicolor/16x16@2/apps/%{appid}.png
-%{_iconsdir}/hicolor/32x32/apps/%{appid}.png
-%{_iconsdir}/hicolor/32x32@2/apps/%{appid}.png
-%{_iconsdir}/hicolor/128x128/apps/%{appid}.png
-%{_iconsdir}/hicolor/128x128@2/apps/%{appid}.png
-%{_iconsdir}/hicolor/256x256/apps/%{appid}.png
-%{_iconsdir}/hicolor/256x256@2/apps/%{appid}.png
-%{_iconsdir}/hicolor/512x512/apps/%{appid}.png
-%{_iconsdir}/hicolor/1024x1024/apps/%{appid}.png
-%{_datadir}/kio/servicemenus/%{appid}.desktop
-%{_mandir}/man1/%{name}.1
-%{_mandir}/man5/%{name}.5
-%{_datadir}/nautilus-python/extensions/ghostty.py
-%{_datadir}/nvim/site/compiler/ghostty.vim
-%{_datadir}/nvim/site/ftdetect/ghostty.vim
-%{_datadir}/nvim/site/ftplugin/ghostty.vim
-%{_datadir}/nvim/site/syntax/ghostty.vim
-%{_datadir}/vim/vimfiles/compiler/ghostty.vim
-%{_datadir}/vim/vimfiles/ftdetect/ghostty.vim
-%{_datadir}/vim/vimfiles/ftplugin/ghostty.vim
-%{_datadir}/vim/vimfiles/syntax/ghostty.vim
-%{_datadir}/zsh/site-functions/_ghostty
-%{_datadir}/dbus-1/services/%{appid}.service
-%{_datadir}/locale/*/LC_MESSAGES/%{appid}.mo
-%{_datadir}/systemd/user/app-%{appid}.service
-%{_libdir}/libghostty-vt.so.*
+%{_bindir}/ghostty
+%{_prefix}/share/applications/com.mitchellh.ghostty.desktop
+%{_prefix}/share/bash-completion/completions/ghostty.bash
+%{_prefix}/share/bat/syntaxes/ghostty.sublime-syntax
+%{_prefix}/share/fish/vendor_completions.d/ghostty.fish
+%{_prefix}/share/ghostty
+%{_prefix}/share/icons/hicolor/1024x1024/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/128x128/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/128x128@2/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/16x16/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/16x16@2/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/256x256@2/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/32x32/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/32x32@2/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/icons/hicolor/512x512/apps/com.mitchellh.ghostty.png
+%{_prefix}/share/kio/servicemenus/com.mitchellh.ghostty.desktop
+%{_prefix}/share/man/man1/ghostty.1
+%{_prefix}/share/man/man5/ghostty.5
+%{_prefix}/share/nautilus-python/extensions/ghostty.py
+%{_prefix}/share/nvim/site/compiler/ghostty.vim
+%{_prefix}/share/nvim/site/ftdetect/ghostty.vim
+%{_prefix}/share/nvim/site/ftplugin/ghostty.vim
+%{_prefix}/share/nvim/site/syntax/ghostty.vim
+%{_prefix}/share/vim/vimfiles/compiler/ghostty.vim
+%{_prefix}/share/vim/vimfiles/ftdetect/ghostty.vim
+%{_prefix}/share/vim/vimfiles/ftplugin/ghostty.vim
+%{_prefix}/share/vim/vimfiles/syntax/ghostty.vim
+%{_prefix}/share/zsh/site-functions/_ghostty
+%{_prefix}/share/dbus-1/services/com.mitchellh.ghostty.service
+%{_prefix}/share/locale/*/LC_MESSAGES/com.mitchellh.ghostty.mo
+%{_prefix}/share/metainfo/com.mitchellh.ghostty.metainfo.xml
+%{_prefix}/share/systemd/user/app-com.mitchellh.ghostty.service
+%{_prefix}/lib/libghostty-vt.so.0
+%{_prefix}/lib/libghostty-vt.so.0.1.0
 
-%{_datadir}/terminfo/x/xterm-ghostty
-%if 0%{?fedora} < 42
-    %{_datadir}/terminfo/g/%{name}
+%{_prefix}/share/terminfo/x/xterm-ghostty
+%if 0%{?fedora} < 43
+    %{_prefix}/share/terminfo/g/ghostty
 %endif
 
 %files devel
 %{_prefix}/include/ghostty/vt.h
 %{_prefix}/include/ghostty/vt/
-%{_libdir}/libghostty-vt.so
-%{_datadir}/pkgconfig/libghostty-vt.pc
+%{_prefix}/lib/libghostty-vt.so
+%{_prefix}/share/pkgconfig/libghostty-vt.pc
 
 %changelog
 %autochangelog
