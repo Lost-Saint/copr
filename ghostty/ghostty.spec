@@ -42,33 +42,13 @@ Conflicts: ghostty-nightly
 %description
 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
 
-%package devel
-Summary: Development files for libghostty-vt
-Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%package        devel
+Summary:        Development files for libghostty-vt
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description    devel
-This package includes the development files for Ghostty.
-
-%package        shell-integration
-Summary:        Ghostty shell integration
-Supplements:    %{name}
-BuildArch:      noarch
-
-%description    shell-integration
-This package contains files allowing Ghostty to integrate with various shells.
-
-%package -n     libghostty-vt
-Summary:        The libghostty-vt libraries
-
-%description -n libghostty-vt
-This package contains the libghostty-vt libraries, the first of many libghostty libaries in development.
-
-%package -n     libghostty-vt-devel
-Summary:        Development files for libghostty-vt
-Requires:       libghostty-vt = %{version}-%{release}
-
-%description -n libghostty-vt-devel
-This package contains the libraries and header files that are needed for developing with libghostty-vt.
+This package provides the development files for libghostty-vt.
 
 %prep
 /usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
@@ -77,8 +57,6 @@ This package contains the libraries and header files that are needed for develop
 ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
 
 %build
-
-%install
 DESTDIR=%{buildroot} zig build \
     --summary all \
     --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
@@ -99,8 +77,8 @@ DESTDIR=%{buildroot} zig build \
 %license LICENSE
 %{_bindir}/%{name}
 %{_datadir}/applications/%{appid}.desktop
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/doc
+%{_datadir}/%{name}
+%{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_datadir}/bash-completion/completions/ghostty.bash
 %{_datadir}/bat/syntaxes/ghostty.sublime-syntax
@@ -132,21 +110,14 @@ DESTDIR=%{buildroot} zig build \
 %{_datadir}/locale/*/LC_MESSAGES/%{appid}.mo
 %{_datadir}/systemd/user/app-%{appid}.service
 
-%files devel
-%{_includedir}/ghostty/
-
-%files shell-integration
-%{_datadir}/%{name}/shell-integration/
-
+%{_datadir}/terminfo/x/xterm-ghostty
 %if 0%{?fedora} < 42
     %{_datadir}/terminfo/g/%{name}
 %endif
-%{_datadir}/terminfo/x/xterm-ghostty
 
-%files -n libghostty-vt
-%{_libdir}/libghostty-vt.so.*
-
-%files -n libghostty-vt-devel
+%files devel
+%{_prefix}/include/ghostty/vt.h
+%{_prefix}/include/ghostty/vt/
 %{_libdir}/libghostty-vt.so
 %{_datadir}/pkgconfig/libghostty-vt.pc
 
