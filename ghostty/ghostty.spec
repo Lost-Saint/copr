@@ -1,16 +1,16 @@
+# Signing key from https://github.com/ghostty-org/ghostty/blob/main/PACKAGING.md
+%global public_key RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV
+%global appid com.mitchellh.ghostty
+
 Name:           ghostty
 Version:        1.3.1
 Release:        1%{?dist}
-Summary:        Fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration
-
-
-License:        MIT
-URL:            https://github.com/ghostty-org/ghostty
+Summary:        A fast, native terminal emulator written in Zig.
+License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.0
+URL:            https://ghostty.org/
 Source0:        https://github.com/ghostty-org/ghostty/archive/refs/tags/v%{version}.tar.gz
 
-
 ExclusiveArch: x86_64 aarch64
-
 
 BuildRequires: blueprint-compiler
 BuildRequires: fontconfig-devel
@@ -28,7 +28,6 @@ BuildRequires: pkg-config
 BuildRequires: wayland-protocols-devel
 BuildRequires: zig
 BuildRequires: zlib-ng-devel
-
 
 Requires: fontconfig
 Requires: freetype
