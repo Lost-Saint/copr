@@ -42,7 +42,6 @@ Conflicts: ghostty-nightly
 %description
 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
 
-
 %package        devel
 Summary:        Development files for libghostty-vt
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -66,7 +65,7 @@ DESTDIR=%{buildroot} zig build \
     -Doptimize=ReleaseFast \
     -Dpie=true \
     -Demit-docs \
-    -Demit-themes=false
+    -Demit-themes=true
 
 # Don't conflict with ncurses-term on F42 and up
 %if 0%{?fedora} >= 42
@@ -109,6 +108,7 @@ DESTDIR=%{buildroot} zig build \
 %{_datadir}/dbus-1/services/%{appid}.service
 %{_datadir}/locale/*/LC_MESSAGES/%{appid}.mo
 %{_datadir}/systemd/user/app-%{appid}.service
+%{_libdir}/libghostty-vt.so.*
 
 %{_datadir}/terminfo/x/xterm-ghostty
 %if 0%{?fedora} < 42
