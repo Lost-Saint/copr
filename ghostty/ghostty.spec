@@ -13,13 +13,14 @@ Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.
 
 ExclusiveArch: x86_64 aarch64
 
+BuildRequires:  gettext
 BuildRequires:  glib2-devel
 BuildRequires:  gtk4-devel
 BuildRequires:  minisign
 BuildRequires:  libadwaita-devel
 BuildRequires:  libX11-devel
 BuildRequires:  pandoc-cli
-BuildRequires:  wayland-protocols-devel
+BuildRequires:  systemd-rpm-macros
 BuildRequires:  zig >= 0.14.0
 BuildRequires:  zig-rpm-macros
 BuildRequires:  pkgconfig(blueprint-compiler)
@@ -76,6 +77,8 @@ This package contains the libraries and header files that are needed for develop
 ZIG_GLOBAL_CACHE_DIR="%{_zig_cache_dir}" ./nix/build-support/fetch-zig-cache.sh
 
 %build
+
+%install
 DESTDIR=%{buildroot} zig build \
     --summary all \
     --prefix "%{_prefix}" --prefix-lib-dir "%{_libdir}" \
