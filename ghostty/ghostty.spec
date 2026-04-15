@@ -13,16 +13,17 @@ Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.
 
 ExclusiveArch: x86_64 aarch64
 
-BuildRequires:  gettext
 BuildRequires:  glib2-devel
 BuildRequires:  gtk4-devel
+BuildRequires:  gtk4-layer-shell-devel
 BuildRequires:  minisign
 BuildRequires:  libadwaita-devel
-BuildRequires:  libX11-devel
 BuildRequires:  pandoc-cli
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  zig >= 0.14.0
 BuildRequires:  zig-rpm-macros
+BuildRequires:  wayland-protocols-devel
+BuildRequires:  zlib-ng-devel
 BuildRequires:  pkgconfig(blueprint-compiler)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(fontconfig)
@@ -34,9 +35,16 @@ BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(oniguruma)
 BuildRequires:  pkgconfig(zlib)
+Requires: fontconfig
+Requires: freetype
+Requires: glib2
 Requires: gtk4
-Requires: gtk4-layer-shell
+Requires: harfbuzz
 Requires: libadwaita
+Requires: libpng
+Requires: oniguruma
+Requires: pixman
+Requires: zlib-ng
 Conflicts: ghostty-nightly
 
 %description
