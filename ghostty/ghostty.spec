@@ -4,11 +4,12 @@
 
 Name:           ghostty
 Version:        1.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A fast, native terminal emulator written in Zig.
 License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.0
 URL:            https://ghostty.org/
-Source0:        https://github.com/ghostty-org/ghostty/archive/refs/tags/v%{version}.tar.gz
+Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
+Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
 
 ExclusiveArch: x86_64 aarch64
 
@@ -16,6 +17,7 @@ BuildRequires: blueprint-compiler
 BuildRequires: fontconfig-devel
 BuildRequires: freetype-devel
 BuildRequires: glib2-devel
+BuildRequires: minisign
 BuildRequires: gtk4-devel
 BuildRequires: gtk4-layer-shell-devel
 BuildRequires: harfbuzz-devel
@@ -40,9 +42,8 @@ Requires: oniguruma
 Requires: pixman
 Requires: zlib-ng
 
-
 %description
-%{summary}.
+👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
 
 %package        devel
 Summary:        Development files for libghostty-vt
@@ -53,6 +54,7 @@ This package provides the development files for libghostty-vt.
 
 
 %prep
+/usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
 %setup -q -n ghostty-%{version}
 
 
@@ -74,22 +76,22 @@ DESTDIR=%{buildroot} zig build \
 %files
 %license LICENSE
 %{_bindir}/ghostty
-%{_prefix}/share/applications/com.mitchellh.ghostty.desktop
+%{_prefix}/share/applications/%{appid}.desktop
 %{_prefix}/share/bash-completion/completions/ghostty.bash
 %{_prefix}/share/bat/syntaxes/ghostty.sublime-syntax
 %{_prefix}/share/fish/vendor_completions.d/ghostty.fish
 %{_prefix}/share/ghostty
-%{_prefix}/share/icons/hicolor/1024x1024/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/128x128/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/128x128@2/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/16x16/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/16x16@2/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/256x256@2/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/32x32/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/32x32@2/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/icons/hicolor/512x512/apps/com.mitchellh.ghostty.png
-%{_prefix}/share/kio/servicemenus/com.mitchellh.ghostty.desktop
+%{_prefix}/share/icons/hicolor/1024x1024/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/128x128/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/128x128@2/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/16x16/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/16x16@2/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/256x256/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/256x256@2/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/32x32/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/32x32@2/apps/%{appid}.png
+%{_prefix}/share/icons/hicolor/512x512/apps/%{appid}.png
+%{_prefix}/share/kio/servicemenus/%{appid}.desktop
 %{_prefix}/share/man/man1/ghostty.1
 %{_prefix}/share/man/man5/ghostty.5
 %{_prefix}/share/nautilus-python/extensions/ghostty.py
@@ -102,10 +104,10 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/share/vim/vimfiles/ftplugin/ghostty.vim
 %{_prefix}/share/vim/vimfiles/syntax/ghostty.vim
 %{_prefix}/share/zsh/site-functions/_ghostty
-%{_prefix}/share/dbus-1/services/com.mitchellh.ghostty.service
-%{_prefix}/share/locale/*/LC_MESSAGES/com.mitchellh.ghostty.mo
-%{_prefix}/share/metainfo/com.mitchellh.ghostty.metainfo.xml
-%{_prefix}/share/systemd/user/app-com.mitchellh.ghostty.service
+%{_prefix}/share/dbus-1/services/%{appid}.service
+%{_prefix}/share/locale/*/LC_MESSAGES/%{appid}.mo
+%{_prefix}/share/metainfo/%{appid}.metainfo.xml
+%{_prefix}/share/systemd/user/app-%{appid}.service
 %{_prefix}/lib/libghostty-vt.so.0
 %{_prefix}/lib/libghostty-vt.so.0.1.0
 
