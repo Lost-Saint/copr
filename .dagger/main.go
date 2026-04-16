@@ -37,7 +37,7 @@ func (m *Copr) BuildSpecFile(
 			fmt.Sprintf("quay.io/fedora/fedora:%s", fedoraVersion),
 		).
 		WithExec(shC("dnf copr enable -y myriad-sun/ghostty")).
-		WithExec(shC("dnf copr enable -y myriad-sun/cava")).
+		WithExec(shC("dnf copr enable -y myriad-sun/zen-browser")).
 		WithExec([]string{
 			"dnf", "install", "-y",
 			"ca-certificates", "curl", "wget",
