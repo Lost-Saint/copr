@@ -1,6 +1,6 @@
 module dagger/copr
 
-go 1.26.2
+go 1.26.1
 
 require (
 	dagger.io/dagger v0.20.5-0.20260409204156-6e4822e59cbb

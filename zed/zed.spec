@@ -44,5 +44,4 @@ install -m 644 share/icons/hicolor/512x512/apps/zed.png %{buildroot}/%{_datadir}
 %{_datadir}/icons/hicolor/512x512/apps/dev.zed.Zed-Nightly.png
 
 %changelog
-* Fri May 03 2024 sigmasd - nightly
-- Initial package
+%autochangelog
