@@ -1,19 +1,23 @@
-Name:           zed
-Version:        nightly
-Release:        1%{?dist}
-Summary:        Zed Nightly App
+%global commit 1db292d2fc4e74604bf07e9f7a859aa26ab6ea9b
+%global shortcommit %(c=%{commit}; echo ${c:0:7})
+%global commit_date 20260420
+%global ver 0.234.0
 
-License:        GPL
-URL:            https://github.com/zed-industries/zed
-%define _disable_source_fetch 0
-Source0:        https://zed.dev/api/releases/nightly/latest/zed-linux-x86_64.tar.gz
+Name:           zed-nightly
+Version:        %ver^%commit_date.%shortcommit
+Release:        1%{?dist}
+Summary:        Zed is a high-performance, multiplayer code editor
+SourceLicense:  AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-or-later
+License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND ((MIT OR Apache-2.0) AND Unicode-3.0) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 AND ISC) AND AGPL.3.0-only AND AGPL-3.0-or-later AND (Apache-2.0 OR BSL-1.0 OR MIT) AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception) AND Apache-2.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (BSD-2-Clause OR MIT OR Apache-2.0) AND BSD-2-Clause AND (CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception) AND (CC0-1.0 OR Apache-2.0) AND (CC0-1.0 OR MIT-0 OR Apache-2.0) AND CC0-1.0 AND GPL-3.0-or-later AND (ISC AND (Apache-2.0 OR ISC) AND OpenSSL) AND (ISC AND (Apache-2.0 OR ISC)) AND ISC AND (MIT AND (MIT OR Apache-2.0)) AND (MIT AND BSD-3-Clause) AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Apache-2.0 OR NCSA) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND MIT AND MPL-2.0 AND Unicode-3.0 AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND Zlib
+URL:            https://zed.dev/
+Source0:        https://github.com/zed-industries/zed/archive/%{commit}.tar.gz
 BuildArch:      x86_64
 
 
 %description
 Zed Nightly App
 
-%licence licences.md
+%license licenses.md
 
 %prep
 %setup -q -n zed-nightly.app
