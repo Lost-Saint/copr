@@ -1,50 +1,98 @@
-%global commit 1db292d2fc4e74604bf07e9f7a859aa26ab6ea9b
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commit_date 20260420
-%global ver 0.234.0
-
-Name:           zed-nightly
-Version:        %ver^%commit_date.%shortcommit
+Name:           zed
+Version:        0.232.2
 Release:        1%{?dist}
-Summary:        Zed is a high-performance, multiplayer code editor
-SourceLicense:  AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-or-later
-License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND ((MIT OR Apache-2.0) AND Unicode-3.0) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 AND ISC) AND AGPL.3.0-only AND AGPL-3.0-or-later AND (Apache-2.0 OR BSL-1.0 OR MIT) AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception) AND Apache-2.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (BSD-2-Clause OR MIT OR Apache-2.0) AND BSD-2-Clause AND (CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception) AND (CC0-1.0 OR Apache-2.0) AND (CC0-1.0 OR MIT-0 OR Apache-2.0) AND CC0-1.0 AND GPL-3.0-or-later AND (ISC AND (Apache-2.0 OR ISC) AND OpenSSL) AND (ISC AND (Apache-2.0 OR ISC)) AND ISC AND (MIT AND (MIT OR Apache-2.0)) AND (MIT AND BSD-3-Clause) AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Apache-2.0 OR NCSA) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND MIT AND MPL-2.0 AND Unicode-3.0 AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND Zlib
-URL:            https://zed.dev/
-Source0:        https://github.com/zed-industries/zed/archive/%{commit}.tar.gz
+Summary:        High-performance multiplayer code editor
 
-ExclusiveArch: x86_64
+License:        AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-only
+URL:            https://github.com/zed-industries/zed
+Source0:        https://github.com/zed-industries/zed/archive/refs/tags/v%{version}.tar.gz
 
+BuildRequires:  rust
+BuildRequires:  cargo
+BuildRequires:  clang
+BuildRequires:  cmake
+BuildRequires:  protobuf-compiler
+BuildRequires:  openssl-devel
+BuildRequires:  wayland-devel
+BuildRequires:  pkgconfig(xcb)
+BuildRequires:  pkgconfig(xkbcommon)
+BuildRequires:  pkgconfig(xkbcommon-x11)
+BuildRequires:  pkgconfig(alsa)
+BuildRequires:  fontconfig-devel
+BuildRequires:  vulkan-headers
+BuildRequires:  vulkan-loader-devel
+BuildRequires:  zlib-devel
+BuildRequires:  gettext
+
+Requires:       vulkan-loader
+Requires:       libxkbcommon%{?_isa}
+Requires:       fontconfig%{?_isa}
+Requires:       openssl-libs%{?_isa}
+Requires:       alsa-lib%{?_isa}
+
+Suggests:       gnome-keyring
 
 %description
-Zed Nightly App
+Zed is a high-performance, multiplayer code editor written in Rust by the
+creators of Atom and Tree-sitter. It renders via GPU (Vulkan), providing
+sub-millisecond input latency and instant startup. Supports X11 and Wayland.
 
 %prep
-%setup -q -n zed-nightly.app
+%autosetup -n zed-%{version}
 
-# Patch desktop file
-sed -i 's/Icon=zed/Icon=dev.zed.Zed-Nightly/' share/applications/zed-nightly.desktop
+%build
+export RUSTFLAGS="%{build_rustflags}"
+export ZED_UPDATE_EXPLANATION="Use your system package manager to update Zed."
 
-%define  debug_package %{nil}
+cargo build --release --locked --package zed --package cli
+
+export APP_ID="dev.zed.Zed"
+export APP_CLI="%{_bindir}/zed"
+export APP_ICON="%{_datadir}/icons/hicolor/512x512/apps/dev.zed.Zed.png"
+export APP_NAME="Zed"
+envsubst < crates/zed/resources/zed.desktop.in > zed.desktop
 
 %install
-rm -rf %{buildroot}
-install -d %{buildroot}/%{_bindir}
-install -m 755 bin/zed %{buildroot}/%{_bindir}/zed
-install -d %{buildroot}/%{_libexecdir}
-install -m 755 libexec/zed-editor %{buildroot}/%{_libexecdir}/zed-editor
-install -d %{buildroot}/%{_datadir}/applications
-install -m 644 share/applications/zed-nightly.desktop %{buildroot}/%{_datadir}/applications/dev.zed.Zed-Nightly.desktop
-install -d %{buildroot}/%{_datadir}/icons/hicolor/1024x1024/apps
-install -m 644 share/icons/hicolor/1024x1024/apps/zed.png %{buildroot}/%{_datadir}/icons/hicolor/1024x1024/apps/dev.zed.Zed-Nightly.png
-install -d %{buildroot}/%{_datadir}/icons/hicolor/512x512/apps
-install -m 644 share/icons/hicolor/512x512/apps/zed.png %{buildroot}/%{_datadir}/icons/hicolor/512x512/apps/dev.zed.Zed-Nightly.png
+# CLI wrapper → /usr/bin/zed
+install -Dm755 target/release/cli %{buildroot}%{_bindir}/zed
+
+# Editor binary → /usr/libexec/zed-editor (CLI finds it here via relative path)
+install -Dm755 target/release/zed %{buildroot}%{_libexecdir}/zed-editor
+
+# Icons
+for size in 16 32 48 128 256 512 1024; do
+    icon="crates/zed/resources/app-icon-${size}.png"
+    [ -f "$icon" ] || continue
+    install -Dm644 "$icon" \
+        %{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/dev.zed.Zed.png
+done
+
+# Desktop entry
+install -Dm644 zed.desktop %{buildroot}%{_datadir}/applications/dev.zed.Zed.desktop
+
+# Licenses
+install -Dm644 LICENSE-AGPL   %{buildroot}%{_licensedir}/%{name}/LICENSE-AGPL
+install -Dm644 LICENSE-APACHE %{buildroot}%{_licensedir}/%{name}/LICENSE-APACHE
+install -Dm644 LICENSE-GPL    %{buildroot}%{_licensedir}/%{name}/LICENSE-GPL
+
+%post
+/usr/bin/update-desktop-database &>/dev/null || :
+/usr/bin/gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
+
+%postun
+/usr/bin/update-desktop-database &>/dev/null || :
+/usr/bin/gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
 
 %files
+%license %{_licensedir}/%{name}/LICENSE-AGPL
+%license %{_licensedir}/%{name}/LICENSE-APACHE
+%license %{_licensedir}/%{name}/LICENSE-GPL
+%doc README.md
 %{_bindir}/zed
 %{_libexecdir}/zed-editor
-%{_datadir}/applications/dev.zed.Zed-Nightly.desktop
-%{_datadir}/icons/hicolor/1024x1024/apps/dev.zed.Zed-Nightly.png
-%{_datadir}/icons/hicolor/512x512/apps/dev.zed.Zed-Nightly.png
+%{_datadir}/applications/dev.zed.Zed.desktop
+%{_datadir}/icons/hicolor/*/apps/dev.zed.Zed.png
 
 %changelog
-%autochangelog
+* Tue Apr 29 2026 Your Name <you@example.com> - 0.232.2-1
+- Initial COPR build
