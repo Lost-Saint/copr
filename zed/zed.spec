@@ -1,98 +1,81 @@
 Name:           zed
-Version:        0.232.2
+Version:        1.0.0
 Release:        1%{?dist}
-Summary:        High-performance multiplayer code editor
+Summary:        Zed is a high-performance, multiplayer code editor
 
-License:        AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-only
-URL:            https://github.com/zed-industries/zed
-Source0:        https://github.com/zed-industries/zed/archive/refs/tags/v%{version}.tar.gz
+License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND ((MIT OR Apache-2.0) AND Unicode-3.0) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 AND ISC) AND AGPL.3.0-only AND AGPL-3.0-or-later AND (Apache-2.0 OR BSL-1.0 OR MIT) AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception) AND Apache-2.0 AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (BSD-2-Clause OR MIT OR Apache-2.0) AND BSD-2-Clause AND (CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception) AND (CC0-1.0 OR Apache-2.0) AND (CC0-1.0 OR MIT-0 OR Apache-2.0) AND CC0-1.0 AND GPL-3.0-or-later AND (ISC AND (Apache-2.0 OR ISC) AND OpenSSL) AND (ISC AND (Apache-2.0 OR ISC)) AND ISC AND (MIT AND (MIT OR Apache-2.0)) AND (MIT AND BSD-3-Clause) AND (MIT OR Apache-2.0 OR CC0-1.0) AND (MIT OR Apache-2.0 OR NCSA) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND MIT AND MPL-2.0 AND Unicode-3.0 AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND Zlib
 
-BuildRequires:  rust
-BuildRequires:  cargo
-BuildRequires:  clang
-BuildRequires:  cmake
-BuildRequires:  protobuf-compiler
-BuildRequires:  openssl-devel
-BuildRequires:  wayland-devel
-BuildRequires:  pkgconfig(xcb)
-BuildRequires:  pkgconfig(xkbcommon)
-BuildRequires:  pkgconfig(xkbcommon-x11)
-BuildRequires:  pkgconfig(alsa)
-BuildRequires:  fontconfig-devel
-BuildRequires:  vulkan-headers
-BuildRequires:  vulkan-loader-devel
-BuildRequires:  zlib-devel
-BuildRequires:  gettext
+URL:            https://zed.dev/
+Source0:        https://github.com/zed-industries/zed/releases/download/v%{version}/zed-linux-x86_64.tar.gz
 
-Requires:       vulkan-loader
-Requires:       libxkbcommon%{?_isa}
-Requires:       fontconfig%{?_isa}
-Requires:       openssl-libs%{?_isa}
+BuildRequires:  tar
+
+ExclusiveArch:  x86_64
+
+%global debug_package %{nil}
+
+# Verified via ldd zed.app/libexec/zed-editor - these resolve from /lib64 (system)
+# Everything else resolves from the bundled zed.app/lib/
+Requires:       glibc%{?_isa}
+Requires:       libgcc%{?_isa}
+Requires:       libstdc++%{?_isa}
 Requires:       alsa-lib%{?_isa}
+# Loaded at runtime via dlopen, not visible in ldd
+Requires:       vulkan-loader%{?_isa}
 
 Suggests:       gnome-keyring
 
 %description
-Zed is a high-performance, multiplayer code editor written in Rust by the
-creators of Atom and Tree-sitter. It renders via GPU (Vulkan), providing
-sub-millisecond input latency and instant startup. Supports X11 and Wayland.
+Code at the speed of thought - Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
+
+This package installs the official prebuilt binary from the Zed project.
 
 %prep
-%autosetup -n zed-%{version}
+%autosetup -n zed.app -p1
 
 %build
-export RUSTFLAGS="%{build_rustflags}"
-export ZED_UPDATE_EXPLANATION="Use your system package manager to update Zed."
-
-cargo build --release --locked --package zed --package cli
-
-export APP_ID="dev.zed.Zed"
-export APP_CLI="%{_bindir}/zed"
-export APP_ICON="%{_datadir}/icons/hicolor/512x512/apps/dev.zed.Zed.png"
-export APP_NAME="Zed"
-envsubst < crates/zed/resources/zed.desktop.in > zed.desktop
+# nothing to build
 
 %install
-# CLI wrapper → /usr/bin/zed
-install -Dm755 target/release/cli %{buildroot}%{_bindir}/zed
+# CLI wrapper
+install -Dm755 bin/zed %{buildroot}%{_bindir}/zed
 
-# Editor binary → /usr/libexec/zed-editor (CLI finds it here via relative path)
-install -Dm755 target/release/zed %{buildroot}%{_libexecdir}/zed-editor
+# Editor binary (CLI finds it via relative path ../libexec/zed-editor)
+install -Dm755 libexec/zed-editor %{buildroot}%{_libexecdir}/zed-editor
+
+# Bundled libraries
+install -dm755 %{buildroot}%{_libdir}/zed
+cp -a lib/. %{buildroot}%{_libdir}/zed/
 
 # Icons
-for size in 16 32 48 128 256 512 1024; do
-    icon="crates/zed/resources/app-icon-${size}.png"
-    [ -f "$icon" ] || continue
-    install -Dm644 "$icon" \
-        %{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/dev.zed.Zed.png
-done
+install -Dm644 share/icons/hicolor/512x512/apps/zed.png \
+               %{buildroot}%{_iconsdir}/hicolor/512x512/apps/dev.zed.Zed.png
+install -Dm644 share/icons/hicolor/1024x1024/apps/zed.png \
+               %{buildroot}%{_iconsdir}/hicolor/1024x1024/apps/dev.zed.Zed.png
 
 # Desktop entry
-install -Dm644 zed.desktop %{buildroot}%{_datadir}/applications/dev.zed.Zed.desktop
+sed 's|Icon=zed|Icon=dev.zed.Zed|g' share/applications/dev.zed.Zed.desktop \
+    > %{buildroot}%{_datadir}/applications/dev.zed.Zed.desktop
 
-# Licenses
-install -Dm644 LICENSE-AGPL   %{buildroot}%{_licensedir}/%{name}/LICENSE-AGPL
-install -Dm644 LICENSE-APACHE %{buildroot}%{_licensedir}/%{name}/LICENSE-APACHE
-install -Dm644 LICENSE-GPL    %{buildroot}%{_licensedir}/%{name}/LICENSE-GPL
+# License
+install -Dm644 licenses.md %{buildroot}%{_licensedir}/%{name}/licenses.md
 
 %post
 /usr/bin/update-desktop-database &>/dev/null || :
-/usr/bin/gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
+/usr/bin/gtk-update-icon-cache -f -t %{_iconsdir}/hicolor &>/dev/null || :
 
 %postun
 /usr/bin/update-desktop-database &>/dev/null || :
-/usr/bin/gtk-update-icon-cache -f -t %{_datadir}/icons/hicolor &>/dev/null || :
+/usr/bin/gtk-update-icon-cache -f -t %{_iconsdir}/hicolor &>/dev/null || :
 
 %files
-%license %{_licensedir}/%{name}/LICENSE-AGPL
-%license %{_licensedir}/%{name}/LICENSE-APACHE
-%license %{_licensedir}/%{name}/LICENSE-GPL
-%doc README.md
+%license %{_licensedir}/%{name}/licenses.md
 %{_bindir}/zed
 %{_libexecdir}/zed-editor
+%{_libdir}/zed/
 %{_datadir}/applications/dev.zed.Zed.desktop
-%{_datadir}/icons/hicolor/*/apps/dev.zed.Zed.png
+%{_iconsdir}/hicolor/512x512/apps/dev.zed.Zed.png
+%{_iconsdir}/hicolor/1024x1024/apps/dev.zed.Zed.png
 
 %changelog
-* Tue Apr 29 2026 Your Name <you@example.com> - 0.232.2-1
-- Initial COPR build
+%autochangelog
