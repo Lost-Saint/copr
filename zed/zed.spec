@@ -54,6 +54,7 @@ install -Dm644 share/icons/hicolor/1024x1024/apps/zed.png \
                %{buildroot}%{_iconsdir}/hicolor/1024x1024/apps/dev.zed.Zed.png
 
 # Desktop entry
+install -dm755 %{buildroot}%{_datadir}/applications
 sed 's|Icon=zed|Icon=dev.zed.Zed|g' share/applications/dev.zed.Zed.desktop \
     > %{buildroot}%{_datadir}/applications/dev.zed.Zed.desktop
 
