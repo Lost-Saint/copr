@@ -138,8 +138,6 @@ desktop-file-validate \
 %{_datadir}/applications/com.github.wwmm.%{name}.desktop
 %{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}{,-symbolic}.svg
 %{_datadir}/metainfo/com.github.wwmm.%{name}.metainfo.xml
-%{_datadir}/dbus-1/services/com.github.wwmm.%{name}.service
-%{_datadir}/%{name}/
 
 %changelog
 %autochangelog
