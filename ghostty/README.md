@@ -16,22 +16,16 @@
 
 ## Installation
 
-1. Enable copr repo
+0. Enable copr repo
 
 ```bash
 sudo dnf copr enable myriad-sun/ghostty
 ```
 
-  - Substitute `dnf` for `yum` if desired
+- Substitute `dnf` for `yum` if desired
 
-2. (Optional) Update package list
-
-```bash
-sudo dnf check-update
-```
-
-3. Install
+0. Install
 
 ```bash
-sudo dnf install ghostty
+sudo dnf install ghostty --refresh
 ```

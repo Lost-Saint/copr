@@ -27,7 +27,7 @@ Bugs related to this package should be reported at this Git project:
 
 ## Installation Instructions
 
-1. Enable `myriad-sun/zen-browser` [Copr](https://copr.fedorainfracloud.org/) repository according to your package manager.
+0. Enable `myriad-sun/zen-browser` [Copr](https://copr.fedorainfracloud.org/) repository according to your package manager.
 
 ```Shell
 # If you are using dnf... (you need to have 'dnf-plugins-core' installed)
@@ -37,19 +37,13 @@ sudo dnf copr enable myriad-sun/zen-browser
 sudo yum copr enable myriad-sun/zen-browser
 ```
 
-2. (Optional) Update your package list.
+0. Execute the following command to install the package.
 
 ```Shell
-sudo dnf check-update
+sudo dnf install zen-browser --refresh
 ```
 
-3. Execute the following command to install the package.
-
-```Shell
-sudo dnf install zen-browser
-```
-
-4. Launch the application from the Application Menu or execute following command in terminal.
+0. Launch the application from the Application Menu or execute following command in terminal.
 
 ```Shell
 zen-browser

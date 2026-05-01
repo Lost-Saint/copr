@@ -38,6 +38,8 @@ func (m *Copr) BuildSpecFile(
 		).
 		WithExec(shC("dnf copr enable -y myriad-sun/ghostty")).
 		WithExec(shC("dnf copr enable -y myriad-sun/zen-browser")).
+		WithExec(shC("dnf copr enable -y myriad-sun/zed")).
+		WithExec(shC("dnf copr enable -y myriad-sun/lutris")).
 		WithExec([]string{
 			"dnf", "install", "-y",
 			"ca-certificates", "curl", "wget",

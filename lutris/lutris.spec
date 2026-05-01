@@ -89,7 +89,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applicatio
 %check
 # Python tests: Disabled because either they are querying hardware (Don't work in mock) or they're
 # trying to spawn processes, which is also blocked.
-# %%pytest --ignore=tests/test_dialogs.py --ignore=tests/test_installer.py --ignore=tests/test_api.py -k "not GetNvidiaDriverInfo and not GetNvidiaGpuInfo and not import_module and not options"
+#%%pytest --ignore=tests/test_dialogs.py --ignore=tests/test_installer.py --ignore=tests/test_api.py -k "not GetNvidiaDriverInfo and not GetNvidiaGpuInfo and not import_module and not options"
 
 %files -f %{pyproject_files} -f %{name}.lang
 %{_bindir}/%{name}
