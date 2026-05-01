@@ -18,8 +18,10 @@ Source0:        %{url}/archive/%{commit}.tar.gz
 BuildRequires:  desktop-file-utils
 BuildRequires:  python3-devel
 Requires:       cabextract
-Requires:       gtk3, psmisc, xorg-x11-server-Xephyr, xrandr
+Requires:       gtk3, psmisc
 Requires:       hicolor-icon-theme
+# According to the INSTALL.rst upstream docs, lutris requires either (xorg-x11-server-Xephyr, xrandr)
+# or gnome-desktop3. Considering we are mainly using Wayland now, gnome-desktop3 should be sufficient.
 Requires:       gnome-desktop3
 Requires:       python3-distro
 Requires:       python3-cairo
@@ -30,7 +32,6 @@ BuildRequires:  gobject-introspection
 BuildRequires:  gtk3-devel
 BuildRequires:  webkit2gtk4.1-devel
 BuildRequires:  python3-cairo-devel
-BuildRequires:  python3-gobject
 
 
 %ifarch x86_64
@@ -87,16 +88,21 @@ on Linux.
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/net.%{name}.Lutris.metainfo.xml
 %fdupes %{buildroot}%{python3_sitelib}
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applications/net.%{name}.Lutris.desktop
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applications/net.%{name}.Lutris1.desktop
+%find_lang %{name} --with-man
 
-# %check
+%check
 # Python tests: Disabled because either they are querying hardware (Don't work in mock) or they're
+# trying to spawn processes, which is also blocked.
+# %pytest --ignore=tests/test_dialogs.py --ignore=tests/test_installer.py --ignore=tests/test_api.py -k "not GetNvidiaDriverInfo and not GetNvidiaGpuInfo and not import_module and not options"
 
-%files -f %{pyproject_files}
+%files -f %{pyproject_files} -f %{name}.lang
 %{_bindir}/%{name}
 %{_datadir}/%{name}/
-%{_datadir}/applications/net.%{name}.Lutris*.desktop
-%{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.*
-%{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.*
+%{_datadir}/applications/net.%{name}.Lutris.desktop
+%{_datadir}/applications/net.%{name}.Lutris1.desktop
+%{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.png
+%{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.svg
 %{_mandir}/man1/%{name}.1.gz
 # Some files being missed by the Python macros
 %{python3_sitelib}/%{name}/__pycache__/optional_settings.*.pyc
