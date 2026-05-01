@@ -84,7 +84,6 @@ on Linux.
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/net.%{name}.Lutris.metainfo.xml
 %fdupes %{buildroot}%{python3_sitelib}
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applications/net.%{name}.Lutris.desktop
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applications/net.%{name}.Lutris1.desktop
 %find_lang %{name} --with-man
 
 %check
@@ -95,10 +94,9 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applicatio
 %files -f %{pyproject_files} -f %{name}.lang
 %{_bindir}/%{name}
 %{_datadir}/%{name}/
-%{_datadir}/applications/net.%{name}.Lutris.desktop
-%{_datadir}/applications/net.%{name}.Lutris1.desktop
-%{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.png
-%{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.svg
+%{_datadir}/applications/net.%{name}.Lutris*.desktop
+%{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.*
+%{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.*
 %{_mandir}/man1/%{name}.1.gz
 # Some files being missed by the Python macros
 %{python3_sitelib}/%{name}/__pycache__/optional_settings.*.pyc
