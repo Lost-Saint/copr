@@ -30,6 +30,7 @@ BuildRequires:  gobject-introspection
 BuildRequires:  gtk3-devel
 BuildRequires:  webkit2gtk4.1-devel
 BuildRequires:  python3-cairo-devel
+BuildRequires:  python3-gobject
 
 
 %ifarch x86_64
@@ -51,10 +52,10 @@ Requires:       glx-utils
 Requires:       gvfs
 Requires:       webkit2gtk4.1
 Recommends: 	p7zip, curl
-Recommends:	fluid-soundfont-gs
+Recommends:	    fluid-soundfont-gs
 Recommends:     wine-core
-Recommends:	p7zip-plugins
-Recommends:	gamemode
+Recommends:	    p7zip-plugins
+Recommends:	    gamemode
 Recommends:     libFAudio
 Recommends:     gamescope
 BuildRequires:  fdupes
@@ -96,8 +97,8 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applicatio
 %{_bindir}/%{name}
 %{_datadir}/%{name}/
 %{_datadir}/applications/net.%{name}.Lutris*.desktop
-%{_datadir}/icons/hicolor/*/apps/net.lutris.Lutris.*
-%{_datadir}/icons/hicolor/*/mimetypes/application-x-lutris.*
+%{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.*
+%{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.*
 %{_datadir}/man/man1/%{name}.1.gz
 # Some files being missed by the Python macros
 %{python3_sitelib}/%{name}/__pycache__/optional_settings.*.pyc
@@ -109,4 +110,3 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applicatio
 
 %changelog
 %autochangelog
-
