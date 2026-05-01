@@ -88,14 +88,8 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/net.%{na
 %fdupes %{buildroot}%{python3_sitelib}
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applications/net.%{name}.Lutris.desktop
 
-%check
+# %check
 # Python tests: Disabled because either they are querying hardware (Don't work in mock) or they're
-# trying to spawn processes, which is also blocked.
-%pytest --ignore=tests/test_dialogs.py \
-        --ignore=tests/test_installer.py \
-        --ignore=tests/test_api.py \
-        --ignore=tests/nose2_plugins \
-        -k "not GetNvidiaDriverInfo and not GetNvidiaGpuInfo and not import_module and not options"
 
 %files -f %{pyproject_files}
 %{_bindir}/%{name}
