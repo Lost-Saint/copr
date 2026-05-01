@@ -17,6 +17,14 @@ Source0:        %{url}/archive/%{commit}.tar.gz
 
 BuildRequires:  desktop-file-utils
 BuildRequires:  python3-devel
+BuildRequires:  gobject-introspection
+BuildRequires:  gtk3-devel
+BuildRequires:  webkit2gtk4.1-devel
+BuildRequires:  python3-cairo-devel
+BuildRequires:  python3-gobject
+BuildRequires:  fdupes, libappstream-glib
+BuildRequires:  meson, gettext
+
 Requires:       cabextract
 Requires:       gtk3, psmisc
 Requires:       hicolor-icon-theme
@@ -25,14 +33,6 @@ Requires:       hicolor-icon-theme
 Requires:       gnome-desktop3
 Requires:       python3-distro
 Requires:       python3-cairo
-
-# Tests
-BuildRequires:  python3dist(pytest)
-BuildRequires:  gobject-introspection
-BuildRequires:  gtk3-devel
-BuildRequires:  webkit2gtk4.1-devel
-BuildRequires:  python3-cairo-devel
-
 
 %ifarch x86_64
 Requires:       mesa-dri-drivers(x86-32)
@@ -49,19 +49,15 @@ Requires:       mesa-vulkan-drivers
 Requires:       mesa-dri-drivers
 Requires:       vulkan-loader
 Requires:       mesa-libGL
-Requires:       glx-utils
-Requires:       gvfs
+Requires:       glx-utils, gvfs
 Requires:       webkit2gtk4.1
-Recommends: 	p7zip, curl
-Recommends:	    fluid-soundfont-gs
+Recommends:     p7zip, curl
+Recommends:     fluid-soundfont-gs
 Recommends:     wine-core
-Recommends:	    p7zip-plugins
-Recommends:	    gamemode
+Recommends:     p7zip-plugins
+Recommends:     gamemode
 Recommends:     libFAudio
 Recommends:     gamescope
-BuildRequires:  fdupes
-BuildRequires:  libappstream-glib
-BuildRequires:  meson, gettext
 
 %description
 Lutris is a gaming platform for GNU/Linux. Its goal is to make
