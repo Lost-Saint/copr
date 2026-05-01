@@ -99,7 +99,7 @@ desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applicatio
 %{_datadir}/applications/net.%{name}.Lutris*.desktop
 %{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.*
 %{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.*
-%{_datadir}/man/man1/%{name}.1.gz
+%{_mandir}/man1/%{name}.1.gz
 # Some files being missed by the Python macros
 %{python3_sitelib}/%{name}/__pycache__/optional_settings.*.pyc
 %{python3_sitelib}/%{name}/optional_settings.py
