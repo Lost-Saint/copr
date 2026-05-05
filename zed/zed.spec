@@ -1,5 +1,5 @@
 Name:           zed
-Version:        1.0.1
+Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Zed is a high-performance, multiplayer code editor
 
@@ -11,10 +11,6 @@ Source0:        https://github.com/zed-industries/zed/releases/download/v%{versi
 ExclusiveArch:  x86_64
 
 %global debug_package %{nil}
-
-
-BuildRequires:  zlib
-BuildRequires:  zlib-devel
 
 %description
 Code at the speed of thought - Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
