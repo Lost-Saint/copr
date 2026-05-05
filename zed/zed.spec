@@ -12,6 +12,8 @@ ExclusiveArch:  x86_64
 
 %global debug_package %{nil}
 
+
+BuildRequires:  zlib
 BuildRequires:  zlib-devel
 
 %description
@@ -59,13 +61,15 @@ install -Dm644 licenses.md %{buildroot}%{_licensedir}/%{name}/licenses.md
 /usr/bin/gtk-update-icon-cache -f -t %{_iconsdir}/hicolor &>/dev/null || :
 
 %files
+%doc CODE_OF_CONDUCT.md
+%doc README.md
 %license %{_licensedir}/%{name}/licenses.md
 %{_bindir}/zed
 %{_libexecdir}/zed-editor
 %{_libdir}/zed/
-%{_datadir}/applications/dev.zed.Zed.desktop
 %{_iconsdir}/hicolor/512x512/apps/dev.zed.Zed.png
 %{_iconsdir}/hicolor/1024x1024/apps/dev.zed.Zed.png
+%{_datadir}/applications/dev.zed.Zed.desktop
 
 %changelog
 %autochangelog
