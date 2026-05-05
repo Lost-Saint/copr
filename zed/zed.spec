@@ -12,9 +12,8 @@ ExclusiveArch:  x86_64
 
 %global debug_package %{nil}
 
-BuildRequires:  zlib
-
 Requires:       alsa-lib%{?_isa}
+Requires:       zlib%{?_isa}
 Requires:       vulkan-loader%{?_isa}
 
 Suggests:       gnome-keyring
@@ -25,7 +24,7 @@ Code at the speed of thought - Zed is a high-performance, multiplayer code edito
 This package installs the official prebuilt binary from the Zed project.
 
 %prep
-%autosetup -n zed.app -p1
+%autosetup -n zed.app
 
 %build
 # nothing to build
