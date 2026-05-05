@@ -12,11 +12,7 @@ ExclusiveArch:  x86_64
 
 %global debug_package %{nil}
 
-Requires:       alsa-lib%{?_isa}
-Requires:       zlib%{?_isa}
-Requires:       vulkan-loader%{?_isa}
-
-Suggests:       gnome-keyring
+BuildRequires:  zlib-devel
 
 %description
 Code at the speed of thought - Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
