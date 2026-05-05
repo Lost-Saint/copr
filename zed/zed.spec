@@ -12,6 +12,9 @@ ExclusiveArch:  x86_64
 
 %global debug_package %{nil}
 
+Requires: zlib
+Requires: zlib-ng-compat
+
 %description
 Code at the speed of thought - Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 
