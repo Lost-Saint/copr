@@ -3,14 +3,18 @@ Version:        1.1.7
 Release:        1%{?dist}
 Summary:        Zed is a high-performance, multiplayer code editor
 
-SourceLicense:  AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-or-later
+License:        AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-or-later
 URL:            https://zed.dev/
 Source0:        https://github.com/zed-industries/zed/releases/download/v%{version}/zed-linux-x86_64.tar.gz
+
+ExclusiveArch:  x86_64
 
 BuildRequires:  desktop-file-utils
 
 Conflicts:      zed-nightly
 Conflicts:      zed-preview
+
+AutoReqProv: no
 
 # Prebuilt upstream binary — no debug info to extract
 %global debug_package %{nil}
