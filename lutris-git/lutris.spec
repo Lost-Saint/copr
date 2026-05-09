@@ -1,6 +1,6 @@
-%global commit 56ef443ca1b3db263a6571ac253888dcc3e674e5
+%global commit de576c69919803b5b23ae2550d065e1982e2d043
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global git_date 20260502T102743Z
+%global git_date 20260509T142950Z
 %global tag v0.5.22
 %global clean_tag %(echo %{tag} | sed 's/^v//')
 
@@ -15,24 +15,28 @@ License:        GPL-3.0-only
 URL:            https://github.com/lutris/lutris
 Source0:        %{url}/archive/%{commit}.tar.gz
 
+# Upstream's lutris/__init__.py calls gi.require_version() at import time.
+# setup.py imports the package to read __version__, which makes the package
+# un-importable during %%pyproject_buildrequires. Read the version string
+# from the file directly instead.
+Patch0:         setup-no-import.patch
+
 BuildRequires:  desktop-file-utils
 BuildRequires:  python3-devel
+Requires:       cabextract
+Requires:       gtk3, psmisc, xorg-x11-server-Xephyr, xrandr
+Requires:       hicolor-icon-theme
+Requires:       gnome-desktop3
+Requires:       python3-distro
+Requires:       python3-cairo
+
+# Tests
+BuildRequires:  python3dist(pytest)
 BuildRequires:  gobject-introspection
 BuildRequires:  gtk3-devel
 BuildRequires:  webkit2gtk4.1-devel
 BuildRequires:  python3-cairo-devel
-BuildRequires:  python3-gobject
-BuildRequires:  fdupes, libappstream-glib
-BuildRequires:  meson, gettext
 
-Requires:       cabextract
-Requires:       gtk3, psmisc
-Requires:       hicolor-icon-theme
-# According to the INSTALL.rst upstream docs, lutris requires either (xorg-x11-server-Xephyr, xrandr)
-# or gnome-desktop3. Considering we are mainly using Wayland now, gnome-desktop3 should be sufficient.
-Requires:       gnome-desktop3
-Requires:       python3-distro
-Requires:       python3-cairo
 
 %ifarch x86_64
 Requires:       mesa-dri-drivers(x86-32)
@@ -49,15 +53,19 @@ Requires:       mesa-vulkan-drivers
 Requires:       mesa-dri-drivers
 Requires:       vulkan-loader
 Requires:       mesa-libGL
-Requires:       glx-utils, gvfs
+Requires:       glx-utils
+Requires:       gvfs
 Requires:       webkit2gtk4.1
-Recommends:     p7zip, curl
-Recommends:     fluid-soundfont-gs
+Recommends: 	p7zip, curl
+Recommends:	fluid-soundfont-gs
 Recommends:     wine-core
-Recommends:     p7zip-plugins
-Recommends:     gamemode
+Recommends:	p7zip-plugins
+Recommends:	gamemode
 Recommends:     libFAudio
 Recommends:     gamescope
+BuildRequires:  fdupes
+BuildRequires:  libappstream-glib
+BuildRequires:  meson, gettext
 
 %description
 Lutris is a gaming platform for GNU/Linux. Its goal is to make
@@ -84,20 +92,20 @@ on Linux.
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/net.%{name}.Lutris.metainfo.xml
 %fdupes %{buildroot}%{python3_sitelib}
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications share/applications/net.%{name}.Lutris.desktop
-%find_lang %{name} --with-man
 
 %check
 # Python tests: Disabled because either they are querying hardware (Don't work in mock) or they're
 # trying to spawn processes, which is also blocked.
-#%%pytest --ignore=tests/test_dialogs.py --ignore=tests/test_installer.py --ignore=tests/test_api.py -k "not GetNvidiaDriverInfo and not GetNvidiaGpuInfo and not import_module and not options"
+# Upstream uses nose2 with file pattern _test_*.py; override pytest's default to match.
+%pytest --override-ini='python_files=_test_*.py' --ignore=tests/_test_dialogs.py --ignore=tests/_test_installer.py --ignore=tests/_test_api.py --ignore=tests/nose2_plugins -k "not GetNvidiaDriverInfo and not GetNvidiaGpuInfo and not import_module and not options"
 
-%files -f %{pyproject_files} -f %{name}.lang
+%files -f %{pyproject_files}
 %{_bindir}/%{name}
 %{_datadir}/%{name}/
 %{_datadir}/applications/net.%{name}.Lutris*.desktop
 %{_iconsdir}/hicolor/*/apps/net.lutris.Lutris.*
 %{_iconsdir}/hicolor/*/mimetypes/application-x-lutris.*
-%{_mandir}/man1/%{name}.1.gz
+%{_datadir}/man/man1/%{name}.1.gz
 # Some files being missed by the Python macros
 %{python3_sitelib}/%{name}/__pycache__/optional_settings.*.pyc
 %{python3_sitelib}/%{name}/optional_settings.py

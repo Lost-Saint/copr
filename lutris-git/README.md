@@ -9,6 +9,8 @@
 
 [Lutris](https://lutris.net) packaged for Fedora and published to [copr](https://copr.fedorainfracloud.org/coprs/myriad-sun/lutris-git)
 
+This package is updated every Sunday to track the latest upstream Lutris changes.
+
 ### Bugs
 
 - Bugs related to Lutris application should be reported to the [lutris GitHub org](https://github.com/lutris/lutris/issues)
