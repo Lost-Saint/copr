@@ -45,7 +45,7 @@ install -Dm755 libexec/zed-editor %{buildroot}%{zed_home}/libexec/zed-editor
 install -dm755 %{buildroot}%{zed_home}/lib
 cp -a lib/. %{buildroot}%{zed_home}/lib/
 
-# Symlink into PATH — avoids a wrapper script while keeping the private layout
+install -dm755 %{buildroot}%{_bindir}
 ln -sr %{buildroot}%{zed_home}/bin/zed %{buildroot}%{_bindir}/zed
 
 install -Dm644 share/icons/hicolor/512x512/apps/zed.png \
@@ -53,13 +53,12 @@ install -Dm644 share/icons/hicolor/512x512/apps/zed.png \
 install -Dm644 share/icons/hicolor/1024x1024/apps/zed.png \
     %{buildroot}%{_iconsdir}/hicolor/1024x1024/apps/dev.zed.Zed.png
 
-# desktop-file-install rewrites the icon name and validates in one step
 desktop-file-install \
     --dir=%{buildroot}%{_datadir}/applications \
     --set-icon=dev.zed.Zed \
     share/applications/dev.zed.Zed.desktop
 
-install -Dm644 licenses.md %{buildroot}%{_licensedir}/%{name}/licenses.md
+install -Dm644 licenses.md %{buildroot}%{_datadir}/licenses/%{name}/licenses.md
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/dev.zed.Zed.desktop
