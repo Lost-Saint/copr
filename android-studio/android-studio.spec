@@ -76,7 +76,8 @@ MimeType=application/x-extension-iml;
 EOF
 
 %check
-%desktop_file_validate %{buildroot}%{_datadir}/applications/%{name}.desktop
+desktop-file-validate \
+    %{buildroot}%{_datadir}/applications/%{name}.desktop
 
 %files
 %license %{_licensedir}/%{name}/LICENSE.txt
@@ -88,4 +89,3 @@ EOF
 
 %changelog
 %autochangelog
-
