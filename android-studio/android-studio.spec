@@ -23,7 +23,7 @@ License:        Apache-2.0
 ExclusiveArch:  x86_64
 URL:            https://developer.android.com/studio
 
-%define suffixS panda4
+%define suffixS panda4-patch1
 
 Source0:        https://dl.google.com/dl/android/studio/ide-zips/%{version}/android-studio-%{suffixS}-linux.tar.gz
 
