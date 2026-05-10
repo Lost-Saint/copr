@@ -136,7 +136,9 @@ desktop-file-validate \
 %doc README.md
 %{_bindir}/%{name}
 %{_datadir}/applications/com.github.wwmm.%{name}.desktop
-%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}{,-symbolic}.svg
+%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}.svg
+%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}-symbolic.svg
+%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}-off-symbolic.svg
 %{_datadir}/metainfo/com.github.wwmm.%{name}.metainfo.xml
 
 %changelog
