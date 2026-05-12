@@ -48,6 +48,7 @@ BuildRequires:  cmake(SPIRV-Headers)
 BuildRequires:  cmake(SPIRV-Tools)
 BuildRequires:  cmake(SDL2)
 BuildRequires:  cmake(Qt6Concurrent)
+BuildRequires:  cmake(Qt6Charts)
 BuildRequires:  cmake(Qt6WebEngineCore)
 BuildRequires:  cmake(Qt6WebEngineWidgets)
 
