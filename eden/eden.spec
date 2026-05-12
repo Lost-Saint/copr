@@ -75,7 +75,7 @@ BuildRequires:  VulkanMemoryAllocator-devel
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
 %prep
-%autosetup -q -n eden
+%setup -q -n eden
 
 
 %build
@@ -115,12 +115,12 @@ cmake --install build
 %license LICENSES/*
 %doc README.md
 %{_bindir}/%{name}
-%{_bindir}/eden-cli
-%{_bindir}/eden-room
+%{_bindir}/%{name}-cli
+%{_bindir}/%{name}-room
 %{_datadir}/applications/%{appid}.desktop
 %{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/metainfo/%{appid}.metainfo.xml
-%{_datarootdir}/mime/packages/dev.eden_emu.eden.xml
+%{_datarootdir}/mime/packages/%{appid}.xml
 %{_udevrulesdir}/72-yuzu-input.rules
 
 %changelog
