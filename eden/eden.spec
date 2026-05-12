@@ -28,7 +28,7 @@ BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  qt6-qtmultimedia-devel
 BuildRequires:  qt6-qtwebengine-devel
-BuildRequires:  qt6-charts-devel
+BuildRequires:  qt6-qtcharts-devel
 BuildRequires:  qt6-linguist
 
 # Vulkan / graphics
@@ -97,9 +97,9 @@ eden is an open source Nintendo Switch emulator/debugger.
 # Install desktop entry and icon if present
 install -Dm644 dist/%{appid}.desktop \
     %{buildroot}%{_datadir}/applications/%{appid}.desktop
-    install -Dm644 dist/%{appid}.svg \
+install -Dm644 dist/%{appid}.svg \
     %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
-    install -Dm644 dist/%{appid}.metainfo.xml \
+install -Dm644 dist/%{appid}.metainfo.xml \
     %{buildroot}%{_datadir}/metainfo/%{appid}.metainfo.xml
 install -Dm644 dist/72-yuzu-input.rules \
     %{buildroot}%{_udevrulesdir}/72-yuzu-input.rules
