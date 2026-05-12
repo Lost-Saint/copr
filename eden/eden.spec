@@ -37,12 +37,17 @@ BuildRequires:  vulkan-utility-libraries-devel
 BuildRequires:  glslang-devel
 BuildRequires:  spirv-tools-devel
 BuildRequires:  spirv-headers-devel
+BuildRequires:  mesa-libEGL-devel
+BuildRequires:  mesa-libGL-devel
 
 # Audio / codec
 BuildRequires:  ffmpeg-devel
 BuildRequires:  opus-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  speexdsp-devel
+BuildRequires:  pipewire-devel
+BuildRequires:  jack-audio-connection-kit-devel
+BuildRequires:  libsamplerate-devel
 
 # Compression / crypto
 BuildRequires:  lz4-devel
@@ -58,7 +63,16 @@ BuildRequires:  hidapi-devel
 BuildRequires:  libusb1-devel
 BuildRequires:  libXext-devel
 BuildRequires:  wayland-devel
+BuildRequires:  wayland-protocols-devel
 BuildRequires:  SDL2-devel
+
+# Graphics / DRM / windowing extras (fix SDL feature detection)
+BuildRequires:  libdrm-devel
+BuildRequires:  mesa-libgbm-devel
+BuildRequires:  libdecor-devel
+
+# Debug / threading support
+BuildRequires:  libunwind-devel
 
 # Runtime
 Requires:       qt6-qtbase
@@ -76,14 +90,13 @@ eden is an open source Nintendo Switch emulator/debugger.
 
 %build
 # Fedora 36+ with GCC 12 requires Clang for C++ compilation.
-# Use clang++ unconditionally to stay consistent across Fedora versions.
 %cmake \
     -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
     -DYUZU_TESTS=OFF \
-    -DYUZU_USE_CPM=ON \
+    -DYUZU_USE_CPM=OFF \
     -DYUZU_USE_EXTERNAL_FFMPEG=ON \
     -DYUZU_USE_EXTERNAL_SDL2=ON \
     -DENABLE_QT_TRANSLATION=ON \
@@ -97,10 +110,13 @@ eden is an open source Nintendo Switch emulator/debugger.
 # Install desktop entry and icon if present
 install -Dm644 dist/%{appid}.desktop \
     %{buildroot}%{_datadir}/applications/%{appid}.desktop
+
 install -Dm644 dist/%{appid}.svg \
-    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
+    %{buildroot}%{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
+
 install -Dm644 dist/%{appid}.metainfo.xml \
     %{buildroot}%{_datadir}/metainfo/%{appid}.metainfo.xml
+
 install -Dm644 dist/72-yuzu-input.rules \
     %{buildroot}%{_udevrulesdir}/72-yuzu-input.rules
 
@@ -109,7 +125,7 @@ install -Dm644 dist/72-yuzu-input.rules \
 %doc README.md
 %{_bindir}/%{name}
 %{_datadir}/applications/%{appid}.desktop
-%{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
+%{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_udevrulesdir}/72-yuzu-input.rules
 
