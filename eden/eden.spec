@@ -1,4 +1,4 @@
-%global appid %{appid}
+%global appid dev.eden_emu.eden
 
 Name:           eden
 Version:        0.2.0
@@ -95,12 +95,12 @@ eden is an open source Nintendo Switch emulator/debugger.
 %cmake_install
 
 # Install desktop entry and icon if present
-install -Dm644 dist/dev.eden_emu.eden.desktop \
-    %{buildroot}%{_datadir}/applications/dev.eden_emu.eden.desktop
-install -Dm644 dist/dev.eden_emu.eden.svg \
-    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/dev.eden_emu.eden.svg
-install -Dm644 dist/dev.eden_emu.eden.metainfo.xml \
-    %{buildroot}%{_datadir}/metainfo/dev.eden_emu.eden.metainfo.xml
+install -Dm644 dist/%{appid}.desktop \
+    %{buildroot}%{_datadir}/applications/%{appid}.desktop
+    install -Dm644 dist/%{appid}.svg \
+    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
+    install -Dm644 dist/%{appid}.metainfo.xml \
+    %{buildroot}%{_datadir}/metainfo/%{appid}.metainfo.xml
 install -Dm644 dist/72-yuzu-input.rules \
     %{buildroot}%{_udevrulesdir}/72-yuzu-input.rules
 
