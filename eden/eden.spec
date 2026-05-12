@@ -69,6 +69,7 @@ BuildRequires:  stb_image-devel
 BuildRequires:  stb_image_write-devel
 BuildRequires:  stb_image_resize-devel
 BuildRequires:  renderdoc-devel
+BuildRequires:  vulkan-utility-libraries-devel
 BuildRequires:  VulkanMemoryAllocator-devel
 
 %description
