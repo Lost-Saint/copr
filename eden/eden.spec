@@ -1,5 +1,16 @@
 %global appid dev.eden_emu.eden
 
+%if %{with pgo}
+%global toolchain clang
+%endif
+
+%undefine _hardened_build
+
+# Build preset to use. One of: custom, generic, v3, zen2, zen4, native
+%if ! %{defined build_preset}
+%global build_preset v3
+%endif
+
 Name:           eden
 Version:        0.2.0
 Release:        1%{?dist}
@@ -8,125 +19,108 @@ License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
 
 Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}-rc2.tar.gz
+Source1:        https://github.com/Eden-CI/PGO/releases/latest/download/eden.profdata
 
 ExclusiveArch:  x86_64 aarch64
 
-BuildRequires:  cmake >= 3.22
-BuildRequires:  ninja-build
+BuildRequires:  gcc
 BuildRequires:  gcc-c++
+BuildRequires:  mold
+
+BuildRequires:  ninja-build
 BuildRequires:  clang
-BuildRequires:  git
-BuildRequires:  python3 >= 3.10
-BuildRequires:  nasm
-BuildRequires:  autoconf
-BuildRequires:  libtool
-BuildRequires:  jq
-BuildRequires:  patch
+BuildRequires:  lld
 
-# Qt6
-BuildRequires:  qt6-qtbase-devel
-BuildRequires:  qt6-qtbase-private-devel
-BuildRequires:  qt6-qtmultimedia-devel
-BuildRequires:  qt6-qtwebengine-devel
-BuildRequires:  qt6-qtcharts-devel
-BuildRequires:  qt6-linguist
+BuildRequires:  cmake
+BuildRequires:  cmake(LLVM)
+BuildRequires:  cmake(Qt6)
+BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6DBus)
+BuildRequires:  cmake(Qt6Gui)
+BuildRequires:  cmake(Qt6GuiPrivate)
+BuildRequires:  cmake(Qt6LinguistTools)
+BuildRequires:  cmake(Qt6Multimedia)
+BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(zlib)
+BuildRequires:  cmake(fmt)
+BuildRequires:  cmake(nlohmann_json)
+BuildRequires:  cmake(SPIRV-Headers)
+BuildRequires:  cmake(SPIRV-Tools)
+BuildRequires:  cmake(SDL2)
+BuildRequires:  cmake(Qt6Concurrent)
+BuildRequires:  cmake(Qt6WebEngineCore)
+BuildRequires:  cmake(Qt6WebEngineWidgets)
 
-# Vulkan / graphics
-BuildRequires:  vulkan-headers
-BuildRequires:  vulkan-utility-libraries-devel
-BuildRequires:  glslang-devel
-BuildRequires:  spirv-tools-devel
-BuildRequires:  spirv-headers-devel
-BuildRequires:  mesa-libEGL-devel
-BuildRequires:  mesa-libGL-devel
+BuildRequires:  pkgconfig
+BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(libusb)
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(liblz4)
+BuildRequires:  pkgconfig(libzstd)
+BuildRequires:  pkgconfig(opus)
+BuildRequires:  pkgconfig(gamemode)
+BuildRequires:  pkgconfig(libudev)
 
-# Audio / codec
+BuildRequires:  glslang
+BuildRequires:  automake
 BuildRequires:  ffmpeg-devel
-BuildRequires:  opus-devel
-BuildRequires:  pulseaudio-libs-devel
-BuildRequires:  speexdsp-devel
-BuildRequires:  pipewire-devel
-BuildRequires:  jack-audio-connection-kit-devel
-BuildRequires:  libsamplerate-devel
-
-# Compression / crypto
-BuildRequires:  lz4-devel
-BuildRequires:  libzstd-devel
-BuildRequires:  zlib-devel
-BuildRequires:  openssl-devel
-
-# Misc libraries
 BuildRequires:  boost-devel
-BuildRequires:  fmt-devel
-BuildRequires:  json-devel
-BuildRequires:  hidapi-devel
-BuildRequires:  libusb1-devel
-BuildRequires:  libXext-devel
-BuildRequires:  wayland-devel
-BuildRequires:  wayland-protocols-devel
-BuildRequires:  SDL2-devel
-
-# Graphics / DRM / windowing extras (fix SDL feature detection)
-BuildRequires:  libdrm-devel
-BuildRequires:  mesa-libgbm-devel
-BuildRequires:  libdecor-devel
-
-# Debug / threading support
-BuildRequires:  libunwind-devel
-
-# Runtime
-Requires:       qt6-qtbase
-Requires:       qt6-qtmultimedia
-Requires:       SDL2
-Requires:       opus
-Requires:       openssl
-Requires:       vulkan-loader
+BuildRequires:  stb_image-devel
+BuildRequires:  stb_image_write-devel
+BuildRequires:  stb_image_resize-devel
+BuildRequires:  renderdoc-devel
+BuildRequires:  VulkanMemoryAllocator-devel
 
 %description
-eden is an open source Nintendo Switch emulator/debugger.
+Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
 %prep
-%setup -q -n eden
+%autosetup -c
+
 
 %build
-# Fedora 36+ with GCC 12 requires Clang for C++ compilation.
-%cmake \
-    -GNinja \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_COMPILER=clang \
-    -DCMAKE_CXX_COMPILER=clang++ \
-    -DYUZU_TESTS=OFF \
-    -DYUZU_USE_CPM=OFF \
-    -DYUZU_USE_EXTERNAL_FFMPEG=ON \
-    -DYUZU_USE_EXTERNAL_SDL2=ON \
-    -DENABLE_QT_TRANSLATION=ON \
-    -DYUZU_CHECK_SUBMODULES=OFF
 
-%cmake_build
+cmake -S . -B build -GNinja \
+    -DCMAKE_INSTALL_PREFIX=%{buildroot}%{_prefix} \
+    -DCMAKE_BUILD_TYPE="Release" \
+    -DUSE_DISCORD_PRESENCE=ON \
+    -DYUZU_USE_BUNDLED_FFMPEG=OFF \
+    -DYUZU_USE_BUNDLED_SDL2=OFF \
+    -DYUZU_USE_EXTERNAL_SDL2=OFF \
+    -DYUZU_USE_BUNDLED_QT=OFF \
+    -DENABLE_QT_TRANSLATION=ON \
+    -DYUZU_USE_QT_MULTIMEDIA=ON \
+    -DYUZU_USE_QT_WEB_ENGINE=ON \
+    -Dhttplib_FORCE_BUNDLED=ON \
+    -DYUZU_TESTS=OFF \
+    -DDYNARMIC_TESTS=OFF \
+    -DBUILD_TESTING=OFF \
+    -DUSE_FASTER_LINKER=ON \
+    -DENABLE_LTO=ON \
+    -DDYNARMIC_ENABLE_LTO=ON \
+    -DYUZU_BUILD_PRESET=%{build_preset} \
+%if %{with pgo}
+    -DCMAKE_C_FLAGS="-fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+    -DCMAKE_CXX_FLAGS="-fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+%endif
+    -Wno-dev
+
+cmake --build build
 
 %install
-%cmake_install
-
-# Install desktop entry and icon if present
-install -Dm644 dist/%{appid}.desktop \
-    %{buildroot}%{_datadir}/applications/%{appid}.desktop
-
-install -Dm644 dist/%{appid}.svg \
-    %{buildroot}%{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
-
-install -Dm644 dist/%{appid}.metainfo.xml \
-    %{buildroot}%{_datadir}/metainfo/%{appid}.metainfo.xml
-
-install -Dm644 dist/72-yuzu-input.rules \
-    %{buildroot}%{_udevrulesdir}/72-yuzu-input.rules
+cmake --install build
 
 %files
-%license LICENSE.txt LICENSES/
+%license LICENSE.txt
+%license LICENSES/*
 %doc README.md
 %{_bindir}/%{name}
+%{_bindir}/eden-cli
+%{_bindir}/eden-room
 %{_datadir}/applications/%{appid}.desktop
 %{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/metainfo/%{appid}.metainfo.xml
+%{_datarootdir}/mime/packages/dev.eden_emu.eden.xml
 %{_udevrulesdir}/72-yuzu-input.rules
 
 %changelog
