@@ -67,12 +67,17 @@ BuildRequires:  pkgconfig(libudev)
 BuildRequires:  glslang
 BuildRequires:  ffmpeg-devel
 BuildRequires:  boost-devel
+BuildRequires:  qt6-qtsvg-devel
 BuildRequires:  stb_image-devel
 BuildRequires:  stb_image_write-devel
 BuildRequires:  stb_image_resize-devel
 BuildRequires:  renderdoc-devel
 BuildRequires:  vulkan-utility-libraries-devel
 BuildRequires:  VulkanMemoryAllocator-devel
+
+Requires: qt6-qtwayland
+Requires: adwaita-icon-theme
+Requires: qt6-qtsvg
 
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
@@ -88,7 +93,7 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
     -DUSE_DISCORD_PRESENCE=ON \
     -DYUZU_USE_BUNDLED_FFMPEG=OFF \
     -DYUZU_USE_BUNDLED_SDL2=OFF \
-    -DYUZU_USE_EXTERNAL_SDL2=OFF \
+    -DYUZU_USE_EXTERNAL_SDL2=ON \
     -DYUZU_USE_BUNDLED_QT=OFF \
     -DENABLE_QT_TRANSLATION=ON \
     -DYUZU_USE_QT_MULTIMEDIA=ON \
