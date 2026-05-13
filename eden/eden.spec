@@ -25,75 +25,97 @@ Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.pr
 
 ExclusiveArch:  x86_64 aarch64
 
-BuildRequires:  boost-devel >= 1.75.0
-BuildRequires:  cmake >= 3.15
-BuildRequires:  discord-rpc-devel
-BuildRequires:  doxygen
+# Build tools
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
-BuildRequires:  glslang-devel
-BuildRequires:  graphviz
-BuildRequires:  hicolor-icon-theme
-BuildRequires:  libboost_container-devel-impl >= 1.75.0
-BuildRequires:  libboost_context-devel-impl >= 1.75.0
-BuildRequires:  libboost_filesystem-devel-impl >= 1.75.0
-BuildRequires:  libboost_headers-devel >= 1.75.0
-BuildRequires:  libboost_process-devel-impl >= 1.75.0
-BuildRequires:  libzstd-devel-static
-BuildRequires:  llvm-devel
+BuildRequires:  clang
+BuildRequires:  lld
 BuildRequires:  mold
+BuildRequires:  ninja-build
+BuildRequires:  cmake
+BuildRequires:  autoconf
+BuildRequires:  libtool
 BuildRequires:  nasm
-BuildRequires:  ninja
-BuildRequires:  shaderc
-BuildRequires:  sndio-devel
+BuildRequires:  jq
+
+# LLVM
+BuildRequires:  cmake(LLVM)
+
+# Qt6 - core modules
+BuildRequires:  cmake(Qt6)
+BuildRequires:  cmake(Qt6Core)
+BuildRequires:  cmake(Qt6Concurrent)
+BuildRequires:  cmake(Qt6DBus)
+BuildRequires:  cmake(Qt6Gui)
+BuildRequires:  cmake(Qt6GuiPrivate)
+BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(Qt6LinguistTools)
+BuildRequires:  qt6-qtsvg-devel
+
+# Qt6 - multimedia (YUZU_USE_QT_MULTIMEDIA=ON)
+BuildRequires:  cmake(Qt6Multimedia)
+
+# Qt6 - web engine (YUZU_USE_QT_WEB_ENGINE=ON)
+BuildRequires:  cmake(Qt6WebEngineCore)
+BuildRequires:  cmake(Qt6WebEngineWidgets)
+
+# Qt6 - charts (used by telemetry/stats UI)
+BuildRequires:  cmake(Qt6Charts)
+
+# FFmpeg - system package required (RPM Fusion free must be enabled)
+BuildRequires:  ffmpeg-devel
+
+# Vulkan
+BuildRequires:  cmake(SPIRV-Headers)
+BuildRequires:  cmake(SPIRV-Tools)
 BuildRequires:  vulkan-utility-libraries-devel
-BuildRequires:  pkgconfig(alsa)
-BuildRequires:  pkgconfig(catch2) >= 2.13.7
-BuildRequires:  pkgconfig(cpp-httplib)
-BuildRequires:  pkgconfig(fmt) >= 8.0.1
-BuildRequires:  pkgconfig(gamemode)
-BuildRequires:  pkgconfig(inih)
-BuildRequires:  pkgconfig(jack)
-BuildRequires:  pkgconfig(libenet)
-BuildRequires:  pkgconfig(liblz4) >= 1.8
-BuildRequires:  pkgconfig(libpcre2-8)
-BuildRequires:  pkgconfig(libpulse)
-BuildRequires:  pkgconfig(libusb-1.0)
-BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(libxml-2.0)
-BuildRequires:  pkgconfig(libzstd) >= 1.5
-BuildRequires:  pkgconfig(nettle)
-BuildRequires:  pkgconfig(nlohmann_json) >= 3.8
-BuildRequires:  pkgconfig(openssl)
+BuildRequires:  VulkanMemoryAllocator-devel
+BuildRequires:  glslang
+
+# Audio
 BuildRequires:  pkgconfig(opus)
-BuildRequires:  pkgconfig(quazip1-qt6)
-BuildRequires:  pkgconfig(sdl2) >= 2.0.18
 BuildRequires:  pkgconfig(speexdsp)
-BuildRequires:  pkgconfig(tinfo)
-BuildRequires:  pkgconfig(vulkan) >= 1.3.274
+BuildRequires:  pkgconfig(libpulse)
 
-#Qt
-BuildRequires:  pkgconfig(Qt6Concurrent)
-BuildRequires:  qt6-platformsupport-private-devel
-BuildRequires:  pkgconfig(Qt6DBus)
-BuildRequires:  pkgconfig(Qt6Linguist)
-BuildRequires:  pkgconfig(Qt6Multimedia)
-BuildRequires:  pkgconfig(Qt6OpenGL)
-BuildRequires:  pkgconfig(Qt6WebEngineCore)
-BuildRequires:  pkgconfig(Qt6WebEngineWidgets)
+# Input / HID
+BuildRequires:  pkgconfig(hidapi)
+BuildRequires:  pkgconfig(libusb)
+BuildRequires:  pkgconfig(libudev)
 
-# ffmpeg
-BuildRequires:  pkgconfig(libavcodec)
-BuildRequires:  pkgconfig(libavfilter)
-BuildRequires:  pkgconfig(libavutil)
-BuildRequires:  pkgconfig(libswscale)
+# Graphics / display
+BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(libXext)
+
+# Compression / serialization
+BuildRequires:  cmake(zlib)
+BuildRequires:  pkgconfig(liblz4)
+BuildRequires:  pkgconfig(libzstd)
+
+# Networking / crypto
+BuildRequires:  pkgconfig(openssl)
+
+# Data / config
+BuildRequires:  cmake(fmt)
+BuildRequires:  cmake(nlohmann_json)
+BuildRequires:  boost-devel
+
+# SDL2 - system package (YUZU_USE_BUNDLED_SDL2=OFF, YUZU_USE_EXTERNAL_SDL2=OFF)
+BuildRequires:  cmake(SDL2)
+
+# Miscellaneous
+BuildRequires:  pkgconfig
+BuildRequires:  pkgconfig(gamemode)
+BuildRequires:  stb_image-devel
+BuildRequires:  stb_image_write-devel
+BuildRequires:  stb_image_resize-devel
+BuildRequires:  renderdoc-devel
 
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
 %prep
 %setup -q -n eden
-
 
 %build
 %cmake \
