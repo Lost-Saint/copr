@@ -77,15 +77,13 @@ BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(speexdsp)
 BuildRequires:  pkgconfig(libpulse)
 
-# Input / HID
-BuildRequires:  pkgconfig(hidapi)
+# Input
 BuildRequires:  pkgconfig(libusb)
 BuildRequires:  pkgconfig(libudev)
 
 # Graphics / display
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(wayland-client)
-BuildRequires:  pkgconfig(libXext)
 
 # Compression / serialization
 BuildRequires:  cmake(zlib)
