@@ -3,8 +3,8 @@
 [![⚡️ Powered by COPR](https://img.shields.io/badge/⚡️_Powered_by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
 [![Build Status](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/)
 
-![📦 x86_64](https://img.shields.io/badge/x86__64-blue?style=flat-square)
-![📦 aarch64](https://img.shields.io/badge/aarch64-blue?style=flat-square)
+![x86_64](https://img.shields.io/badge/x86__64-blue?style=flat-square)
+![aarch64](https://img.shields.io/badge/aarch64-blue?style=flat-square)
 
 ## ⚠️ Special Note
 
