@@ -75,10 +75,6 @@ BuildRequires:  renderdoc-devel
 BuildRequires:  vulkan-utility-libraries-devel
 BuildRequires:  VulkanMemoryAllocator-devel
 
-Requires: qt6-qtwayland
-Requires: adwaita-icon-theme
-Requires: qt6-qtsvg
-
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
