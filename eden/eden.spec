@@ -1,10 +1,12 @@
 %global appid dev.eden_emu.eden
 
+# Enable PGO build with: --with pgo
+%bcond_with pgo
+
+# When PGO is enabled, use the clang compiler instead
 %if %{with pgo}
 %global toolchain clang
 %endif
-
-%undefine _hardened_build
 
 # Build preset to use. One of: custom, generic, v3, zen2, zen4, native
 %if ! %{defined build_preset}
@@ -19,7 +21,7 @@ License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
 
 Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}-rc2.tar.gz
-Source1:        https://github.com/Eden-CI/PGO/releases/latest/download/eden.profdata
+Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -63,7 +65,6 @@ BuildRequires:  pkgconfig(gamemode)
 BuildRequires:  pkgconfig(libudev)
 
 BuildRequires:  glslang
-BuildRequires:  automake
 BuildRequires:  ffmpeg-devel
 BuildRequires:  boost-devel
 BuildRequires:  stb_image-devel
@@ -81,10 +82,9 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
 
 
 %build
-
-cmake -S . -B build -GNinja \
-    -DCMAKE_INSTALL_PREFIX=%{buildroot}%{_prefix} \
-    -DCMAKE_BUILD_TYPE="Release" \
+%cmake \
+    -GNinja \
+    -DCMAKE_BUILD_TYPE=Release \
     -DUSE_DISCORD_PRESENCE=ON \
     -DYUZU_USE_BUNDLED_FFMPEG=OFF \
     -DYUZU_USE_BUNDLED_SDL2=OFF \
@@ -101,16 +101,20 @@ cmake -S . -B build -GNinja \
     -DENABLE_LTO=ON \
     -DDYNARMIC_ENABLE_LTO=ON \
     -DYUZU_BUILD_PRESET=%{build_preset} \
+    -DENABLE_RENDERDOC=ON \
 %if %{with pgo}
-    -DCMAKE_C_FLAGS="-fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
-    -DCMAKE_CXX_FLAGS="-fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+    -DCMAKE_C_FLAGS="%{optflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+    -DCMAKE_CXX_FLAGS="%{optflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
 %endif
     -Wno-dev
 
-cmake --build build
+%cmake_build
 
 %install
-cmake --install build
+%cmake_install
+
+%check
+# Tests are disabled
 
 %files
 %license LICENSE.txt
