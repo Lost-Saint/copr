@@ -14,18 +14,17 @@
 %endif
 
 Name:           eden
-Version:        0.2.0
+Version:        0.2.0-rc2
 Release:        1%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
 
-Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}-rc2.tar.gz
+Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}.tar.gz
 Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata
 
 ExclusiveArch:  x86_64 aarch64
 
-# Build tools
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  clang
@@ -37,11 +36,8 @@ BuildRequires:  autoconf
 BuildRequires:  libtool
 BuildRequires:  nasm
 BuildRequires:  jq
-
-# LLVM
 BuildRequires:  cmake(LLVM)
-
-# Qt6 - core modules
+# Qt6
 BuildRequires:  cmake(Qt6)
 BuildRequires:  cmake(Qt6Core)
 BuildRequires:  cmake(Qt6Concurrent)
@@ -50,57 +46,40 @@ BuildRequires:  cmake(Qt6Gui)
 BuildRequires:  cmake(Qt6GuiPrivate)
 BuildRequires:  cmake(Qt6Widgets)
 BuildRequires:  cmake(Qt6LinguistTools)
-BuildRequires:  qt6-qtsvg-devel
-
-# Qt6 - multimedia (YUZU_USE_QT_MULTIMEDIA=ON)
 BuildRequires:  cmake(Qt6Multimedia)
-
-# Qt6 - web engine (YUZU_USE_QT_WEB_ENGINE=ON)
 BuildRequires:  cmake(Qt6WebEngineCore)
 BuildRequires:  cmake(Qt6WebEngineWidgets)
-
-# Qt6 - charts (used by telemetry/stats UI)
 BuildRequires:  cmake(Qt6Charts)
-
 # FFmpeg - system package required (RPM Fusion free must be enabled)
 BuildRequires:  ffmpeg-devel
-
 # Vulkan
 BuildRequires:  cmake(SPIRV-Headers)
 BuildRequires:  cmake(SPIRV-Tools)
 BuildRequires:  vulkan-utility-libraries-devel
 BuildRequires:  VulkanMemoryAllocator-devel
 BuildRequires:  glslang
-
 # Audio
 BuildRequires:  pkgconfig(opus)
 BuildRequires:  pkgconfig(speexdsp)
 BuildRequires:  pkgconfig(libpulse)
-
 # Input
 BuildRequires:  pkgconfig(libusb)
 BuildRequires:  pkgconfig(libudev)
-
 # Graphics / display
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(wayland-client)
-
 # Compression / serialization
 BuildRequires:  cmake(zlib)
 BuildRequires:  pkgconfig(liblz4)
 BuildRequires:  pkgconfig(libzstd)
-
-# Networking / crypto
+# Networking
 BuildRequires:  pkgconfig(openssl)
-
 # Data / config
 BuildRequires:  cmake(fmt)
 BuildRequires:  cmake(nlohmann_json)
 BuildRequires:  boost-devel
-
-# SDL2 - system package (YUZU_USE_BUNDLED_SDL2=OFF, YUZU_USE_EXTERNAL_SDL2=OFF)
+# SDL2
 BuildRequires:  cmake(SDL2)
-
 # Miscellaneous
 BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(gamemode)
