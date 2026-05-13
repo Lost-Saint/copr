@@ -123,7 +123,6 @@ cmake --install build
 %{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_datarootdir}/mime/packages/%{appid}.xml
-%{_udevrulesdir}/72-yuzu-input.rules
 
 %changelog
 %autochangelog
