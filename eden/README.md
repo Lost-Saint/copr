@@ -1,34 +1,64 @@
 # Eden
 
-[![⚡️ Powered by COPR](https://img.shields.io/badge/⚡️_Powered_by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
+[![⚡ Powered by COPR](https://img.shields.io/badge/Powered%20by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
 [![Build Status](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/)
 
-## ⚠️ Special Note
+## About Eden
 
-This package depends on ffmpeg-devel, which is provided via the RPM Fusion repository configured in this COPR build environment.
+Eden Emulator is a Nintendo Switch emulator derived from Yuzu and Sudachi, originally started by developer Camille LaVey.
 
-## About the Application
+This repository provides RPM packaging and distribution for Fedora systems through COPR.
 
-This is a package of the Eden Emulator. Eden Emulator is derived from Yuzu and Sudachi - started by developer Camille LaVey. It's written in C++
+## ⚠ Special Note
 
-- Bugs related to Eden should be reported directly to the Eden Emulator repo:
-  <https://git.eden-emu.dev/eden-emu/eden/issues>
+This package depends on `ffmpeg-devel`, which is provided through RPM Fusion in the COPR build environment.
 
-- Bugs related to this package should be reported at this Git project:
-  <https://github.com/lost-saint/copr/issues>
+If you encounter dependency-related issues, ensure RPM Fusion is enabled on your system.
+
+## Bug Reports
+
+Issues related to the emulator itself should be reported directly to the Eden Emulator project:
+
+<https://git.eden-emu.dev/eden-emu/eden/issues>
+
+Issues related to installation, dependencies, COPR builds, or RPM packaging should be reported here:
+
+<https://github.com/lost-saint/copr/issues>
 
 ## Installation
 
-1. Enable copr repo
+### 1. Enable the COPR Repository
 
 ```bash
 sudo dnf copr enable myriad-sun/eden
 ```
 
-- Substitute `dnf` for `yum` if desired
-
-2. Install
+### 2. Install Eden
 
 ```bash
 sudo dnf install eden --refresh
 ```
+
+## Updating
+
+To update Eden alongside your normal system updates:
+
+```bash
+sudo dnf upgrade
+```
+
+## Uninstall
+
+To remove Eden:
+
+```bash
+sudo dnf remove eden
+```
+
+## Links
+
+- COPR Repository
+  [https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/)
+
+- Eden Emulator
+  [https://git.eden-emu.dev/eden-emu/eden](https://git.eden-emu.dev/eden-emu/eden)
