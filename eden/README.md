@@ -1,42 +1,35 @@
-````markdown
-# Eden (COPR Build)
+# Eden
 
-Eden is an experimental open-source Nintendo Switch emulator focused on performance and stability.
+[![⚡️ Powered by COPR](https://img.shields.io/badge/⚡️_Powered_by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
 
----
+![📦 Supported Architectures: x86_64 | aarch64](https://img.shields.io/badge/📦_Supported_Architectures-x86__64_|_aarch64-blue?style=flat-square)
 
-## ⚠️ Requirement
+## ⚠️ Special Note
 
-This build requires **RPM Fusion Free repository**.
+This package depends on ffmpeg-devel, which is provided via the RPM Fusion repository configured in this COPR build environment.
 
----
+## About the Application
 
-## 📦 Install from COPR
+This is a package of the Eden Emulator. Eden Emulator is derived from Yuzu and Sudachi - started by developer Camille LaVey. It's written in C++
 
-Enable the COPR repository:
+- Bugs related to Eden should be reported directly to the Eden Emulator repo:
+  <https://git.eden-emu.dev/eden-emu/eden/issues>
+
+- Bugs related to this package should be reported at this Git project:
+  <https://github.com/lost-saint/copr/issues>
+
+## Installation
+
+1. Enable copr repo
 
 ```bash
 sudo dnf copr enable myriad-sun/eden
 ```
-````
 
-Install Eden:
+- Substitute `dnf` for `yum` if desired
+
+2. Install
 
 ```bash
 sudo dnf install eden --refresh
 ```
-
----
-
-## 🛠️ About
-
-This package builds Eden Emulator using system libraries, Qt6, and Vulkan, with optional performance optimizations like LTO and PGO.
-
----
-
-## 💡 Notes
-
-- Works on Fedora and other RPM-based systems
-- Supports x86_64 and aarch64
-- Built with modern toolchain (CMake + Ninja + LLVM)
-- Tests are disabled in this build
