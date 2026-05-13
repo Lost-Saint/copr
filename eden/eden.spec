@@ -25,55 +25,52 @@ Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.pr
 
 ExclusiveArch:  x86_64 aarch64
 
+BuildRequires:  boost-devel >= 1.75.0
+BuildRequires:  cmake >= 3.15
+BuildRequires:  discord-rpc-devel
+BuildRequires:  doxygen
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
+BuildRequires:  glslang-devel
+BuildRequires:  graphviz
+BuildRequires:  hicolor-icon-theme
+BuildRequires:  libboost_container-devel-impl >= 1.75.0
+BuildRequires:  libboost_context-devel-impl >= 1.75.0
+BuildRequires:  libboost_filesystem-devel-impl >= 1.75.0
+BuildRequires:  libboost_headers-devel >= 1.75.0
+BuildRequires:  libboost_process-devel-impl >= 1.75.0
+BuildRequires:  libzstd-devel-static
+BuildRequires:  llvm-devel
 BuildRequires:  mold
-
-BuildRequires:  ninja-build
-BuildRequires:  clang
-BuildRequires:  lld
-
-BuildRequires:  cmake
-BuildRequires:  cmake(LLVM)
-BuildRequires:  cmake(Qt6)
-BuildRequires:  cmake(Qt6Core)
-BuildRequires:  cmake(Qt6DBus)
-BuildRequires:  cmake(Qt6Gui)
-BuildRequires:  cmake(Qt6GuiPrivate)
-BuildRequires:  cmake(Qt6LinguistTools)
-BuildRequires:  cmake(Qt6Multimedia)
-BuildRequires:  cmake(Qt6Widgets)
-BuildRequires:  cmake(zlib)
-BuildRequires:  cmake(fmt)
-BuildRequires:  cmake(nlohmann_json)
-BuildRequires:  cmake(SPIRV-Headers)
-BuildRequires:  cmake(SPIRV-Tools)
-BuildRequires:  cmake(SDL2)
-BuildRequires:  cmake(Qt6Concurrent)
-BuildRequires:  cmake(Qt6Charts)
-BuildRequires:  cmake(Qt6WebEngineCore)
-BuildRequires:  cmake(Qt6WebEngineWidgets)
-
-BuildRequires:  pkgconfig
-BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(libusb)
-BuildRequires:  pkgconfig(openssl)
-BuildRequires:  pkgconfig(liblz4)
-BuildRequires:  pkgconfig(libzstd)
-BuildRequires:  pkgconfig(opus)
-BuildRequires:  pkgconfig(gamemode)
-BuildRequires:  pkgconfig(libudev)
-
-BuildRequires:  glslang
-BuildRequires:  ffmpeg-devel
-BuildRequires:  boost-devel
-BuildRequires:  qt6-qtsvg-devel
-BuildRequires:  stb_image-devel
-BuildRequires:  stb_image_write-devel
-BuildRequires:  stb_image_resize-devel
-BuildRequires:  renderdoc-devel
+BuildRequires:  nasm
+BuildRequires:  ninja
+BuildRequires:  shaderc
+BuildRequires:  sndio-devel
 BuildRequires:  vulkan-utility-libraries-devel
-BuildRequires:  VulkanMemoryAllocator-devel
+
+BuildRequires:  boost-devel >= 1.75.0
+BuildRequires:  cmake >= 3.15
+BuildRequires:  discord-rpc-devel
+BuildRequires:  doxygen
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
+BuildRequires:  glslang-devel
+BuildRequires:  graphviz
+BuildRequires:  hicolor-icon-theme
+BuildRequires:  libboost_container-devel-impl >= 1.75.0
+BuildRequires:  libboost_context-devel-impl >= 1.75.0
+BuildRequires:  libboost_filesystem-devel-impl >= 1.75.0
+BuildRequires:  libboost_headers-devel >= 1.75.0
+BuildRequires:  libboost_process-devel-impl >= 1.75.0
+BuildRequires:  libzstd-devel-static
+BuildRequires:  llvm-devel
+BuildRequires:  mold
+BuildRequires:  nasm
+BuildRequires:  ninja
+BuildRequires:  shaderc
+BuildRequires:  sndio-devel
+BuildRequires:  unzip
+BuildRequires:  vulkan-utility-libraries-devel
 
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
@@ -89,7 +86,7 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
     -DUSE_DISCORD_PRESENCE=ON \
     -DYUZU_USE_BUNDLED_FFMPEG=OFF \
     -DYUZU_USE_BUNDLED_SDL2=OFF \
-    -DYUZU_USE_EXTERNAL_SDL2=ON \
+    -DYUZU_USE_EXTERNAL_SDL2=OFF \
     -DYUZU_USE_BUNDLED_QT=OFF \
     -DENABLE_QT_TRANSLATION=ON \
     -DYUZU_USE_QT_MULTIMEDIA=ON \
