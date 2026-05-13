@@ -14,13 +14,13 @@
 %endif
 
 Name:           eden
-Version:        0.2.0-rc2
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
 
-Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}.tar.gz
+Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}-rc2.tar.gz
 Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata
 
 ExclusiveArch:  x86_64 aarch64
