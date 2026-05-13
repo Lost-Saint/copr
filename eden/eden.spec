@@ -47,30 +47,46 @@ BuildRequires:  ninja
 BuildRequires:  shaderc
 BuildRequires:  sndio-devel
 BuildRequires:  vulkan-utility-libraries-devel
+BuildRequires:  pkgconfig(alsa)
+BuildRequires:  pkgconfig(catch2) >= 2.13.7
+BuildRequires:  pkgconfig(cpp-httplib)
+BuildRequires:  pkgconfig(fmt) >= 8.0.1
+BuildRequires:  pkgconfig(gamemode)
+BuildRequires:  pkgconfig(inih)
+BuildRequires:  pkgconfig(jack)
+BuildRequires:  pkgconfig(libenet)
+BuildRequires:  pkgconfig(liblz4) >= 1.8
+BuildRequires:  pkgconfig(libpcre2-8)
+BuildRequires:  pkgconfig(libpulse)
+BuildRequires:  pkgconfig(libusb-1.0)
+BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(libzstd) >= 1.5
+BuildRequires:  pkgconfig(nettle)
+BuildRequires:  pkgconfig(nlohmann_json) >= 3.8
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(opus)
+BuildRequires:  pkgconfig(quazip1-qt6)
+BuildRequires:  pkgconfig(sdl2) >= 2.0.18
+BuildRequires:  pkgconfig(speexdsp)
+BuildRequires:  pkgconfig(tinfo)
+BuildRequires:  pkgconfig(vulkan) >= 1.3.274
 
-BuildRequires:  boost-devel >= 1.75.0
-BuildRequires:  cmake >= 3.15
-BuildRequires:  discord-rpc-devel
-BuildRequires:  doxygen
-BuildRequires:  gcc
-BuildRequires:  gcc-c++
-BuildRequires:  glslang-devel
-BuildRequires:  graphviz
-BuildRequires:  hicolor-icon-theme
-BuildRequires:  libboost_container-devel-impl >= 1.75.0
-BuildRequires:  libboost_context-devel-impl >= 1.75.0
-BuildRequires:  libboost_filesystem-devel-impl >= 1.75.0
-BuildRequires:  libboost_headers-devel >= 1.75.0
-BuildRequires:  libboost_process-devel-impl >= 1.75.0
-BuildRequires:  libzstd-devel-static
-BuildRequires:  llvm-devel
-BuildRequires:  mold
-BuildRequires:  nasm
-BuildRequires:  ninja
-BuildRequires:  shaderc
-BuildRequires:  sndio-devel
-BuildRequires:  unzip
-BuildRequires:  vulkan-utility-libraries-devel
+#Qt
+BuildRequires:  pkgconfig(Qt6Concurrent)
+BuildRequires:  qt6-platformsupport-private-devel
+BuildRequires:  pkgconfig(Qt6DBus)
+BuildRequires:  pkgconfig(Qt6Linguist)
+BuildRequires:  pkgconfig(Qt6Multimedia)
+BuildRequires:  pkgconfig(Qt6OpenGL)
+BuildRequires:  pkgconfig(Qt6WebEngineCore)
+BuildRequires:  pkgconfig(Qt6WebEngineWidgets)
+
+# ffmpeg
+BuildRequires:  pkgconfig(libavcodec)
+BuildRequires:  pkgconfig(libavfilter)
+BuildRequires:  pkgconfig(libavutil)
+BuildRequires:  pkgconfig(libswscale)
 
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
