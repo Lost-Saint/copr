@@ -103,8 +103,9 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
     -DYUZU_BUILD_PRESET=%{build_preset} \
     -DENABLE_RENDERDOC=ON \
 %if %{with pgo}
-    -DCMAKE_C_FLAGS="%{optflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
-    -DCMAKE_CXX_FLAGS="%{optflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+    # Use precomputed LLVM PGO profile
+    -DCMAKE_C_FLAGS="%{build_cflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+    -DCMAKE_CXX_FLAGS="%{build_cxxflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
 %endif
     -Wno-dev
 
