@@ -3,6 +3,8 @@
 [![⚡ Powered by COPR](https://img.shields.io/badge/Powered%20by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
 [![Build Status](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/)
 
+[![Latest Version](https://img.shields.io/badge/dynamic/json?color=blue&label=Version&query=builds.latest.source_package.version&url=https%3A%2F%2Fcopr.fedorainfracloud.org%2Fapi_3%2Fpackage%3Fownername%3Dmyriad-sun%26projectname%3Deden%26packagename%3Deden%26with_latest_build%3DTrue&style=flat-square&logoColor=blue)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/)
+
 ## About Eden
 
 Eden Emulator is a Nintendo Switch emulator derived from Yuzu and Sudachi, originally started by developer Camille LaVey.
