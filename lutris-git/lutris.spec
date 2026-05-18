@@ -1,6 +1,6 @@
-%global commit de576c69919803b5b23ae2550d065e1982e2d043
+%global commit e269d439e48fc42af58b53237dc7446f82bc9c1d
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global git_date 20260509T142950Z
+%global git_date 20260517T143127Z
 %global tag v0.5.22
 %global clean_tag %(echo %{tag} | sed 's/^v//')
 
@@ -57,10 +57,10 @@ Requires:       glx-utils
 Requires:       gvfs
 Requires:       webkit2gtk4.1
 Recommends: 	p7zip, curl
-Recommends:	fluid-soundfont-gs
+Recommends:	    fluid-soundfont-gs
 Recommends:     wine-core
-Recommends:	p7zip-plugins
-Recommends:	gamemode
+Recommends:	    p7zip-plugins
+Recommends:	    gamemode
 Recommends:     libFAudio
 Recommends:     gamescope
 BuildRequires:  fdupes
