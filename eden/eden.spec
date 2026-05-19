@@ -8,7 +8,7 @@
 
 Name:           eden
 Version:        0.2.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
@@ -86,6 +86,8 @@ BuildRequires:  renderdoc-devel
 
 Requires:       gamemode
 
+Recommends:     xorg-x11-server-Xwayland
+
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
@@ -126,6 +128,17 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
 %install
 %cmake_install
 
+# Force XWayland: Wayland is unsupported and causes crashes/perf issues
+install -d %{buildroot}%{_libexecdir}
+mv %{buildroot}%{_bindir}/eden %{buildroot}%{_libexecdir}/eden
+
+cat > %{buildroot}%{_bindir}/eden << 'EOF'
+#!/bin/sh
+export QT_QPA_PLATFORM=xcb
+exec %{_libexecdir}/eden "$@"
+EOF
+chmod 755 %{buildroot}%{_bindir}/eden
+
 %check
 # Tests are disabled
 
@@ -133,7 +146,8 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
 %license LICENSE.txt
 %license LICENSES/*
 %doc README.md
-%{_bindir}/%{name}
+%{_libexecdir}/eden
+%{_bindir}/eden
 %{_bindir}/%{name}-cli
 %{_bindir}/%{name}-room
 %{_datadir}/applications/%{appid}.desktop
