@@ -1,13 +1,6 @@
 %global appid dev.eden_emu.eden
 
-# Enable PGO build with: --with pgo
-%bcond_with pgo
-
-# When PGO is enabled, use the clang compiler instead
-%if %{with pgo}
 %global toolchain clang
-%endif
-
 # Build preset to use. One of: custom, generic, v3, zen2, zen4, native
 %if ! %{defined build_preset}
 %global build_preset v3
@@ -86,7 +79,12 @@ BuildRequires:  pkgconfig(gamemode)
 BuildRequires:  stb_image-devel
 BuildRequires:  stb_image_write-devel
 BuildRequires:  stb_image_resize-devel
+# Enable the RenderDoc COPR or disable ENABLE_RENDERDOC below.
+%if %{defined with_renderdoc}
 BuildRequires:  renderdoc-devel
+%endif
+
+Requires:       gamemode
 
 %description
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
@@ -114,12 +112,13 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
     -DENABLE_LTO=ON \
     -DDYNARMIC_ENABLE_LTO=ON \
     -DYUZU_BUILD_PRESET=%{build_preset} \
-    -DENABLE_RENDERDOC=ON \
-%if %{with pgo}
-    # Use precomputed LLVM PGO profile
+    %if %{defined with_renderdoc}
+        -DENABLE_RENDERDOC=ON \
+    %else
+        -DENABLE_RENDERDOC=OFF \
+    %endif
     -DCMAKE_C_FLAGS="%{build_cflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
     -DCMAKE_CXX_FLAGS="%{build_cxxflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
-%endif
     -Wno-dev
 
 %cmake_build
