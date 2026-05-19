@@ -120,7 +120,7 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
         -DENABLE_RENDERDOC=OFF \
     %endif
     -DCMAKE_C_FLAGS="%{build_cflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
-    -DCMAKE_CXX_FLAGS="%{build_cxxflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date -Wno-unused-const-variable" \
+    -DCMAKE_CXX_FLAGS="%{build_cxxflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date -Wno-unused-const-variable -Wno-error=unused-const-variable" \
     -Wno-dev
 
 %cmake_build
