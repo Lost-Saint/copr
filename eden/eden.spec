@@ -94,7 +94,7 @@ Recommends:     xorg-x11-server-Xwayland
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
 %prep
-%setup -q -n eden
+%autosetup -p1 -n eden
 
 %build
 %cmake \
