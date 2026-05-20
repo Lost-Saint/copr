@@ -16,6 +16,8 @@ URL:            https://eden-emu.dev
 Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}.tar.gz
 Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata
 
+Patch0:         fix-unused-nce-constants.patch
+
 ExclusiveArch:  x86_64 aarch64
 
 BuildRequires:  gcc
