@@ -1,4 +1,5 @@
 # Eden
+
 [![⚡ Powered by COPR](https://img.shields.io/badge/⚡Powered%20by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
 [![Copr build status](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/)
 
@@ -55,11 +56,3 @@ To remove Eden:
 ```bash
 sudo dnf remove eden
 ```
-
-## Links
-
-- COPR Repository
-  [https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/)
-
-- Eden Emulator
-  [https://git.eden-emu.dev/eden-emu/eden](https://git.eden-emu.dev/eden-emu/eden)
