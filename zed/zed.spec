@@ -11,8 +11,7 @@ ExclusiveArch:  x86_64
 
 BuildRequires:  desktop-file-utils
 
-Conflicts:      zed-nightly
-Conflicts:      zed-preview
+Conflicts:  zed-aarch64
 
 AutoReqProv: no
 
