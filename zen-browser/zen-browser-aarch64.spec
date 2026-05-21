@@ -2,7 +2,7 @@
 %global             app_name zen
 %global             debug_package %{nil}
 
-Name:               zen-browser
+Name:               zen-browser-aarch64
 Version:            1.19.13b
 Release:            1%{?dist}
 Summary:            Zen Browser
