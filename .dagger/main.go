@@ -16,6 +16,8 @@ import (
 
 // validFedoraVersions is an allowlist of supported Fedora versions.
 var validFedoraVersions = map[string]bool{
+	"40": true,
+	"41": true,
 	"42": true,
 	"43": true,
 	"44": true,
@@ -201,4 +203,49 @@ func (m *Copr) BuildSpecFiles(
 	}
 
 	return strings.Join(outputs, "\n"), nil
+}
+
+// BuildSpecFilesOrdered builds groups of spec files sequentially, where specs
+// within each group build in parallel.
+//
+// This is required when specs have dependencies on each other — for example,
+// ghostty/gtk4-layer-shell.spec must be built and installed before
+// ghostty/ghostty.spec can resolve its build dependencies.
+//
+// Example call:
+//
+//	specGroups: [["ghostty/gtk4-layer-shell.spec"], ["ghostty/ghostty.spec"]]
+//
+// Each group completes fully (all specs in it succeed) before the next group
+// starts. A failure in any group halts execution and returns partial output
+// alongside the error.
+func (m *Copr) BuildSpecFilesOrdered(
+	ctx context.Context,
+	// repository root
+	// +defaultPath="/"
+	source *dagger.Directory,
+	// ordered groups of spec files; each group runs after the previous completes
+	specGroups [][]string,
+	// fedora version to build against
+	// +default="43"
+	fedoraVersion string,
+	// additional COPR repositories to enable (optional)
+	// +optional
+	extraCoprRepos []string,
+) (string, error) {
+	var allOutputs []string
+
+	for i, group := range specGroups {
+		out, err := m.BuildSpecFiles(ctx, source, group, fedoraVersion, extraCoprRepos)
+		// Collect output even on error so the caller sees what succeeded.
+		if out != "" {
+			allOutputs = append(allOutputs, out)
+		}
+		if err != nil {
+			return strings.Join(allOutputs, "\n"),
+				fmt.Errorf("group %d/%d failed: %w", i+1, len(specGroups), err)
+		}
+	}
+
+	return strings.Join(allOutputs, "\n"), nil
 }
