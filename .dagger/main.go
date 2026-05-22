@@ -7,7 +7,7 @@ package main
 
 import (
 	"context"
-	"dagger/main/internal/dagger"
+	"dagger/copr/internal/dagger"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -39,7 +39,7 @@ func (m *Copr) BuildSpecFile(
 		WithExec(shC("dnf copr enable -y myriad-sun/ghostty")).
 		WithExec(shC("dnf copr enable -y myriad-sun/zen-browser")).
 		WithExec(shC("dnf copr enable -y myriad-sun/zed")).
-		WithExec(shC("dnf copr enable -y myriad-sun/lutris")).
+		WithExec(shC("dnf copr enable -y myriad-sun/lutris-git")).
 		WithExec([]string{
 			"dnf", "install", "-y",
 			"ca-certificates", "curl", "wget",
@@ -85,7 +85,7 @@ func (m *Copr) BuildSpecFiles(
 	// rpm spec files to be built
 	specFiles []string,
 	// fedora version to build against
-	// +default="42"
+	// +default="43"
 	fedoraVersion string,
 ) (string, error) {
 	results := []string{}

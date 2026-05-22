@@ -4,7 +4,7 @@
 
 Name:           ghostty
 Version:        1.3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A fast, native terminal emulator written in Zig.
 License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.0
 URL:            https://ghostty.org/
@@ -28,7 +28,7 @@ BuildRequires: pandoc-cli
 BuildRequires: pixman-devel
 BuildRequires: pkg-config
 BuildRequires: wayland-protocols-devel
-BuildRequires: zig
+BuildRequires: zig >= 0.14.0
 BuildRequires: zlib-ng-devel
 
 Requires: fontconfig
@@ -66,10 +66,11 @@ DESTDIR=%{buildroot} zig build \
     -Doptimize=ReleaseFast \
     -Dcpu=baseline \
     -Dpie=true \
+    -Dstrip=false \
     -Demit-docs \
     -Demit-themes=true
 
-%if 0%{?fedora} >= 43
+%if 0%{?fedora} >= 42
     rm -f "%{buildroot}%{_datadir}/terminfo/g/ghostty"
 %endif
 
@@ -112,7 +113,7 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/lib/libghostty-vt.so.0.1.0
 
 %{_datadir}/terminfo/x/xterm-ghostty
-%if 0%{?fedora} < 43
+%if 0%{?fedora} < 42
     %{_datadir}/terminfo/g/ghostty
 %endif
 
