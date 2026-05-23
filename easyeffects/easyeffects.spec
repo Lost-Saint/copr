@@ -2,6 +2,7 @@ Name:           easyeffects
 Version:        8.2.2
 Release:        1%{?dist}
 Summary:        Audio effects and filters for PipeWire applications
+Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 License:        GPL-3.0-only
 URL:            https://github.com/wwmm/easyeffects

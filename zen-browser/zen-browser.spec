@@ -6,6 +6,8 @@ Name:               zen-browser
 Version:            1.19.13b
 Release:            1%{?dist}
 Summary:            Zen Browser
+Packager:           Lost Saint <lost.endanger051@8shield.net>
+
 
 License:            MPLv2.0
 URL:                https://github.com/zen-browser/desktop
