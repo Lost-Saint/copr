@@ -1,0 +1,79 @@
+name: 🐛 Bug Report
+description: Something is broken or not working as expected
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out as much as you can — it helps a lot.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package is having the issue?
+      options:
+        - android-studio
+        - easyeffects
+        - eden
+        - ghostty
+        - lutris-git
+        - zed
+        - zen-browser
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: fedora-version
+    attributes:
+      label: Fedora Version
+      description: What version of Fedora are you on?
+      placeholder: e.g. Fedora 41
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: Package Version
+      description: What version of the package is installed? Run `rpm -q <package-name>` to find out.
+      placeholder: e.g. ghostty-1.1.0-1
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug. What did you expect to happen, and what actually happened?
+      placeholder: |
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce the issue?
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs or Errors
+      description: Paste any error messages, terminal output, or `dnf` output here. This will be formatted as code automatically.
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Anything else?
+      description: Extra context, screenshots, workarounds you've tried — anything that might help.
