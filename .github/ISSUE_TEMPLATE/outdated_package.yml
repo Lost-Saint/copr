@@ -1,0 +1,56 @@
+name: ⬆️ Outdated Package
+description: A package is behind its upstream version
+labels: ['outdated']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Spotted an outdated package? Let me know and I'll push an update!
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package is out of date?
+      options:
+        - android-studio
+        - easyeffects
+        - eden
+        - ghostty
+        - lutris-git
+        - zed
+        - zen-browser
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: current-version
+    attributes:
+      label: Current Version in COPR
+      description: What version is currently in the repo? Run `rpm -q <package-name>`.
+      placeholder: e.g. ghostty-1.0.1-1
+    validations:
+      required: true
+
+  - type: input
+    id: latest-version
+    attributes:
+      label: Latest Upstream Version
+      description: What version has upstream released?
+      placeholder: e.g. ghostty-1.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: upstream-release
+    attributes:
+      label: Upstream Release Link
+      description: Link to the upstream release or changelog.
+      placeholder: e.g. https://github.com/ghostty-org/ghostty/releases/tag/v1.1.0
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Anything else?
+      description: Any notes about breaking changes or things to watch out for in the new version.
