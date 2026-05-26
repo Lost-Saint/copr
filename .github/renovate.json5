@@ -1,0 +1,66 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+  ],
+  minimumReleaseAge: null,
+  automerge: true,
+  customManagers: [
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^zed/.*\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'zed-industries/zed',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^ghostty/.*\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'ghostty-org/ghostty',
+      datasourceTemplate: 'github-tags',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^zen-browser/.*\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'zen-browser/desktop',
+      datasourceTemplate: 'github-releases',
+      versioningTemplate: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?b?$',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^lutris-git/.*\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'lutris-org/lutris',
+      datasourceTemplate: 'github-releases',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^easyeffects/.*\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'wwmm/easyeffects',
+      datasourceTemplate: 'github-releases',
+    },
+  ],
+}
