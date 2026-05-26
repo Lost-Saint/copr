@@ -25,7 +25,7 @@
     {
       customType: 'regex',
       managerFilePatterns: [
-        '/^ghostty/.*\\.spec$/',
+        '/^ghostty/ghostty\\.spec$/',
       ],
       matchStrings: [
         'Version:\\s*(?<currentValue>\\S+)',
