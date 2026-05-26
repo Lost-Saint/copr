@@ -63,4 +63,10 @@
       datasourceTemplate: 'github-releases',
     },
   ],
+  packageRules: [
+    {
+      matchPackageNames: ['lutris-org/lutris'],
+      schedule: ['every sunday'],
+    },
+  ],
 }
