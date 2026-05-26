@@ -76,7 +76,8 @@
         'Version:\\s*(?<currentValue>\\S+)',
       ],
       depNameTemplate: 'wwmm/easyeffects',
-      datasourceTemplate: 'github-releases',
+      datasourceTemplate: 'github-tags',
+      versioningTemplate": 'semver',
     },
   ],
   packageRules: [
