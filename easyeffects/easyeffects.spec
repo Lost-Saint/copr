@@ -65,7 +65,11 @@ BuildRequires:  pkgconfig(soundtouch)
 BuildRequires:  pkgconfig(nlohmann_json)
 BuildRequires:  pkgconfig(libportal)
 BuildRequires:  pkgconfig(libportal-qt6)
+%if 0%{?fedora} >= 44
 BuildRequires:  pkgconfig(webrtc-audio-processing-2)
+%else
+BuildRequires:  pkgconfig(webrtc-audio-processing-1)
+%endif
 BuildRequires:  pkgconfig(libmysofa)
 BuildRequires:  zita-convolver-devel >= 3.1.0
 BuildRequires:  ladspa-devel
