@@ -1,0 +1,32 @@
+---
+name: spec guards
+on:
+  pull_request:
+    paths:
+      - '*/*.spec'
+      - scripts/check-spec-guards.sh
+      - scripts/fix-spec-guards.sh
+      - .github/renovate.json5
+      - .github/spec-build-targets.json
+      - .github/workflows/spec-guards.yaml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  spec-guards:
+    runs-on: ubuntu-latest
+    container: fedora:44@sha256:498c452f32a739b61f0ef215bce9924ebc4866cbe44710f58157d77723b7a6d2
+    steps:
+      - name: Install dependencies
+        run: dnf install -y git jq rpm
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+      - name: Trust workspace git directory
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Run spec guards
+        run: scripts/check-spec-guards.sh
