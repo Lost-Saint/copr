@@ -3,7 +3,6 @@
   extends: [
     'config:recommended',
   ],
-  minimumReleaseAge: null,
   automerge: true,
   customManagers: [
     {
