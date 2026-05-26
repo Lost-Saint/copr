@@ -77,7 +77,6 @@
       ],
       depNameTemplate: 'wwmm/easyeffects',
       datasourceTemplate: 'github-tags',
-      versioningTemplate": 'semver',
     },
   ],
   packageRules: [
