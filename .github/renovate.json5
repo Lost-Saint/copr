@@ -4,6 +4,12 @@
     'config:recommended',
   ],
   automerge: true,
+  ignorePaths: [
+    '.dagger/**',
+  ],
+  enabledManagers: [
+    'custom.regex',
+  ],
   customManagers: [
     {
       customType: 'regex',
@@ -25,6 +31,17 @@
         'Version:\\s*(?<currentValue>\\S+)',
       ],
       depNameTemplate: 'ghostty-org/ghostty',
+      datasourceTemplate: 'github-tags',
+    },
+    {
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^ghostty/gtk4-layer-shell\\.spec$/',
+      ],
+      matchStrings: [
+        'Version:\\s*(?<currentValue>\\S+)',
+      ],
+      depNameTemplate: 'wmww/gtk4-layer-shell',
       datasourceTemplate: 'github-tags',
     },
     {
