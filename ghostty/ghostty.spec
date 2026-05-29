@@ -11,7 +11,6 @@ License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.
 URL:            https://ghostty.org/
 Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
 Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
-Source2: https://ziglang.org/download/%{zig_version}/zig-linux-%{zig_arch}-%{zig_version}.tar.xz
 
 ExclusiveArch: x86_64 aarch64
 
