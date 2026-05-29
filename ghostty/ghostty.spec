@@ -2,9 +2,6 @@
 %global public_key RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV
 %global appid com.mitchellh.ghostty
 
-%global zig_version 0.15.0
-%global zig_arch %{_arch}
-
 Name:           ghostty
 Version:        1.3.1
 Release:        5%{?dist}
@@ -33,7 +30,7 @@ BuildRequires: pandoc-cli
 BuildRequires: pixman-devel
 BuildRequires: pkg-config
 BuildRequires: wayland-protocols-devel
-BuildRequires: zig
+BuildRequires: zig = 0.15.2
 BuildRequires: zlib-ng-devel
 
 Requires: fontconfig
@@ -64,9 +61,6 @@ This package provides the development files for libghostty-vt.
 
 
 %build
-tar -xf %{SOURCE2} -C %{_builddir}
-ZIG=%{_builddir}/zig-linux-%{zig_arch}-%{zig_version}/zig
-
 DESTDIR=%{buildroot} zig build \
     --summary all \
     --prefix "%{_prefix}" \
