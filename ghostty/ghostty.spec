@@ -2,15 +2,19 @@
 %global public_key RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV
 %global appid com.mitchellh.ghostty
 
+%global zig_version 0.15.0
+%global zig_arch %{_arch}
+
 Name:           ghostty
 Version:        1.3.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        A fast, native terminal emulator written in Zig.
 Packager:       Lost Saint <lost.endanger051@8shield.net>
 License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.0
 URL:            https://ghostty.org/
 Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
 Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
+Source2: https://ziglang.org/download/%{zig_version}/zig-linux-%{zig_arch}-%{zig_version}.tar.xz
 
 ExclusiveArch: x86_64 aarch64
 
@@ -60,6 +64,9 @@ This package provides the development files for libghostty-vt.
 
 
 %build
+tar -xf %{SOURCE2} -C %{_builddir}
+ZIG=%{_builddir}/zig-linux-%{zig_arch}-%{zig_version}/zig
+
 DESTDIR=%{buildroot} zig build \
     --summary all \
     --prefix "%{_prefix}" \
