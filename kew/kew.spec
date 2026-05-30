@@ -8,6 +8,7 @@ URL:            https://codeberg.org/ravachol/kew
 Source0:        https://codeberg.org/ravachol/kew/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  pkgconfig
 BuildRequires:  taglib-devel
@@ -22,7 +23,7 @@ BuildRequires:  libnotify-devel
 BuildRequires:  glib2-devel
 BuildRequires:  libatomic
 
-# Optional: AAC/M4A support via faad2 (auto-detected at build time)
+# Add: AAC/M4A support via faad2 (auto-detected at build time)
 BuildRequires:  faad2-devel
 
 Requires:       chafa
@@ -40,7 +41,7 @@ visualizer.
 %autosetup -n kew
 
 %build
-%make_build PREFIX=%{_prefix}
+%make_build PREFIX=%{_prefix} GIT_TAG=v%{version}
 
 %install
 %make_install PREFIX=%{_prefix} DESTDIR=%{buildroot}
