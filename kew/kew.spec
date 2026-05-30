@@ -39,9 +39,10 @@ visualizer.
 
 %prep
 %autosetup -n kew
-# The Makefile sets file capabilities (cap_sys_nice) for real-time scheduling,
-# which is not permitted in the COPR build chroot. Remove the setcap call.
-sed -i '/setcap/d' Makefile
+# Remove the setcap if-block entirely — it cannot run in the mock chroot
+# (no CAP_SETFCAP), and the multi-line shell block breaks if only the
+# setcap line is deleted.
+sed -i '/if \[ "\$\$(uname)"/,/fi/d' Makefile
 
 %build
 %make_build PREFIX=%{_prefix} KEW_VERSION=v%{version}
