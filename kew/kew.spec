@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 Name:           kew
 Version:        4.0.0
 Release:        1%{?dist}
@@ -41,16 +43,12 @@ visualizer.
 
 %prep
 %autosetup -p1 -n kew
-# Remove the setcap if-block entirely — it cannot run in the mock chroot
-# (no CAP_SETFCAP), and the multi-line shell block breaks if only the
-# setcap line is deleted.
-sed -i '/if \[ "\$\$(uname)"/,/fi/d' Makefile
 
 %build
 %make_build PREFIX=%{_prefix} KEW_VERSION=v%{version}
 
 %install
-%make_install PREFIX=%{_prefix} DESTDIR=%{buildroot}
+make install DESTDIR=%{buildroot} PREFIX=%{_prefix}
 
 %files
 %license LICENSE
