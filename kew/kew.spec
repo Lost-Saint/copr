@@ -9,7 +9,6 @@ Source0:        https://codeberg.org/ravachol/kew/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
-BuildRequires:  git
 BuildRequires:  make
 BuildRequires:  pkgconfig
 BuildRequires:  taglib-devel
@@ -40,9 +39,12 @@ visualizer.
 
 %prep
 %autosetup -n kew
+# The Makefile sets file capabilities (cap_sys_nice) for real-time scheduling,
+# which is not permitted in the COPR build chroot. Remove the setcap call.
+sed -i '/setcap/d' Makefile
 
 %build
-%make_build PREFIX=%{_prefix}
+%make_build PREFIX=%{_prefix} KEW_VERSION=v%{version}
 
 %install
 %make_install PREFIX=%{_prefix} DESTDIR=%{buildroot}
