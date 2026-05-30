@@ -7,6 +7,8 @@ License:        GPL-2.0-only
 URL:            https://codeberg.org/ravachol/kew
 Source0:        https://codeberg.org/ravachol/kew/archive/v%{version}.tar.gz
 
+Patch0:         kew-no-setcap.patch
+
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  make
@@ -38,7 +40,7 @@ lyrics via .lrc files or embedded tags, replay gain, and a spectrum
 visualizer.
 
 %prep
-%autosetup -n kew
+%autosetup -p1 -n kew
 # Remove the setcap if-block entirely — it cannot run in the mock chroot
 # (no CAP_SETFCAP), and the multi-line shell block breaks if only the
 # setcap line is deleted.

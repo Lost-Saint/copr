@@ -1,0 +1,15 @@
+--- kew.orig/Makefile	2026-05-29 22:16:48.975722066 -0500
++++ kew/Makefile	2026-05-29 22:17:31.193731259 -0500
+@@ -317,12 +317,6 @@
+ 		done; \
+ 	fi
+ 
+-	@if [ "$$(uname)" = "Linux" ]; then \
+-		if command -v setcap >/dev/null 2>&1; then \
+-			setcap cap_sys_nice+ep $(DESTDIR)$(PREFIX)/bin/kew; \
+-		fi; \
+-	fi
+-
+ .PHONY: uninstall
+ uninstall:
+ 	rm -f $(DESTDIR)$(PREFIX)/bin/kew
