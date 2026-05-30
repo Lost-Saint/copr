@@ -46,7 +46,7 @@ BuildRequires:  cmake(Qt6Multimedia)
 BuildRequires:  cmake(Qt6WebEngineCore)
 BuildRequires:  cmake(Qt6WebEngineWidgets)
 BuildRequires:  cmake(Qt6Charts)
-# FFmpeg - system package required (RPM Fusion free must be enabled)
+# FFmpeg
 BuildRequires:  ffmpeg-devel
 # Vulkan
 BuildRequires:  cmake(SPIRV-Headers)
