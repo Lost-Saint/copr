@@ -9,6 +9,7 @@ Source0:        https://codeberg.org/ravachol/kew/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
+BuildRequires:  git
 BuildRequires:  make
 BuildRequires:  pkgconfig
 BuildRequires:  taglib-devel
@@ -41,7 +42,7 @@ visualizer.
 %autosetup -n kew
 
 %build
-%make_build PREFIX=%{_prefix} GIT_TAG=v%{version}
+%make_build PREFIX=%{_prefix}
 
 %install
 %make_install PREFIX=%{_prefix} DESTDIR=%{buildroot}
@@ -50,9 +51,8 @@ visualizer.
 %license LICENSE
 %doc README.md
 %{_bindir}/kew
-%{_bindir}/play
 %{_datadir}/kew/
-%{_datadir}/locale/
+%{_datadir}/locale/*/LC_MESSAGES/kew.mo
 %{_mandir}/man1/kew.1*
 
 %changelog
