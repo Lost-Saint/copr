@@ -7,8 +7,8 @@
 %endif
 
 Name:           eden
-Version:        0.2.0
-Release:        2%{?dist}
+Version:        0.2.1
+Release:        1%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
@@ -16,8 +16,6 @@ Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}.tar.gz
 Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata
-
-Patch0:         fix-unused-nce-constants.patch
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -95,7 +93,7 @@ Recommends:     xorg-x11-server-Xwayland
 Eden is an experimental open-source emulator for the Nintendo Switch, built with performance and stability in mind. It is written in C++ with cross-platform support for Windows, Linux, FreeBSD, Solaris, OpenBSD, and Android.
 
 %prep
-%autosetup -p1 -n eden
+%autosetup -n eden
 
 %build
 %cmake \
