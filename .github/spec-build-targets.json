@@ -3,6 +3,8 @@
   "spec_overrides": {
     "ghostty/ghostty.spec": ["43", "44"],
     "zed/zed.spec": ["43", "44"],
-    "zed/zed-aarch64.spec": ["43", "44"]
+    "zed/zed-aarch64.spec": ["43", "44"],
+    "zen-browser/zen-browser.spec": ["43", "44"],
+    "zen-browser/zen-browser-aarch64.spec": ["43", "44"]
   }
 }
