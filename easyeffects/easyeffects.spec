@@ -14,9 +14,7 @@ Obsoletes:      pulseeffects < 6.1.1-1
 
 BuildRequires:  cmake
 BuildRequires:  extra-cmake-modules
-BuildRequires:  ninja-build
 BuildRequires:  gcc-c++
-BuildRequires:  gettext
 BuildRequires:  itstool
 BuildRequires:  libappstream-glib
 BuildRequires:  desktop-file-utils
@@ -74,6 +72,7 @@ BuildRequires:  ladspa-devel
 Requires:       qt6qml(org.kde.kirigami)
 Requires:       qt6qml(org.kde.kirigamiaddons.components)
 Requires:       qt6qml(QtGraphs)
+Requires:       qt6qml(QtWebEngine)
 
 # Visual style
 Requires:       breeze-icon-theme
@@ -86,17 +85,15 @@ Recommends:     plasma-breeze%{?_isa}
 # D-Bus activation
 Requires:       dbus-common
 
-# PipeWire PulseAudio compatibility layer
-Requires:       pipewire-pulseaudio
-
 # Optional LV2/LADSPA plugin collections (provide the actual effects)
 Recommends:     lv2-calf-plugins
 Recommends:     lsp-plugins-lv2
 Recommends:     lv2-mdala-plugins
 Recommends:     lv2-zam-plugins
 
-# In-app help requires yelp
-Recommends:     yelp
+
+# Because of QtWebEngine dependency
+ExclusiveArch:  %{qt6_qtwebengine_arches}
 
 %description
 EasyEffects (formerly PulseEffects) is an audio effects and filters
@@ -113,10 +110,10 @@ Effect chains are fully configurable: plugins can be reordered
 dynamically and saved as named presets that can be autoloaded per device.
 
 %prep
-%autosetup -p1
+%autosetup
 
 %conf
-%cmake -GNinja
+%cmake
 
 %build
 %cmake_build
@@ -127,19 +124,16 @@ dynamically and saved as named presets that can be autoloaded per device.
 %find_lang %{name}
 
 %check
-appstream-util validate-relax --nonet \
-    %{buildroot}%{_datadir}/metainfo/com.github.wwmm.%{name}.metainfo.xml
-desktop-file-validate \
-    %{buildroot}%{_datadir}/applications/com.github.wwmm.%{name}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/com.github.wwmm.%{name}.metainfo.xml
+
 
 %files -f %{name}.lang
 %license LICENSE
 %doc README.md
 %{_bindir}/%{name}
 %{_datadir}/applications/com.github.wwmm.%{name}.desktop
-%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}.svg
-%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}-symbolic.svg
-%{_iconsdir}/hicolor/scalable/apps/com.github.wwmm.%{name}-off-symbolic.svg
+%{_datadir}/icons/hicolor/scalable/apps/com.github.wwmm.%{name}{,-symbolic}.svg
+%{_datadir}/icons/hicolor/scalable/apps/com.github.wwmm.easyeffects-off-symbolic.svg
 %{_datadir}/metainfo/com.github.wwmm.%{name}.metainfo.xml
 
 %changelog
