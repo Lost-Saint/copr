@@ -16,7 +16,7 @@
 %global __requires_exclude ^libaaudio\\.so.*|^libandroid\\.so.*|^libmediandk\\.so.*|^liblog\\.so.*|^libc\\.so.*|^libm\\.so.*|^libdl\\.so.*|^libcrypt\\.so.*|^libstdc\\+\\+\\.so.*|^libncursesw\\.so.*|^libtinfo\\.so.*|^libnsl\\.so.*|^libpanelw\\.so.*$
 
 Name:           android-studio
-Version:        2025.3.4.7
+Version:        2026.1.1.8
 Release:        1%{?dist}
 Summary:        Official IDE for Android development
 License:        Apache-2.0
@@ -25,7 +25,7 @@ URL:            https://developer.android.com/studio
 Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 
-%define suffixS panda4-patch1
+%define suffixS quail1
 
 Source0:        https://dl.google.com/dl/android/studio/ide-zips/%{version}/android-studio-%{suffixS}-linux.tar.gz
 
