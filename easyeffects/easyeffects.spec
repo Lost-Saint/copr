@@ -101,18 +101,8 @@ Recommends:     lv2-zam-plugins
 ExclusiveArch:  %{qt6_qtwebengine_arches}
 
 %description
-EasyEffects (formerly PulseEffects) is an audio effects and filters
-application for PipeWire. It applies real-time DSP processing to both
-playback and recording streams, with a modern Qt6/QML/Kirigami interface
-and a system tray applet.
-
-Supported effects include: parametric equalizer, compressor, limiter,
-gate, expander, convolver (room correction / impulse response), bass
-enhancer, exciter, RNNoise AI-based noise reduction, stereo tools,
-pitch shifting, reverberation, echo canceller, and more.
-
-Effect chains are fully configurable: plugins can be reordered
-dynamically and saved as named presets that can be autoloaded per device.
+Limiters, compressor, reverberation, high-pass filter, low pass filter,
+equalizer many more effects for PipeWire applications.
 
 %prep
 %autosetup
