@@ -22,7 +22,6 @@ Summary:        Official IDE for Android development
 License:        Apache-2.0
 ExclusiveArch:  x86_64
 URL:            https://developer.android.com/studio
-Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 
 %define suffixS quail1

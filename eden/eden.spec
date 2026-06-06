@@ -12,7 +12,6 @@ Release:        1%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
-Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}.tar.gz
 Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata

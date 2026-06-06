@@ -9,7 +9,6 @@ Name:           lutris
 Version:        %{clean_tag}^%{git_date}.g%{shortcommit}
 Release:        %autorelease
 Summary:        Install and play any video game easily
-Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 
 # Automatically converted from old format: GPLv3 - review is highly recommended.

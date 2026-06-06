@@ -2,24 +2,24 @@ Name:           easyeffects
 Version:        8.2.4
 Release:        1%{?dist}
 Summary:        Audio effects and filters for PipeWire applications
-Packager:       Lost Saint <lost.endanger051@8shield.net>
 
-License:        GPL-3.0-only
+License:        GPL-3.0-or-later
 URL:            https://github.com/wwmm/easyeffects
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
-# Absorb the old PulseAudio-era name
+# Preserve upgrade path from the historical PulseEffects package.
 Provides:       pulseeffects = 6.1.1-1
 Obsoletes:      pulseeffects < 6.1.1-1
 
+# Base build requirements
 BuildRequires:  cmake
 BuildRequires:  extra-cmake-modules
 BuildRequires:  gcc-c++
-BuildRequires:  itstool
 BuildRequires:  libappstream-glib
 BuildRequires:  desktop-file-utils
+BuildRequires:  itstool
 
-# Qt6
+# Qt 6 framework
 BuildRequires:  cmake(Qt6Core)
 BuildRequires:  cmake(Qt6DBus)
 BuildRequires:  cmake(Qt6Graphs)
@@ -29,8 +29,9 @@ BuildRequires:  cmake(Qt6Qml)
 BuildRequires:  cmake(Qt6Quick)
 BuildRequires:  cmake(Qt6QuickControls2)
 BuildRequires:  cmake(Qt6Widgets)
+BuildRequires:  cmake(Qt6WebEngineQuick)
 
-# KDE Frameworks 6
+# KDE Frameworks 6 integration
 BuildRequires:  cmake(KF6ColorScheme)
 BuildRequires:  cmake(KF6Config)
 BuildRequires:  cmake(KF6ConfigWidgets)
@@ -41,58 +42,62 @@ BuildRequires:  cmake(KF6Kirigami)
 BuildRequires:  cmake(KF6KirigamiAddons)
 BuildRequires:  cmake(KF6QQC2DesktopStyle)
 
-# QML module availability at build time
+# QML modules not detected automatically
 BuildRequires:  qt6qml(org.kde.kirigami)
 
-# TBB (cmake find module, not pkgconfig)
+# Core libraries and DSP dependencies
 BuildRequires:  cmake(TBB)
 
-# Audio / DSP — versioned where upstream enforces minimums
 BuildRequires:  pkgconfig(libpipewire-0.3) >= 1.0.6
 BuildRequires:  pkgconfig(lilv-0) >= 0.24
 BuildRequires:  pkgconfig(libebur128) >= 1.2.6
 BuildRequires:  pkgconfig(fftw3)
 BuildRequires:  pkgconfig(fftw3f)
 BuildRequires:  pkgconfig(speexdsp)
-BuildRequires:  pkgconfig(samplerate)
-BuildRequires:  pkgconfig(sndfile)
+BuildRequires:  pkgconfig(nlohmann_json)
 BuildRequires:  pkgconfig(gsl)
 BuildRequires:  pkgconfig(libbs2b)
+BuildRequires:  pkgconfig(samplerate)
+BuildRequires:  pkgconfig(sndfile)
 BuildRequires:  pkgconfig(rnnoise)
 BuildRequires:  pkgconfig(soundtouch)
-BuildRequires:  pkgconfig(nlohmann_json)
 BuildRequires:  pkgconfig(libportal)
 BuildRequires:  pkgconfig(libportal-qt6)
 BuildRequires:  pkgconfig(webrtc-audio-processing-2)
-BuildRequires:  pkgconfig(libmysofa)
-BuildRequires:  zita-convolver-devel >= 3.1.0
-BuildRequires:  ladspa-devel
 
-# Runtime — QML modules must be declared explicitly for Fedora depsolving
+# Convolution engine
+BuildRequires:  zita-convolver-devel >= 3.1.0
+
+# Plugin and filter support
+BuildRequires:  ladspa-devel
+BuildRequires:  pkgconfig(libmysofa)
+
+# Runtime integration and desktop styling
+Requires:       breeze-icon-theme
+
+# Default QQC2 desktop style selected by upstream
+Requires:       kf6-qqc2-desktop-style%{?_isa}
+
+# Recommended Breeze Plasma styling
+Recommends:     plasma-breeze%{?_isa}
+
+# Runtime QML modules required by the UI
 Requires:       qt6qml(org.kde.kirigami)
 Requires:       qt6qml(org.kde.kirigamiaddons.components)
 Requires:       qt6qml(QtGraphs)
 Requires:       qt6qml(QtWebEngine)
 
-# Visual style
-Requires:       breeze-icon-theme
+# Runtime system integration
 Requires:       hicolor-icon-theme
-# Default theme referenced directly in source
-Requires:       kf6-qqc2-desktop-style%{?_isa}
-# Upstream recommendation; non-fatal without it
-Recommends:     plasma-breeze%{?_isa}
-
-# D-Bus activation
 Requires:       dbus-common
 
-# Optional LV2/LADSPA plugin collections (provide the actual effects)
+# Optional LV2 plugin collections
 Recommends:     lv2-calf-plugins
-Recommends:     lsp-plugins-lv2
 Recommends:     lv2-mdala-plugins
+Recommends:     lsp-plugins-lv2
 Recommends:     lv2-zam-plugins
 
-
-# Because of QtWebEngine dependency
+# QtWebEngine limits supported architectures
 ExclusiveArch:  %{qt6_qtwebengine_arches}
 
 %description

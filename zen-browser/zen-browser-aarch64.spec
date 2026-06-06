@@ -6,7 +6,6 @@ Name:               zen-browser-aarch64
 Version:            1.20.1b
 Release:            1%{?dist}
 Summary:            Zen Browser
-Packager:           Lost Saint <lost.endanger051@8shield.net>
 
 
 License:            MPLv2.0
