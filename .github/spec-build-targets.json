@@ -2,6 +2,9 @@
   "default_fedora_versions": ["42", "43", "44"],
   "spec_overrides": {
     "ghostty/ghostty.spec": ["43", "44"],
-    "zen-browser/zen-browser.spec": ["43", "44"]
+    "zen-browser/zen-browser.spec": ["43", "44"],
+    "cava/cava.spec": ["43", "44"],
+    "lutris-git/lutris.spec": ["43", "44"],
+    "easyeffects/easyeffects.spec": ["43", "44"]
   }
 }
