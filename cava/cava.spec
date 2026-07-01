@@ -1,5 +1,5 @@
 Name:           cava
-Version:        0.10.7
+Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Console-based Audio Visualizer for Alsa
 
