@@ -93,3 +93,7 @@ appstreamcli validate --no-net app/deploy/linux/com.moonlight_stream.Moonlight.a
 %{_datadir}/applications/com.moonlight_stream.Moonlight.desktop
 %{_datadir}/icons/hicolor/scalable/apps/moonlight.svg
 %{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
+
+%changelog
+* Sun Jul 05 2026 Moonlight COPR <noreply@copr.invalid> - 6.1.0-0.20260705git5e1ac6df87d4
+- Nightly snapshot
