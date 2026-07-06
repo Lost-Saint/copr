@@ -24,6 +24,7 @@ BuildRequires:  qt6-qtsvg-devel
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(libavcodec) >= 60
+BuildRequires:  pkgconfig(libavformat)
 BuildRequires:  pkgconfig(libavutil)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libplacebo) >= 7.349.0
