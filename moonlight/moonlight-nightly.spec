@@ -1,0 +1,97 @@
+# This file is rendered by make-source.sh. It is not a standalone spec.
+# The generated source archive contains Moonlight Qt plus all pinned submodules.
+
+%global gitdate @GITDATE@
+%global commit @COMMIT@
+%global shortcommit %(printf '%s\n' %{commit} | cut -c1-12)
+
+Name:           moonlight-nightly
+Version:        @VERSION@
+Release:        0.%{gitdate}git%{shortcommit}%{?dist}
+Summary:        Nightly Moonlight game-streaming client
+
+License:        GPL-3.0-or-later
+URL:            https://github.com/moonlight-stream/moonlight-qt
+Source0:        %{name}-%{version}-%{gitdate}git%{shortcommit}.tar.xz
+
+# A functional Linux build needs FFmpeg. In COPR, enable an additional
+# repository that provides these pkg-config capabilities (commonly RPM Fusion).
+BuildRequires:  appstream
+BuildRequires:  desktop-file-utils
+BuildRequires:  gcc-c++
+BuildRequires:  make
+BuildRequires:  pkgconf-pkg-config
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qtdeclarative-devel
+BuildRequires:  qt6-qtsvg-devel
+BuildRequires:  pkgconfig(egl)
+BuildRequires:  pkgconfig(gl)
+BuildRequires:  pkgconfig(libavcodec) >= 60
+BuildRequires:  pkgconfig(libavutil)
+BuildRequires:  pkgconfig(libdrm)
+BuildRequires:  pkgconfig(libplacebo) >= 7.349.0
+BuildRequires:  pkgconfig(libswscale)
+BuildRequires:  pkgconfig(libva)
+BuildRequires:  pkgconfig(libva-drm)
+BuildRequires:  pkgconfig(libva-wayland)
+BuildRequires:  pkgconfig(libva-x11)
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(opus)
+BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(SDL2_ttf)
+BuildRequires:  pkgconfig(vdpau)
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(x11)
+
+# qmake detects the system libraries above and enables FFmpeg, VA-API,
+# VDPAU, DRM, Wayland, X11, EGL, and libplacebo/Vulkan support.
+# The nightly owns /usr/bin/moonlight, so it must not be co-installed
+# with the normal RPM package.
+Conflicts:       moonlight
+
+%description
+Moonlight is an open-source game-streaming client for Sunshine and NVIDIA
+GameStream hosts. This package tracks the upstream master branch and is built
+entirely from source, including its pinned git submodules.
+
+%prep
+%autosetup -n %{name}-%{version}-%{gitdate}git%{shortcommit}
+
+%build
+qmake6 \
+    "QMAKE_CFLAGS+=%{build_cflags}" \
+    "QMAKE_CXXFLAGS+=%{build_cxxflags}" \
+    "QMAKE_LFLAGS+=%{build_ldflags}" \
+    "CONFIG+=release" \
+    moonlight-qt.pro
+
+%make_build release
+
+%install
+# Moonlight's qmake release target has used both locations across qmake layouts.
+# Prefer the upstream-documented app/moonlight path and fail if neither exists.
+binary=app/moonlight
+[[ -x "${binary}" ]] || binary=app/release/moonlight
+[[ -x "${binary}" ]]
+
+# Install the exact upstream Linux payload into Fedora-standard locations.
+install -Dpm0755 "${binary}" \
+    %{buildroot}%{_bindir}/moonlight
+install -Dpm0644 app/deploy/linux/com.moonlight_stream.Moonlight.desktop \
+    %{buildroot}%{_datadir}/applications/com.moonlight_stream.Moonlight.desktop
+install -Dpm0644 app/res/moonlight.svg \
+    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/moonlight.svg
+install -Dpm0644 app/deploy/linux/com.moonlight_stream.Moonlight.appdata.xml \
+    %{buildroot}%{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
+
+%check
+desktop-file-validate app/deploy/linux/com.moonlight_stream.Moonlight.desktop
+appstreamcli validate --no-net app/deploy/linux/com.moonlight_stream.Moonlight.appdata.xml
+
+%files
+%license LICENSE
+%doc README.md
+%{_bindir}/moonlight
+%{_datadir}/applications/com.moonlight_stream.Moonlight.desktop
+%{_datadir}/icons/hicolor/scalable/apps/moonlight.svg
+%{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
