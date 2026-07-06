@@ -1,9 +1,12 @@
-%global gitdate 20260705
-%global commit 5e1ac6df87d44f01785b01c8b5258235410bca76
+# This file is rendered by make-source.sh. It is not a standalone spec.
+# The generated source archive contains Moonlight Qt plus all pinned submodules.
+
+%global gitdate @GITDATE@
+%global commit @COMMIT@
 %global shortcommit %(printf '%s\n' %{commit} | cut -c1-12)
 
 Name:           moonlight-nightly
-Version:        6.1.0
+Version:        @VERSION@
 Release:        0.%{gitdate}git%{shortcommit}%{?dist}
 Summary:        Nightly Moonlight game-streaming client
 
