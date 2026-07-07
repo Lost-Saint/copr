@@ -8,25 +8,23 @@ package main
 import (
 	"context"
 	"dagger/copr/internal/dagger"
+	"encoding/json"
 	"fmt"
 	"path"
 	"strings"
 	"sync"
 )
 
-// validFedoraVersions is an allowlist of supported Fedora versions.
-var validFedoraVersions = map[string]bool{
-	"40": true,
-	"41": true,
-	"42": true,
-	"43": true,
-	"44": true,
-}
-
 // invalidPathChars are shell metacharacters that must not appear in spec paths.
 const invalidPathChars = ";|&`$(){} \t"
 
 type Copr struct{}
+
+type buildTargetConfig struct {
+	DefaultFedoraVersions []string            `json:"default_fedora_versions"`
+	SpecOverrides         map[string][]string `json:"spec_overrides"`
+	ExtraCoprRepos        map[string][]string `json:"extra_copr_repos"`
+}
 
 // shC returns cmd wrapped in `sh -c` for shell pipeline execution.
 func shC(cmd string) []string {
@@ -36,8 +34,8 @@ func shC(cmd string) []string {
 // validateInputs checks fedoraVersion and specFile for known-bad values
 // before they are interpolated into container commands.
 func validateInputs(fedoraVersion, specFile string) error {
-	if !validFedoraVersions[fedoraVersion] {
-		return fmt.Errorf("unsupported Fedora version %q: must be one of 40, 41, 42, 43, 44", fedoraVersion)
+	if fedoraVersion == "" || strings.Trim(fedoraVersion, "0123456789") != "" {
+		return fmt.Errorf("unsupported Fedora version %q: must be numeric", fedoraVersion)
 	}
 	if strings.ContainsAny(specFile, invalidPathChars) {
 		return fmt.Errorf("specFile path %q contains invalid characters", specFile)
@@ -48,10 +46,61 @@ func validateInputs(fedoraVersion, specFile string) error {
 	return nil
 }
 
+func loadBuildTargetConfig(ctx context.Context, source *dagger.Directory) (buildTargetConfig, error) {
+	contents, err := source.File(".github/spec-build-targets.json").Contents(ctx)
+	if err != nil {
+		return buildTargetConfig{}, fmt.Errorf("read .github/spec-build-targets.json: %w", err)
+	}
+
+	var cfg buildTargetConfig
+	if err := json.Unmarshal([]byte(contents), &cfg); err != nil {
+		return buildTargetConfig{}, fmt.Errorf("parse .github/spec-build-targets.json: %w", err)
+	}
+
+	return cfg, nil
+}
+
+func fedoraVersionsForSpec(cfg buildTargetConfig, specFile string) []string {
+	if versions, ok := cfg.SpecOverrides[specFile]; ok {
+		return versions
+	}
+	return cfg.DefaultFedoraVersions
+}
+
+func validateBuildTarget(cfg buildTargetConfig, fedoraVersion, specFile string) error {
+	for _, version := range fedoraVersionsForSpec(cfg, specFile) {
+		if version == fedoraVersion {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("%s is not configured to build for Fedora %s", specFile, fedoraVersion)
+}
+
+func appendUniqueStrings(dst []string, src []string) []string {
+	seen := make(map[string]bool, len(dst)+len(src))
+	var out []string
+
+	for _, value := range append(dst, src...) {
+		if value == "" || seen[value] {
+			continue
+		}
+		seen[value] = true
+		out = append(out, value)
+	}
+
+	return out
+}
+
 // baseContainer returns a Fedora container with the RPM build toolchain
 // pre-installed. This layer is shared and cached across all spec builds.
-func (m *Copr) baseContainer(fedoraVersion string) *dagger.Container {
-	return dag.Container().
+func (m *Copr) baseContainer(fedoraVersion, specFile string) *dagger.Container {
+	platform := dagger.Platform("linux/amd64")
+	if strings.Contains(specFile, "aarch64") || strings.Contains(specFile, "arm64") {
+		platform = dagger.Platform("linux/arm64")
+	}
+
+	return dag.Container(dagger.ContainerOpts{Platform: platform}).
 		From(fmt.Sprintf("quay.io/fedora/fedora:%s", fedoraVersion)).
 		WithExec([]string{
 			"dnf", "install", "-y",
@@ -82,29 +131,45 @@ func (m *Copr) BuildSpecFile(
 		return "", err
 	}
 
+	cfg, err := loadBuildTargetConfig(ctx, source)
+	if err != nil {
+		return "", err
+	}
+	if err := validateBuildTarget(cfg, fedoraVersion, specFile); err != nil {
+		return "", err
+	}
+
 	specFileName := path.Base(specFile)
 	specFileDir := path.Dir(specFile)
 	specDest := fmt.Sprintf("/root/rpmbuild/SPECS/%s", specFileName)
+	extraCoprRepos = appendUniqueStrings(extraCoprRepos, cfg.ExtraCoprRepos[specFile])
 
 	// Start from the shared cached base image.
-	container := m.baseContainer(fedoraVersion).
+	container := m.baseContainer(fedoraVersion, specFile).
 		WithMountedDirectory("/workspace", source).
 		WithWorkdir("/workspace")
 
 	// Enable only the COPR repos required by this specific spec.
 	for _, repo := range extraCoprRepos {
-		container = container.WithExec(shC(fmt.Sprintf("dnf copr enable -y %s", repo)))
+		container = container.WithExec([]string{"dnf", "copr", "enable", "-y", repo})
 	}
 
 	return container.
 		WithExec([]string{"rpmdev-setuptree"}).
+
+		// Extract colocated source RPMs so specs with generated local sources
+		// can resolve Source entries without checking in each archive separately.
+		WithExec(shC(fmt.Sprintf(
+			"find %s -maxdepth 1 -type f -name '*.src.rpm' -exec rpm -ivh --define '_topdir /root/rpmbuild' --replacepkgs {} \\;",
+			specFileDir,
+		))).
 
 		// Copy spec file into the RPM build tree.
 		WithExec([]string{"cp", specFile, specDest}).
 
 		// Copy well-known source file types from the spec directory to SOURCES.
 		WithExec(shC(fmt.Sprintf(
-			"find %s -type f \\( -name '*.desktop' -o -name '*.json' -o -name '*.sh' -o -name '*.conf' -o -name '*.patch' \\) -exec cp {} /root/rpmbuild/SOURCES/ \\;",
+			"find %s -type f \\( -name '*.desktop' -o -name '*.json' -o -name '*.sh' -o -name '*.conf' -o -name '*.patch' -o -name '*.tar' -o -name '*.tar.gz' -o -name '*.tgz' -o -name '*.tar.xz' -o -name '*.txz' -o -name '*.zip' -o -name '*.profdata' -o -name '*.minisig' -o -name '*.src.rpm' \\) -exec cp {} /root/rpmbuild/SOURCES/ \\;",
 			specFileDir,
 		))).
 

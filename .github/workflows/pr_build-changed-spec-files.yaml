@@ -3,7 +3,11 @@ name: build changed spec files
 on:
   pull_request:
     paths:
-      - "*/*.spec"
+      - "**/*.spec"
+      - ".github/spec-build-targets.json"
+      - ".github/workflows/pr_build-changed-spec-files.yaml"
+      - ".dagger/**"
+      - "dagger.json"
 permissions:
   contents: read
   pull-requests: read
@@ -29,18 +33,35 @@ jobs:
         with:
           files: |
             **/*.spec
+            .github/spec-build-targets.json
+            .github/workflows/pr_build-changed-spec-files.yaml
+            .dagger/**
+            dagger.json
       - name: Set matrix output
         id: set-matrix
         # yamllint disable rule:line-length
         run: |
+          set -euo pipefail
           build_targets_json=$(jq -c . .github/spec-build-targets.json)
           fedora_versions=$(jq -r '.default_fedora_versions | join(" ")' <<< "$build_targets_json")
           spec_fedora_versions_json=$(jq -c '.spec_overrides' <<< "$build_targets_json")
+          all_specs=$(git ls-files '*.spec')
           files='${{ steps.changed-files.outputs.all_changed_files }}'
           include_array='[]'
+          build_all_specs=false
 
           if [ -n "$files" ]; then
             for file in $files; do
+              case "$file" in
+                .github/spec-build-targets.json|.github/workflows/pr_build-changed-spec-files.yaml|dagger.json|.dagger/*)
+                  build_all_specs=true
+                  ;;
+              esac
+
+              if [[ "$file" != *.spec ]]; then
+                continue
+              fi
+
               os="ubuntu-24.04"
               file_fedora_versions="$fedora_versions"
 
@@ -63,6 +84,32 @@ jobs:
             done
           fi
 
+          if [ "$build_all_specs" = true ]; then
+            for file in $all_specs; do
+              os="ubuntu-24.04"
+              file_fedora_versions="$fedora_versions"
+
+              if [[ "$file" == *aarch64.spec ]] || [[ "$file" == *arm.spec ]]; then
+                os="ubuntu-24.04-arm"
+              fi
+
+              override_versions=$(jq -r --arg spec "$file" '.[$spec] // empty | join(" ")' <<< "$spec_fedora_versions_json")
+              if [ -n "$override_versions" ]; then
+                file_fedora_versions="$override_versions"
+              fi
+
+              for fv in $file_fedora_versions; do
+                include_array=$(echo "$include_array" | jq -c \
+                  --arg spec "$file" \
+                  --arg os "$os" \
+                  --arg fv "$fv" \
+                  '. += [{"spec-file": $spec, "os": $os, "fedora-version": $fv}]')
+              done
+            done
+          fi
+
+          include_array=$(echo "$include_array" | jq -c 'unique_by(."spec-file", ."fedora-version")')
+
           matrix_json=$(jq -cn --argjson inc "$include_array" '{"include": $inc}')
           echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
   # yamllint enable rule:line-length
@@ -81,7 +128,7 @@ jobs:
         # yamllint disable-line rule:line-length
         uses: dagger/dagger-for-github@b81317a976cb7f7125469707321849737cd1b3bc # v7
         with:
-          version: "latest"
+          version: "0.20.8"
           verb: call
           # yamllint disable-line rule:line-length
           args: build-spec-file --spec-file "${{ matrix.spec-file }}" --fedora-version "${{ matrix.fedora-version }}"

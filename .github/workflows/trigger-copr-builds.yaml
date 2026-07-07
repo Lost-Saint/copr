@@ -4,12 +4,19 @@ on:
   push:
     branches: [main]
     paths:
-      - "*/*.spec"
+      - "**/*.spec"
+      - ".github/spec-build-targets.json"
+      - ".github/workflows/trigger-copr-builds.yaml"
   workflow_dispatch:
     inputs:
       # checkov:skip=CKV_GHA_7:arg passed to env
       spec_file:
         description: "Spec file to build (format: project/package.spec)"
+        required: false
+        type: string
+      # checkov:skip=CKV_GHA_7:arg passed to env
+      fedora_versions:
+        description: "Optional Fedora versions to build, space or comma separated"
         required: false
         type: string
 permissions:
@@ -29,29 +36,47 @@ jobs:
         uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
         with:
           files: |
-            */*.spec
+            **/*.spec
+            .github/spec-build-targets.json
+            .github/workflows/trigger-copr-builds.yaml
       - name: Create package matrix
         id: matrix_from_changed_spec_files
         # yamllint disable rule:line-length
+        env:
+          MANUAL_SPEC_FILE: ${{ github.event.inputs.spec_file }}
+          MANUAL_FEDORA_VERSIONS_INPUT: ${{ github.event.inputs.fedora_versions }}
         run: |
           set -euo pipefail
           BUILD_TARGETS_JSON=$(jq -c . .github/spec-build-targets.json)
           FEDORA_VERSIONS=$(jq -r '.default_fedora_versions | join(" ")' <<< "$BUILD_TARGETS_JSON")
           SPEC_FEDORA_VERSIONS_JSON=$(jq -c '.spec_overrides' <<< "$BUILD_TARGETS_JSON")
+          ALL_SPECS=$(git ls-files '*.spec')
           INCLUDE_ARRAY='[]'
           # used to ensure unique spec file paths, newline-separated
           SEEN_SPEC_FILES=""
 
           # Check if manual spec file was provided via workflow_dispatch
-          MANUAL_SPEC_FILE="${{ github.event.inputs.spec_file }}"
+          MANUAL_FEDORA_VERSIONS="$(tr ',' ' ' <<< "${MANUAL_FEDORA_VERSIONS_INPUT}")"
+          CHANGED_FILES="${{ steps.changed_specs.outputs.all_changed_files }}"
+          BUILD_ALL_SPECS=false
+
+          for CHANGED_FILE in ${CHANGED_FILES}; do
+            case "$CHANGED_FILE" in
+              .github/spec-build-targets.json|.github/workflows/trigger-copr-builds.yaml)
+                BUILD_ALL_SPECS=true
+                ;;
+            esac
+          done
 
           if [ -n "${MANUAL_SPEC_FILE}" ]; then
             echo "::notice::Using manually specified spec file: ${MANUAL_SPEC_FILE}"
             # Use the manually specified spec file instead of changed files
             SPEC_FILES="${MANUAL_SPEC_FILE}"
+          elif [ "$BUILD_ALL_SPECS" = true ]; then
+            SPEC_FILES="${ALL_SPECS}"
           else
             # Use the detected changed files
-            SPEC_FILES="${{ steps.changed_specs.outputs.all_changed_files }}"
+            SPEC_FILES="${CHANGED_FILES}"
           fi
 
           for COPR_SPEC_FILE in ${SPEC_FILES}; do
@@ -86,6 +111,10 @@ jobs:
             if [ -n "$OVERRIDE_VERSIONS" ]; then
               FEDORA_BUILD_VERSIONS="$OVERRIDE_VERSIONS"
             fi
+            CONFIGURED_FEDORA_BUILD_VERSIONS="$FEDORA_BUILD_VERSIONS"
+            if [ -n "$MANUAL_FEDORA_VERSIONS" ]; then
+              FEDORA_BUILD_VERSIONS="$MANUAL_FEDORA_VERSIONS"
+            fi
 
             SPEC_EXCLUSIVE_ARCHES="$(grep -Pom1 '^ExclusiveArch:\s*\K.*' "$COPR_SPEC_FILE" || true)"
             SPEC_BUILD_ARCH="$(grep -Pom1 '^BuildArch:\s*\K[^[:space:]]+' "$COPR_SPEC_FILE" || true)"
@@ -114,8 +143,21 @@ jobs:
 
             CHROOTS=""
             for FEDORA_VERSION in $FEDORA_BUILD_VERSIONS; do
+              if ! [[ "$FEDORA_VERSION" =~ ^[0-9]+$ ]]; then
+                echo "::error::Invalid Fedora version: ${FEDORA_VERSION}"
+                exit 1
+              fi
+              if [ -n "$MANUAL_FEDORA_VERSIONS" ] && ! grep -qw "$FEDORA_VERSION" <<< "$CONFIGURED_FEDORA_BUILD_VERSIONS"; then
+                echo "::error file=$COPR_SPEC_FILE::Fedora ${FEDORA_VERSION} is not configured as a build target for ${COPR_SPEC_FILE}"
+                exit 1
+              fi
+
               for SPEC_ARCH in $SPEC_ARCHES; do
-                CHROOTS="${CHROOTS} fedora-${FEDORA_VERSION}-${SPEC_ARCH}"
+                if [ "$FEDORA_VERSION" = "45" ]; then
+                  CHROOTS="${CHROOTS} fedora-rawhide-${SPEC_ARCH}"
+                else
+                  CHROOTS="${CHROOTS} fedora-${FEDORA_VERSION}-${SPEC_ARCH}"
+                fi
               done
             done
             CHROOTS="$(xargs <<< "$CHROOTS")"
@@ -137,9 +179,7 @@ jobs:
         # yamllint enable rule:line-length
   trigger-package-build:
     needs: matrix_from_changed_specs
-    if: |
-      needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
-      || github.event.inputs.spec_file != ''
+    if: needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.matrix_from_changed_specs.outputs.matrix) }}
@@ -177,7 +217,7 @@ jobs:
           echo "::notice file=${{ matrix.project }}/${{ matrix.package }}.spec::Building package ${{ matrix.package }} in project ${{ matrix.project }}"
           copr-cli build-package \
             "${CHROOT_ARGS[@]}" \
-            --name ${{ matrix.package }} \
+            --name "${{ matrix.package }}" \
             "${COPR_OWNER}/${{ matrix.project }}"
         # yamllint enable rule:line-length
       - name: Cleanup configuration
