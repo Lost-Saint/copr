@@ -23,6 +23,7 @@ icon, and AppStream cache updates.
 ## Generate a nightly source bundle
 
 ```bash
+cd /copr/moonlight
 ./make-source.sh ./out
 ```
 
