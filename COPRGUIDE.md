@@ -21,20 +21,20 @@ sudo dnf install <package-name> --refresh
 
 ## Packages
 
-| Package | What it is | Notes |
-| --- | --- | --- |
-| `android-studio` | Google's official IDE for Android development | `x86_64` |
-| `cava` | Terminal audio visualizer |  |
-| `easyeffects` | Audio effects and equalizer for PipeWire |  |
-| `eden` | Nintendo Switch emulator | Needs RPM Fusion Free available on the client system |
-| `ghostty` | Fast, feature-rich terminal emulator |  |
-| `kew` | Terminal music player |  |
-| `lutris` | Game manager built from the `lutris-git` spec | Install package name is `lutris` |
-| `moonlight-nightly` | Nightly Moonlight game-streaming client | Needs RPM Fusion Free available on the client system |
-| `zed` | Zed editor for `x86_64` |  |
-| `zed-aarch64` | Zed editor for `aarch64` | Architecture-specific package name |
-| `zen-browser` | Zen Browser for `x86_64` |  |
-| `zen-browser-aarch64` | Zen Browser for `aarch64` | Architecture-specific package name |
+| Package               | What it is                                    | Notes                                                |
+| --------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| `android-studio`      | Google's official IDE for Android development | `x86_64`                                             |
+| `cava`                | Terminal audio visualizer                     |                                                      |
+| `easyeffects`         | Audio effects and equalizer for PipeWire      |                                                      |
+| `eden`                | Nintendo Switch emulator                      | Needs RPM Fusion Free available on the client system |
+| `ghostty`             | Fast, feature-rich terminal emulator          |                                                      |
+| `kew`                 | Terminal music player                         |                                                      |
+| `lutris`              | Game manager built from the `lutris-git` spec | Install package name is `lutris`                     |
+| `moonlight-nightly`   | Nightly Moonlight game-streaming client       | Needs RPM Fusion Free available on the client system |
+| `zed`                 | Zed editor for `x86_64`                       |                                                      |
+| `zed-aarch64`         | Zed editor for `aarch64`                      | Architecture-specific package name                   |
+| `zen-browser`         | Zen Browser for `x86_64`                      |                                                      |
+| `zen-browser-aarch64` | Zen Browser for `aarch64`                     | Architecture-specific package name                   |
 
 `gtk4-layer-shell` is also published in the COPR project, but it is a support
 package used by Ghostty rather than a normal end-user app.
