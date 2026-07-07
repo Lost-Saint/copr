@@ -3,8 +3,7 @@ name: allcheckspassed # https://github.com/wechuli/allcheckspassed
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-permissions:
-  contents: read # required for actions/checkout
+permissions: {}
 concurrency:
   # yamllint disable-line rule:line-length
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -14,10 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: read # required to poll checks
-      contents: read # required for actions/checkout
     steps:
       # yamllint disable-line rule:line-length
-      - uses: wechuli/allcheckspassed@1d00cf0c34c4b0805db8866d8913f22e7125301e # v2
+      - uses: wechuli/allcheckspassed@204ff63e89eabdc8086f0c50b91f675bcf37c8f6 # v2.4.0
         with:
           delay: "3" # default: 1
           retries: "15" # default: 10

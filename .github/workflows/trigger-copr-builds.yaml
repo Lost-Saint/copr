@@ -9,31 +9,34 @@ on:
       - ".github/workflows/trigger-copr-builds.yaml"
   workflow_dispatch:
     inputs:
-      # checkov:skip=CKV_GHA_7:arg passed to env
+      # checkov:skip=CKV_GHA_7:arg passed to env and validated before use
       spec_file:
         description: "Spec file to build (format: project/package.spec)"
         required: false
         type: string
-      # checkov:skip=CKV_GHA_7:arg passed to env
+      # checkov:skip=CKV_GHA_7:arg passed to env and validated before use
       fedora_versions:
         description: "Optional Fedora versions to build, space or comma separated"
         required: false
         type: string
-permissions:
-  contents: read # required for actions/checkout
+permissions: {}
 env:
   COPR_OWNER: myriad-sun
 jobs:
   matrix_from_changed_specs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       matrix: ${{ steps.matrix_from_changed_spec_files.outputs.matrix }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Get changed spec files
         id: changed_specs
         # yamllint disable rule:line-length
-        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
+        uses: step-security/changed-files@2e07db73e5ccdb319b9a6c7766bd46d39d304bad # v47.0.5
         with:
           files: |
             **/*.spec
@@ -45,6 +48,7 @@ jobs:
         env:
           MANUAL_SPEC_FILE: ${{ github.event.inputs.spec_file }}
           MANUAL_FEDORA_VERSIONS_INPUT: ${{ github.event.inputs.fedora_versions }}
+          CHANGED_FILES: ${{ steps.changed_specs.outputs.all_changed_files }}
         run: |
           set -euo pipefail
           BUILD_TARGETS_JSON=$(jq -c . .github/spec-build-targets.json)
@@ -57,8 +61,18 @@ jobs:
 
           # Check if manual spec file was provided via workflow_dispatch
           MANUAL_FEDORA_VERSIONS="$(tr ',' ' ' <<< "${MANUAL_FEDORA_VERSIONS_INPUT}")"
-          CHANGED_FILES="${{ steps.changed_specs.outputs.all_changed_files }}"
           BUILD_ALL_SPECS=false
+
+          if [ -n "${MANUAL_SPEC_FILE}" ] && ! [[ "${MANUAL_SPEC_FILE}" =~ ^[A-Za-z0-9._/-]+\.spec$ ]]; then
+            echo "::error::Invalid spec file path: ${MANUAL_SPEC_FILE}"
+            exit 1
+          fi
+          for MANUAL_FEDORA_VERSION in ${MANUAL_FEDORA_VERSIONS}; do
+            if ! [[ "$MANUAL_FEDORA_VERSION" =~ ^[0-9]+$ ]]; then
+              echo "::error::Invalid Fedora version: ${MANUAL_FEDORA_VERSION}"
+              exit 1
+            fi
+          done
 
           for CHANGED_FILE in ${CHANGED_FILES}; do
             case "$CHANGED_FILE" in
@@ -84,6 +98,14 @@ jobs:
             if [ -z "$COPR_SPEC_FILE" ]; then
               continue
             fi
+            if ! [[ "$COPR_SPEC_FILE" =~ ^[A-Za-z0-9._/-]+\.spec$ ]]; then
+              echo "::error file=$COPR_SPEC_FILE::Spec file path contains unsupported characters"
+              exit 1
+            fi
+            if [ ! -f "$COPR_SPEC_FILE" ]; then
+              echo "::error file=$COPR_SPEC_FILE::Spec file does not exist"
+              exit 1
+            fi
 
             if echo "${SEEN_SPEC_FILES}" | grep -qxF "$COPR_SPEC_FILE"; then
               continue
@@ -95,6 +117,10 @@ jobs:
             # Remove potential ./ prefix if present
             #   (e.g. if find results included it)
             COPR_PROJECT="${COPR_PROJECT#./}"
+            if ! [[ "$COPR_PROJECT" =~ ^[A-Za-z0-9._/-]+$ ]]; then
+              echo "::error file=$COPR_SPEC_FILE::Project path contains unsupported characters"
+              exit 1
+            fi
 
             # Extract package name from the 'Name:' field in the spec file
             # Using grep -Po for Perl-compatible regex to get only the matched
@@ -104,6 +130,10 @@ jobs:
             if [ -z "${COPR_PACKAGE_NAME}" ]; then
               echo "::warning file=$COPR_SPEC_FILE::Could not extract package name from $COPR_SPEC_FILE"
               continue # Skip this file if package name couldn't be extracted
+            fi
+            if ! [[ "$COPR_PACKAGE_NAME" =~ ^[A-Za-z0-9._+-]+$ ]]; then
+              echo "::error file=$COPR_SPEC_FILE::Package name contains unsupported characters"
+              exit 1
             fi
 
             FEDORA_BUILD_VERSIONS="$FEDORA_VERSIONS"
@@ -181,6 +211,7 @@ jobs:
     needs: matrix_from_changed_specs
     if: needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
+    permissions: {}
     strategy:
       matrix: ${{ fromJson(needs.matrix_from_changed_specs.outputs.matrix) }}
       fail-fast: false
@@ -207,18 +238,22 @@ jobs:
           echo "${COPR_CONFIG}" > ~/.config/copr
       - name: Build ${{ matrix.package }}
         # yamllint disable rule:line-length
+        env:
+          CHROOTS: ${{ matrix.chroots }}
+          PACKAGE: ${{ matrix.package }}
+          PROJECT: ${{ matrix.project }}
         run: |
           set -euo pipefail
           declare -a CHROOT_ARGS=()
-          for CHROOT in ${{ matrix.chroots }}; do
+          for CHROOT in ${CHROOTS}; do
             CHROOT_ARGS+=(--chroot "$CHROOT")
           done
 
-          echo "::notice file=${{ matrix.project }}/${{ matrix.package }}.spec::Building package ${{ matrix.package }} in project ${{ matrix.project }}"
+          echo "::notice file=${PROJECT}/${PACKAGE}.spec::Building package ${PACKAGE} in project ${PROJECT}"
           copr-cli build-package \
             "${CHROOT_ARGS[@]}" \
-            --name "${{ matrix.package }}" \
-            "${COPR_OWNER}/${{ matrix.project }}"
+            --name "${PACKAGE}" \
+            "${COPR_OWNER}/${PROJECT}"
         # yamllint enable rule:line-length
       - name: Cleanup configuration
         if: always()
