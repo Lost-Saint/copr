@@ -6,7 +6,7 @@
 
 Name:           moonlight-nightly
 Version:        %{clean_tag}^%{git_date}.g%{shortcommit}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Nightly Moonlight game-streaming client
 
 License:        GPL-3.0-or-later
@@ -40,6 +40,8 @@ BuildRequires:  pkgconfig(SDL2_ttf)
 BuildRequires:  pkgconfig(vdpau)
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(x11)
+
+Requires:       qt6-qtdeclarative
 
 # Both packages install /usr/bin/moonlight.
 Conflicts:       moonlight
@@ -83,7 +85,8 @@ appstreamcli validate --no-net \
 %{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
 
 %changelog
-* @CHANGELOG_DATE@ Moonlight COPR <noreply@copr.invalid> - @VERSION@^@GIT_DATE@.g@SHORTCOMMIT@-1
+* @CHANGELOG_DATE@ Moonlight COPR <noreply@copr.invalid> - @VERSION@^@GIT_DATE@.g@SHORTCOMMIT@-2
 - Nightly snapshot.
 - Use upstream qmake install targets with Fedora paths.
 - Validate installed desktop and AppStream metadata from the buildroot.
+- Explicitly require Qt QML runtime modules needed by embedded QML.
