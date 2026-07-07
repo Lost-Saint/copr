@@ -24,12 +24,15 @@ Patch0:         setup-no-import.patch
 
 BuildRequires:  desktop-file-utils
 BuildRequires:  python3-devel
+BuildRequires:  python3-certifi
 Requires:       cabextract
 Requires:       gtk3, psmisc, xorg-x11-server-Xephyr, xrandr
 Requires:       hicolor-icon-theme
 Requires:       gnome-desktop3
 Requires:       python3-distro
 Requires:       python3-cairo
+Requires:       python3-certifi
+
 
 # Tests
 BuildRequires:  python3dist(pytest)
