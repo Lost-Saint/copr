@@ -57,28 +57,22 @@ qmake6 \
     "QMAKE_CFLAGS+=%{build_cflags}" \
     "QMAKE_CXXFLAGS+=%{build_cxxflags}" \
     "QMAKE_LFLAGS+=%{build_ldflags}" \
+    "PREFIX=%{_prefix}" \
+    "BINDIR=bin" \
+    "DATADIR=share" \
     "CONFIG+=release" \
     moonlight-qt.pro
 
 %make_build release
 
 %install
-binary=app/moonlight
-[[ -x "${binary}" ]] || binary=app/release/moonlight
-[[ -x "${binary}" ]]
-
-install -Dpm0755 "${binary}" \
-    %{buildroot}%{_bindir}/moonlight
-install -Dpm0644 app/deploy/linux/com.moonlight_stream.Moonlight.desktop \
-    %{buildroot}%{_datadir}/applications/com.moonlight_stream.Moonlight.desktop
-install -Dpm0644 app/res/moonlight.svg \
-    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/moonlight.svg
-install -Dpm0644 app/deploy/linux/com.moonlight_stream.Moonlight.appdata.xml \
-    %{buildroot}%{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
+%make_install INSTALL_ROOT=%{buildroot}
 
 %check
-desktop-file-validate app/deploy/linux/com.moonlight_stream.Moonlight.desktop
-appstreamcli validate --no-net app/deploy/linux/com.moonlight_stream.Moonlight.appdata.xml
+desktop-file-validate \
+    %{buildroot}%{_datadir}/applications/com.moonlight_stream.Moonlight.desktop
+appstreamcli validate --no-net \
+    %{buildroot}%{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
 
 %files
 %license LICENSE

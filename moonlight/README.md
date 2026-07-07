@@ -7,7 +7,7 @@ This is a source-only Fedora RPM package for the `master` branch of
 submodules, and produces two files in the output directory:
 
 - `moonlight-nightly.spec`
-- `moonlight-nightly-<version>-<date>git<commit>.tar.xz`
+- `moonlight-nightly-<commit>.tar.gz`
 
 The generated spec builds the release target with Qt 6/qmake and installs only:
 
@@ -33,7 +33,7 @@ build itself does not access the network.
 
 ```bash
 mkdir -p ~/rpmbuild/{SOURCES,SPECS}
-cp out/moonlight-nightly-*.tar.xz ~/rpmbuild/SOURCES/
+cp out/moonlight-nightly-*.tar.gz ~/rpmbuild/SOURCES/
 cp out/moonlight-nightly.spec ~/rpmbuild/SPECS/
 rpmbuild -bs ~/rpmbuild/SPECS/moonlight-nightly.spec
 copr-cli build <owner>/<project> ~/rpmbuild/SRPMS/*/moonlight-nightly-*.src.rpm
