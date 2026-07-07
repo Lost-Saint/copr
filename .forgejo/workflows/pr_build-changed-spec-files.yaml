@@ -1,0 +1,146 @@
+---
+name: build changed spec files
+on:
+  pull_request:
+    paths:
+      - "**/*.spec"
+      - ".github/spec-build-targets.json"
+      - ".forgejo/workflows/pr_build-changed-spec-files.yaml"
+      - ".dagger/**"
+      - "dagger.json"
+permissions: {}
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  detect-changes:
+    runs-on: docker
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has-changes: ${{ steps.changed-files.outputs.any_changed }}
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: changed spec files
+        id: changed-files
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          output_file="${GITHUB_OUTPUT:-${FORGEJO_OUTPUT:?}}"
+          base_ref="${BASE_REF:-main}"
+          git fetch origin "$base_ref" --depth=1
+          changed_files="$(git diff --name-only "origin/${base_ref}...HEAD" -- \
+            '**/*.spec' \
+            '.github/spec-build-targets.json' \
+            '.forgejo/workflows/pr_build-changed-spec-files.yaml' \
+            '.dagger/**' \
+            'dagger.json' || true)"
+
+          if [ -n "$changed_files" ]; then
+            any_changed=true
+          else
+            any_changed=false
+          fi
+
+          {
+            echo "all_changed_files<<EOF"
+            printf '%s\n' "$changed_files"
+            echo "EOF"
+            echo "any_changed=$any_changed"
+          } >> "$output_file"
+      - name: Set matrix output
+        id: set-matrix
+        # yamllint disable rule:line-length
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          set -euo pipefail
+          output_file="${GITHUB_OUTPUT:-${FORGEJO_OUTPUT:?}}"
+          build_targets_json=$(jq -c . .github/spec-build-targets.json)
+          fedora_versions=$(jq -r '.default_fedora_versions | join(" ")' <<< "$build_targets_json")
+          spec_fedora_versions_json=$(jq -c '.spec_overrides' <<< "$build_targets_json")
+          all_specs=$(git ls-files '*.spec')
+          files="$CHANGED_FILES"
+          include_array='[]'
+          build_all_specs=false
+
+          if [ -n "$files" ]; then
+            for file in $files; do
+              case "$file" in
+                .github/spec-build-targets.json|.forgejo/workflows/pr_build-changed-spec-files.yaml|dagger.json|.dagger/*)
+                  build_all_specs=true
+                  ;;
+              esac
+
+              if [[ "$file" != *.spec ]]; then
+                continue
+              fi
+              if ! [[ "$file" =~ ^[A-Za-z0-9._/-]+\.spec$ ]]; then
+                echo "::error file=$file::Spec file path contains unsupported characters"
+                exit 1
+              fi
+
+              file_fedora_versions="$fedora_versions"
+              override_versions=$(jq -r --arg spec "$file" '.[$spec] // empty | join(" ")' <<< "$spec_fedora_versions_json")
+              if [ -n "$override_versions" ]; then
+                file_fedora_versions="$override_versions"
+              fi
+
+              for fv in $file_fedora_versions; do
+                include_array=$(echo "$include_array" | jq -c \
+                  --arg spec "$file" \
+                  --arg fv "$fv" \
+                  '. += [{"spec-file": $spec, "fedora-version": $fv}]')
+              done
+            done
+          fi
+
+          if [ "$build_all_specs" = true ]; then
+            for file in $all_specs; do
+              file_fedora_versions="$fedora_versions"
+              override_versions=$(jq -r --arg spec "$file" '.[$spec] // empty | join(" ")' <<< "$spec_fedora_versions_json")
+              if [ -n "$override_versions" ]; then
+                file_fedora_versions="$override_versions"
+              fi
+
+              for fv in $file_fedora_versions; do
+                include_array=$(echo "$include_array" | jq -c \
+                  --arg spec "$file" \
+                  --arg fv "$fv" \
+                  '. += [{"spec-file": $spec, "fedora-version": $fv}]')
+              done
+            done
+          fi
+
+          include_array=$(echo "$include_array" | jq -c 'unique_by(."spec-file", ."fedora-version")')
+          matrix_json=$(jq -cn --argjson inc "$include_array" '{"include": $inc}')
+          echo "matrix=$matrix_json" >> "$output_file"
+  # yamllint enable rule:line-length
+  build-spec:
+    name: build ${{ matrix.spec-file }} (F${{ matrix.fedora-version }})
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
+    runs-on: docker
+    permissions:
+      contents: read
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: https://data.forgejo.org/actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: dagger build ${{ matrix.spec-file }} (F${{ matrix.fedora-version }})
+        # yamllint disable-line rule:line-length
+        uses: https://github.com/dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
+        with:
+          version: "0.21.7"
+          verb: call
+          # yamllint disable-line rule:line-length
+          args: build-spec-file --spec-file "${{ matrix.spec-file }}" --fedora-version "${{ matrix.fedora-version }}"

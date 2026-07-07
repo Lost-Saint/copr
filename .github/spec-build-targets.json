@@ -1,6 +1,8 @@
 {
   "default_fedora_versions": ["43", "44", "45"],
-  "spec_overrides": {},
+  "spec_overrides": {
+    "myriad-sun/ghostty.spec": ["44"]
+  },
   "extra_copr_repos": {
     "ghostty/ghostty.spec": ["myriad-sun/ghostty"]
   }
