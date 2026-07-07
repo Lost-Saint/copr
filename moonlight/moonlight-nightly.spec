@@ -84,4 +84,6 @@ appstreamcli validate --no-net \
 
 %changelog
 * Sun Jul 05 2026 Moonlight COPR <noreply@copr.invalid> - 6.1.0^20260705T205209Z.g5e1ac6d-1
-- Nightly snapshot
+- Nightly snapshot.
+- Use upstream qmake install targets with Fedora paths.
+- Validate installed desktop and AppStream metadata from the buildroot.

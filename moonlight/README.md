@@ -36,7 +36,7 @@ mkdir -p ~/rpmbuild/{SOURCES,SPECS}
 cp out/moonlight-nightly-*.tar.gz ~/rpmbuild/SOURCES/
 cp out/moonlight-nightly.spec ~/rpmbuild/SPECS/
 rpmbuild -bs ~/rpmbuild/SPECS/moonlight-nightly.spec
-copr-cli build <owner>/<project> ~/rpmbuild/SRPMS/*/moonlight-nightly-*.src.rpm
+copr-cli build <owner>/<project> ~/rpmbuild/SRPMS/moonlight-nightly-*.src.rpm
 ```
 
 The COPR buildroot must make the listed `pkgconfig(libav*)` capabilities
