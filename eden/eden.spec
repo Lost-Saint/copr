@@ -1,9 +1,14 @@
 %global appid dev.eden_emu.eden
 
 %global toolchain clang
-# Build preset to use. One of: custom, generic, v3, zen2, zen4, native
+# Build preset: x86_64 supports custom, generic, v3, zen2, zen4, native;
+# aarch64 supports custom, generic, armv9, native.
 %if ! %{defined build_preset}
+%ifarch x86_64
 %global build_preset v3
+%else
+%global build_preset generic
+%endif
 %endif
 
 Name:           eden
@@ -16,10 +21,10 @@ URL:            https://eden-emu.dev
 Source0:        https://git.eden-emu.dev/eden-emu/eden/archive/v%{version}.tar.gz
 Source1:        https://github.com/Eden-CI/PGO/releases/download/v020525/eden.profdata
 
+%global pgo_flags -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date
+
 ExclusiveArch:  x86_64 aarch64
 
-BuildRequires:  gcc
-BuildRequires:  gcc-c++
 BuildRequires:  clang
 BuildRequires:  lld
 BuildRequires:  mold
@@ -30,6 +35,8 @@ BuildRequires:  libtool
 BuildRequires:  nasm
 BuildRequires:  jq
 BuildRequires:  cmake(LLVM)
+BuildRequires:  desktop-file-utils
+BuildRequires:  appstream
 # Qt6
 BuildRequires:  cmake(Qt6)
 BuildRequires:  cmake(Qt6Core)
@@ -95,6 +102,7 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
 %autosetup -n eden
 
 %build
+# Fedora's compiler flags already enable LTO; upstream's IPO check fails with them.
 %cmake \
     -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
@@ -111,16 +119,15 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
     -DDYNARMIC_TESTS=OFF \
     -DBUILD_TESTING=OFF \
     -DUSE_FASTER_LINKER=ON \
-    -DENABLE_LTO=ON \
-    -DDYNARMIC_ENABLE_LTO=ON \
+    -DENABLE_LTO=OFF \
     -DYUZU_BUILD_PRESET=%{build_preset} \
     %if %{defined with_renderdoc}
         -DENABLE_RENDERDOC=ON \
     %else
         -DENABLE_RENDERDOC=OFF \
     %endif
-    -DCMAKE_C_FLAGS="%{build_cflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
-    -DCMAKE_CXX_FLAGS="%{build_cxxflags} -fprofile-use=%{SOURCE1} -Wno-backend-plugin -Wno-profile-instr-unprofiled -Wno-profile-instr-out-of-date" \
+    -DCMAKE_C_FLAGS="%{build_cflags} %{pgo_flags}" \
+    -DCMAKE_CXX_FLAGS="%{build_cxxflags} %{pgo_flags}" \
     -Wno-dev
 
 %cmake_build
@@ -140,7 +147,8 @@ EOF
 chmod 755 %{buildroot}%{_bindir}/eden
 
 %check
-# Tests are disabled
+desktop-file-validate dist/%{appid}.desktop
+appstreamcli validate --no-net dist/%{appid}.metainfo.xml
 
 %files
 %license LICENSE.txt
@@ -153,7 +161,7 @@ chmod 755 %{buildroot}%{_bindir}/eden
 %{_datadir}/applications/%{appid}.desktop
 %{_iconsdir}/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/metainfo/%{appid}.metainfo.xml
-%{_datarootdir}/mime/packages/%{appid}.xml
+%{_datadir}/mime/packages/%{appid}.xml
 
 %changelog
 %autochangelog
