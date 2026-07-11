@@ -13,7 +13,7 @@
 
 Name:           eden
 Version:        0.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
