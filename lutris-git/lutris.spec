@@ -32,6 +32,7 @@ Requires:       gnome-desktop3
 Requires:       python3-distro
 Requires:       python3-cairo
 Requires:       python3-certifi
+Recommends:     python3-magic
 
 
 # Tests
