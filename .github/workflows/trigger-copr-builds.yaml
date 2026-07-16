@@ -206,7 +206,7 @@ jobs:
           echo "$INCLUDE_ARRAY" | jq .
           echo "::endgroup::"
 
-          MATRIX_JSON=$(jq -cn --argjson include "$INCLUDE_ARRAY" '{"include": $include}')
+          MATRIX_JSON=$(jq -cn --argjson inc "$INCLUDE_ARRAY" '{"include": $inc}')
           # shellcheck disable=SC2086
           echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
         # yamllint enable rule:line-length

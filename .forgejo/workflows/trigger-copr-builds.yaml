@@ -229,7 +229,7 @@ jobs:
           echo "$INCLUDE_ARRAY" | jq .
           echo "::endgroup::"
 
-          MATRIX_JSON=$(jq -cn --argjson include "$INCLUDE_ARRAY" '{"include": $include}')
+          MATRIX_JSON=$(jq -cn --argjson inc "$INCLUDE_ARRAY" '{"include": $inc}')
           echo "matrix=${MATRIX_JSON}" >> "$output_file"
         # yamllint enable rule:line-length
   trigger-package-build:
