@@ -7,6 +7,8 @@ License:        GPL-3.0-or-later
 URL:            https://github.com/wwmm/easyeffects
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
+ExclusiveArch: x86_64 aarch64
+
 # Preserve upgrade path from the historical PulseEffects package.
 Provides:       pulseeffects = 6.1.1-1
 Obsoletes:      pulseeffects < 6.1.1-1

@@ -145,15 +145,9 @@ jobs:
               exit 1
             fi
 
-            # Extract package name from the 'Name:' field in the spec file
-            # Using grep -Po for Perl-compatible regex to get only the matched
-            # group. Assumes 'Name:' is at the beginning of a line.
-            COPR_PACKAGE_NAME="$(grep -Po '^Name:\s*\K[^[:space:]]+' "$COPR_SPEC_FILE")"
-
-            if [ -z "${COPR_PACKAGE_NAME}" ]; then
-              echo "::warning file=$COPR_SPEC_FILE::Could not extract package name from $COPR_SPEC_FILE"
-              continue # Skip this file if package name couldn't be extracted
-            fi
+            # COPR package names match their spec filenames. Deriving the name
+            # from the path avoids trying to expand RPM macros on the CI host.
+            COPR_PACKAGE_NAME="$(basename "$COPR_SPEC_FILE" .spec)"
             if ! [[ "$COPR_PACKAGE_NAME" =~ ^[A-Za-z0-9._+-]+$ ]]; then
               echo "::error file=$COPR_SPEC_FILE::Package name contains unsupported characters"
               exit 1
@@ -177,14 +171,23 @@ jobs:
             if [ "$SPEC_BUILD_ARCH" = "noarch" ]; then
               SPEC_ARCHES="x86_64"
             elif [ -n "$SPEC_EXCLUSIVE_ARCHES" ]; then
-              SPEC_ARCHES=""
-              if [[ "$SPEC_EXCLUSIVE_ARCHES" == *x86_64* ]]; then
-                SPEC_ARCHES="${SPEC_ARCHES} x86_64"
+              DETECTED_SPEC_ARCHES=""
+              if [[ "$SPEC_EXCLUSIVE_ARCHES" == *'%{qt6_qtwebengine_arches}'* ]]; then
+                DETECTED_SPEC_ARCHES="x86_64 aarch64"
+              else
+                if [[ "$SPEC_EXCLUSIVE_ARCHES" == *x86_64* ]]; then
+                  DETECTED_SPEC_ARCHES="${DETECTED_SPEC_ARCHES} x86_64"
+                fi
+                if [[ "$SPEC_EXCLUSIVE_ARCHES" == *aarch64* ]]; then
+                  DETECTED_SPEC_ARCHES="${DETECTED_SPEC_ARCHES} aarch64"
+                fi
               fi
-              if [[ "$SPEC_EXCLUSIVE_ARCHES" == *aarch64* ]]; then
-                SPEC_ARCHES="${SPEC_ARCHES} aarch64"
+              DETECTED_SPEC_ARCHES="$(xargs <<< "$DETECTED_SPEC_ARCHES")"
+              if [ -n "$DETECTED_SPEC_ARCHES" ]; then
+                SPEC_ARCHES="$DETECTED_SPEC_ARCHES"
+              else
+                echo "::notice file=$COPR_SPEC_FILE::ExclusiveArch uses RPM macros; defaulting to x86_64"
               fi
-              SPEC_ARCHES="$(xargs <<< "$SPEC_ARCHES")"
             elif [ -n "$SPEC_IFARCH_ARCHES" ]; then
               SPEC_ARCHES="$SPEC_IFARCH_ARCHES"
             fi
