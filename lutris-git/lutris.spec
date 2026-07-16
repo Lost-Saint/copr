@@ -1,6 +1,6 @@
-%global commit 07470764e709c1abcda8164e680815d9a2239b3c
+%global commit 8663afc110c7a093f90eed8aa7fecb2829820648
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global git_date 20260712T150457Z
+%global git_date 20260714T234143Z
 %global tag v0.5.22
 %global clean_tag %(echo %{tag} | sed 's/^v//')
 
@@ -9,7 +9,6 @@ Name:           lutris
 Version:        %{clean_tag}^%{git_date}.g%{shortcommit}
 Release:        %autorelease
 Summary:        Install and play any video game easily
-
 
 # Automatically converted from old format: GPLv3 - review is highly recommended.
 License:        GPL-3.0-only
@@ -24,7 +23,6 @@ Patch0:         setup-no-import.patch
 
 BuildRequires:  desktop-file-utils
 BuildRequires:  python3-devel
-BuildRequires:  python3-certifi
 Requires:       cabextract
 Requires:       gtk3, psmisc, xorg-x11-server-Xephyr, xrandr
 Requires:       hicolor-icon-theme
@@ -32,8 +30,6 @@ Requires:       gnome-desktop3
 Requires:       python3-distro
 Requires:       python3-cairo
 Requires:       python3-certifi
-Recommends:     python3-magic
-
 
 # Tests
 BuildRequires:  python3dist(pytest)
@@ -41,6 +37,7 @@ BuildRequires:  gobject-introspection
 BuildRequires:  gtk3-devel
 BuildRequires:  webkit2gtk4.1-devel
 BuildRequires:  python3-cairo-devel
+BuildRequires:  python3-certifi
 
 
 %ifarch x86_64
