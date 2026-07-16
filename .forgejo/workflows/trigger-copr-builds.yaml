@@ -256,7 +256,7 @@ jobs:
 
           echo "::group::Installing COPR CLI dependencies"
           python3 -m venv /tmp/copr-venv
-          /tmp/copr-venv/bin/python -m pip install copr-cli requests_gssapi
+          /tmp/copr-venv/bin/python -m pip install copr-cli requests_gssapi rich
           echo "::endgroup::"
       - name: Configure copr-cli authentication
         env:
