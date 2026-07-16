@@ -24,7 +24,7 @@ env:
   COPR_OWNER: myriad-sun
 jobs:
   matrix_from_changed_specs:
-    runs-on: docker
+    runs-on: codeberg-small
     permissions:
       contents: read
     outputs:
@@ -232,7 +232,7 @@ jobs:
   trigger-package-build:
     needs: matrix_from_changed_specs
     if: needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
-    runs-on: docker
+    runs-on: codeberg-small
     permissions: {}
     strategy:
       matrix: ${{ fromJson(needs.matrix_from_changed_specs.outputs.matrix) }}
