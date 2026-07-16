@@ -247,15 +247,16 @@ jobs:
           echo "::group::Installing system dependencies"
           if command -v sudo >/dev/null 2>&1; then
             sudo apt-get update
-            sudo apt-get install -y python3-dev libkrb5-dev
+            sudo apt-get install -y python3-dev python3-venv libkrb5-dev
           else
             apt-get update
-            apt-get install -y python3-dev libkrb5-dev
+            apt-get install -y python3-dev python3-venv libkrb5-dev
           fi
           echo "::endgroup::"
 
           echo "::group::Installing COPR CLI dependencies"
-          python3 -m pip install copr-cli requests_gssapi
+          python3 -m venv /tmp/copr-venv
+          /tmp/copr-venv/bin/python -m pip install copr-cli requests_gssapi
           echo "::endgroup::"
       - name: Configure copr-cli authentication
         env:
@@ -280,7 +281,7 @@ jobs:
           done
 
           echo "::notice file=${PROJECT}/${PACKAGE}.spec::Building package ${PACKAGE} in project ${PROJECT}"
-          copr-cli build-package \
+          /tmp/copr-venv/bin/copr-cli build-package \
             "${CHROOT_ARGS[@]}" \
             --name "${PACKAGE}" \
             "${COPR_OWNER}/${PROJECT}"
