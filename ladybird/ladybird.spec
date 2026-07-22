@@ -1,8 +1,14 @@
 %global commit         9b6432a9a0791333828938ee19170595811eeb1d
 %global shortcommit    %(c=%{commit}; echo ${c:0:7})
-# Bump this alongside %%commit -- it just records when you took the
-# snapshot, doesn't need to match the commit date exactly.
+
+# Bump this alongside %%commit -- it records when the snapshot was taken
+# and does not need to match the commit date exactly.
 %global snapshot_date  20260721
+
+# Ladybird is a very large, mostly static C++ build. Fedora's default LTO
+# flags cause GCC's lto1 process to exceed the memory available on many
+# Copr builders.
+%global _lto_cflags %{nil}
 
 Name:           ladybird
 Version:        0^%{snapshot_date}git%{shortcommit}
@@ -42,7 +48,7 @@ BuildRequires:  perl-IPC-Cmd
 BuildRequires:  perl-lib
 BuildRequires:  perl-Time-Piece
 
-# Linux graphics/platform headers
+# Linux graphics and platform headers
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  zlib-ng-compat-static
@@ -54,11 +60,11 @@ BuildRequires:  qt6-qtwayland-devel >= 6.9
 
 # Optional but recommended; enables the Vulkan DMA-BUF shader path
 BuildRequires:  glslang
+
 Recommends:     liberation-sans-fonts
 
-# Runtime library dependencies (Qt6, etc.) are picked up automatically by
-# RPM's dependency generator from the linked binaries, so no manual
-# Requires: should be needed here.
+# Runtime library dependencies such as Qt 6 are detected automatically by
+# RPM's dependency generator from the linked binaries.
 
 %description
 Ladybird is an independent web browser and engine built from scratch on
@@ -68,12 +74,29 @@ WebKit.
 %prep
 %autosetup -n %{name}-%{commit}
 
+# Ladybird enables -march=native for normal native builds. This is unsuitable
+# for distribution packages because it can generate binaries that require CPU
+# features present on the build host but absent on users' systems.
+#
+# Fail the build if the expected option is not present, so an upstream change
+# does not silently leave -march=native enabled.
+grep -Fq 'add_cxx_compile_options(-march=native)' \
+    Meta/CMake/compile_options.cmake
+
+sed -i \
+    '/add_cxx_compile_options(-march=native)/d' \
+    Meta/CMake/compile_options.cmake
+
 %build
 export LADYBIRD_SOURCE_DIR="$PWD"
 export VCPKG_ROOT="$PWD/Build/vcpkg"
-export VCPKG_MAX_CONCURRENCY="%{_smp_build_ncpus}"
 
-# Clones vcpkg and checks out the baseline pinned by vcpkg.json.
+# Keep both the vcpkg dependency build and the main Ladybird build from
+# exhausting memory on Copr workers.
+export VCPKG_MAX_CONCURRENCY=4
+export CMAKE_BUILD_PARALLEL_LEVEL=4
+
+# Clone vcpkg and check out the baseline pinned by vcpkg.json.
 python3 Meta/Utils/build_vcpkg.py
 
 %cmake \
@@ -97,10 +120,11 @@ DESTDIR="%{buildroot}" \
     --component ladybird_Runtime
 
 %check
-# Ladybird's test suite (LibWeb layout tests, Test262, etc.) is large,
-# needs a display/GPU, and is not well suited to a chroot build
-# environment, so it is intentionally not run here. Enable selectively
-# with ctest if you need it:
+# Ladybird's test suite, including LibWeb layout tests and Test262, is large
+# and may require a display or GPU. It is not run in the chroot build
+# environment.
+#
+# Enable individual tests selectively when suitable:
 # %%ctest
 
 %files
