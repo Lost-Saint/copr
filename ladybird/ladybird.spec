@@ -13,25 +13,62 @@ License:        BSD-2-Clause
 URL:            https://ladybird.org
 Source0:        https://github.com/LadybirdBrowser/ladybird/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 
-# Ladybird requires a very recent C++23 toolchain (Clang 21 or GCC 14+)
-# and CMake 3.30+; adjust/pin these if your COPR chroot doesn't provide
-# them by default.
+ExclusiveArch:  x86_64 aarch64
+
+%ifarch aarch64
+%global vcpkg_triplet arm64-linux
+%else
+%global vcpkg_triplet x64-linux
+%endif
+
 BuildRequires:  cmake >= 3.30
 BuildRequires:  ninja-build
-BuildRequires:  gcc-c++
+BuildRequires:  make
+
+# Ladybird requires GCC 14+ or Clang 19+.
+BuildRequires:  gcc-c++ >= 14
+
+BuildRequires:  python3
 BuildRequires:  rust
 BuildRequires:  cargo
-BuildRequires:  nasm
+
+# vcpkg bootstrap and downloads
+BuildRequires:  git-core
+BuildRequires:  curl
+BuildRequires:  tar
+BuildRequires:  unzip
+BuildRequires:  zip
+
+# General build tools used by vcpkg ports
+BuildRequires:  pkgconf-pkg-config
 BuildRequires:  autoconf
-BuildRequires:  automake
 BuildRequires:  autoconf-archive
+BuildRequires:  automake
 BuildRequires:  libtool
-BuildRequires:  pkgconfig(Qt6Core)
-BuildRequires:  pkgconfig(Qt6Gui)
-BuildRequires:  pkgconfig(Qt6Widgets)
-BuildRequires:  pkgconfig(Qt6Network)
-BuildRequires:  qt6-qtbase-devel
-BuildRequires:  qt6-qtwayland-devel
+BuildRequires:  nasm
+BuildRequires:  ccache
+BuildRequires:  patchelf
+
+# Required by vcpkg/OpenSSL and other ports
+BuildRequires:  perl-FindBin
+BuildRequires:  perl-IPC-Cmd
+BuildRequires:  perl-lib
+BuildRequires:  perl-Time-Piece
+
+# Fedora/Linux platform dependencies
+BuildRequires:  libdrm-devel
+BuildRequires:  libglvnd-devel
+BuildRequires:  ncurses-devel
+BuildRequires:  zlib-ng-compat-static
+BuildRequires:  liberation-sans-fonts
+
+# Linux uses the system Qt build
+BuildRequires:  qt6-qtbase-devel >= 6.9
+BuildRequires:  qt6-qttools-devel >= 6.9
+BuildRequires:  qt6-qtwayland-devel >= 6.9
+
+# Optional but recommended; enables the Vulkan DMA-BUF shader path
+BuildRequires:  glslang
 
 # Runtime library dependencies (Qt6, etc.) are picked up automatically by
 # RPM's dependency generator from the linked binaries, so no manual
@@ -46,11 +83,32 @@ WebKit.
 %autosetup -n %{name}-%{commit}
 
 %build
-%cmake
+export LADYBIRD_SOURCE_DIR="$PWD"
+export VCPKG_ROOT="$PWD/Build/vcpkg"
+export VCPKG_MAX_CONCURRENCY="%{_smp_build_ncpus}"
+
+# Clones vcpkg and checks out the baseline pinned by vcpkg.json.
+python3 Meta/Utils/build_vcpkg.py
+
+%cmake \
+    -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
+    -DVCPKG_OVERLAY_TRIPLETS="$PWD/Meta/CMake/vcpkg/distribution-triplets" \
+    -DVCPKG_TARGET_TRIPLET=%{vcpkg_triplet} \
+    -DVCPKG_HOST_TRIPLET=%{vcpkg_triplet} \
+    -DVCPKG_INSTALL_OPTIONS=--no-print-usage \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DBUILD_TESTING=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DLADYBIRD_GUI_FRAMEWORK=Qt \
+    -DENABLE_INSTALL_FREEDESKTOP_FILES=ON \
+    -DENABLE_LTO_FOR_RELEASE=OFF
+
 %cmake_build
 
 %install
-%cmake_install
+DESTDIR="%{buildroot}" \
+    cmake --install "%{_vpath_builddir}" \
+    --component ladybird_Runtime
 
 %check
 # Ladybird's test suite (LibWeb layout tests, Test262, etc.) is large,
@@ -62,11 +120,21 @@ WebKit.
 %files
 %license LICENSE
 %doc README.md
-%{_bindir}/%{name}
-%{_libdir}/lib*.so.*
-%{_datadir}/applications/*.desktop
-%{_datadir}/icons/hicolor/*/apps/%{name}.*
-%{_datadir}/%{name}/
+
+%{_bindir}/Ladybird
+
+%{_libexecdir}/Compositor
+%{_libexecdir}/ImageDecoder
+%{_libexecdir}/RequestServer
+%{_libexecdir}/WebContent
+%{_libexecdir}/WebWorker
+
+%{_datadir}/Lagom/
+
+%{_datadir}/applications/org.ladybird.Ladybird.desktop
+%{_datadir}/icons/hicolor/scalable/apps/org.ladybird.Ladybird.svg
+%{_datadir}/dbus-1/services/org.ladybird.Ladybird.service
+%{_datadir}/metainfo/org.ladybird.Ladybird.metainfo.xml
 
 %changelog
 %autochangelog
