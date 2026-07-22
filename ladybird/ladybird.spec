@@ -1,19 +1,15 @@
-# Fedora spec file for Ladybird, intended for building on COPR.
-#
-# Ladybird has no tagged upstream releases as of this writing (still
-# pre-alpha, git-only), so this packages a git snapshot using Fedora's
-# snapshot-versioning scheme. Update %%global commit (and snapshot_date)
-# to a real commit each time you cut a new build. See "Assumptions" below
-# the spec for important caveats before trying to actually build this.
-#
-# Release/%%changelog use rpmautospec (%%autorelease/%%autochangelog),
-# which reads the packaging repo's own git history -- this only works
-# correctly when COPR builds via the SCM method (a git repo containing
-# this spec), not a plain spec+tarball/SRPM upload.
-
-%global commit        0000000000000000000000000000000000000000
+# %%commit is resolved to the current tip of master when the spec is
+# parsed (i.e. every SRPM build), so there's no hash to hand-edit before
+# each build. This does mean builds are NOT reproducible -- two builds
+# on different days can pick up different upstream commits. It also
+# needs network access at SRPM-generation time, same as %%build (see the
+# COPR networking note below). If you want a fixed, reproducible
+# snapshot instead, replace this with a literal 40-character commit
+# hash, e.g.:
+#   %%global commit c1b0e180ba64d2ea7e815e2c2e93087ae9a26500
+%global commit         %(git ls-remote https://github.com/LadybirdBrowser/ladybird.git HEAD | cut -f1)
 %global shortcommit    %(c=%{commit}; echo ${c:0:7})
-%global snapshot_date  20260721
+%global snapshot_date  %(date +%Y%m%d)
 
 Name:           ladybird
 Version:        0^%{snapshot_date}git%{shortcommit}
@@ -23,15 +19,6 @@ Summary:        Truly independent web browser and engine
 License:        BSD-2-Clause
 URL:            https://ladybird.org
 Source0:        https://github.com/LadybirdBrowser/ladybird/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
-
-# Ladybird's CMake build fetches and compiles most of its third-party
-# dependencies (Skia, simdjson, simdutf, etc.) via vcpkg during %%build,
-# which needs internet access. Mock has no network access during builds
-# by default; on COPR you must explicitly enable it for this project:
-#   Project Settings -> General -> Networking, or
-#   copr-cli create/edit-package ... --enable-net on
-# This is a COPR-only accommodation, not something official Fedora
-# builds (Koji) allow.
 
 # Ladybird requires a very recent C++23 toolchain (Clang 21 or GCC 14+)
 # and CMake 3.30+; adjust/pin these if your COPR chroot doesn't provide
