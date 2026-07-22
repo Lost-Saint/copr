@@ -23,52 +23,38 @@ ExclusiveArch:  x86_64 aarch64
 
 BuildRequires:  cmake >= 3.30
 BuildRequires:  ninja-build
+BuildRequires:  gcc-c++ >= 14
 BuildRequires:  make
 
-# Ladybird requires GCC 14+ or Clang 19+.
-BuildRequires:  gcc-c++ >= 14
-
 BuildRequires:  python3
-BuildRequires:  rust
+BuildRequires:  git-core
 BuildRequires:  cargo
 
-# vcpkg bootstrap and downloads
-BuildRequires:  git-core
-BuildRequires:  curl
-BuildRequires:  tar
-BuildRequires:  unzip
-BuildRequires:  zip
-
-# General build tools used by vcpkg ports
-BuildRequires:  pkgconf-pkg-config
-BuildRequires:  autoconf
+# vcpkg port build tools
 BuildRequires:  autoconf-archive
-BuildRequires:  automake
 BuildRequires:  libtool
 BuildRequires:  nasm
-BuildRequires:  ccache
 BuildRequires:  patchelf
 
-# Required by vcpkg/OpenSSL and other ports
+# OpenSSL's vcpkg port
 BuildRequires:  perl-FindBin
 BuildRequires:  perl-IPC-Cmd
 BuildRequires:  perl-lib
 BuildRequires:  perl-Time-Piece
 
-# Fedora/Linux platform dependencies
-BuildRequires:  libdrm-devel
-BuildRequires:  libglvnd-devel
+# Linux graphics/platform headers
+BuildRequires:  mesa-libGL-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  zlib-ng-compat-static
-BuildRequires:  liberation-sans-fonts
 
-# Linux uses the system Qt build
+# System Qt frontend
 BuildRequires:  qt6-qtbase-devel >= 6.9
 BuildRequires:  qt6-qttools-devel >= 6.9
 BuildRequires:  qt6-qtwayland-devel >= 6.9
 
 # Optional but recommended; enables the Vulkan DMA-BUF shader path
 BuildRequires:  glslang
+Recommends:     liberation-sans-fonts
 
 # Runtime library dependencies (Qt6, etc.) are picked up automatically by
 # RPM's dependency generator from the linked binaries, so no manual
