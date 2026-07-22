@@ -1,15 +1,8 @@
-# %%commit is resolved to the current tip of master when the spec is
-# parsed (i.e. every SRPM build), so there's no hash to hand-edit before
-# each build. This does mean builds are NOT reproducible -- two builds
-# on different days can pick up different upstream commits. It also
-# needs network access at SRPM-generation time, same as %%build (see the
-# COPR networking note below). If you want a fixed, reproducible
-# snapshot instead, replace this with a literal 40-character commit
-# hash, e.g.:
-#   %%global commit c1b0e180ba64d2ea7e815e2c2e93087ae9a26500
-%global commit         %(git ls-remote https://github.com/LadybirdBrowser/ladybird.git HEAD | cut -f1)
+%global commit         9b6432a9a0791333828938ee19170595811eeb1d
 %global shortcommit    %(c=%{commit}; echo ${c:0:7})
-%global snapshot_date  %(date +%Y%m%d)
+# Bump this alongside %%commit -- it just records when you took the
+# snapshot, doesn't need to match the commit date exactly.
+%global snapshot_date  20260721
 
 Name:           ladybird
 Version:        0^%{snapshot_date}git%{shortcommit}
