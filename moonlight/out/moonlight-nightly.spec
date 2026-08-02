@@ -6,7 +6,7 @@
 
 Name:           moonlight-nightly
 Version:        %{clean_tag}^%{git_date}.g%{shortcommit}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Nightly Moonlight game-streaming client
 
 License:        GPL-3.0-or-later
