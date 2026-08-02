@@ -1,6 +1,6 @@
-%global commit 5e1ac6df87d44f01785b01c8b5258235410bca76
+%global commit 546cb72e32e5ac04bbc7e0b3a254176e5696685a
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global git_date 20260705T205209Z
+%global git_date 20260727T054837Z
 %global tag v6.1.0
 %global clean_tag %(echo %{tag} | sed 's/^v//')
 
@@ -85,7 +85,7 @@ appstreamcli validate --no-net \
 %{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
 
 %changelog
-* Sun Jul 05 2026 Moonlight COPR <noreply@copr.invalid> - 6.1.0^20260705T205209Z.g5e1ac6d-2
+* Mon Jul 27 2026 Moonlight COPR <noreply@copr.invalid> - 6.1.0^20260727T054837Z.g546cb72-2
 - Nightly snapshot.
 - Use upstream qmake install targets with Fedora paths.
 - Validate installed desktop and AppStream metadata from the buildroot.
