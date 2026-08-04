@@ -67,7 +67,7 @@ License:	%{shrink:
 		}
 URL:            https://www.blender.org
 
-Source0:        https://download.%{name}.org/source/%{name}-%{version}.tar.xz
+Source0: https://github.com/blender/blender/archive/refs/tags/v5.2.0.tar.gz
 # Custom RPM macros
 Source1:        %{name}-macros-source
 
