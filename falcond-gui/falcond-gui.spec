@@ -21,7 +21,6 @@ Requires:       falcond
 Requires:       falcond-profiles
 Requires:       libadwaita
 Requires(post): gtk-update-icon-cache
-Packager:       Lost Saint <lost.endanger051@8shield.net>
 
 %description
 falcond-gui provides a user-friendly graphical interface for managing falcond. It allows users to view the status of the daemon and customize its behavior.
@@ -52,5 +51,4 @@ install -Dm644 res/%{appid}.png -t %{buildroot}%{_hicolordir}/512x512/apps/
 %{_appsdir}/%{appid}.desktop
 
 %changelog
-* Thu Jan 1 2026 Gilver E. <roachy@fyralabs.com> - 1.0.0-1
-- Initial package
+%autochangelog

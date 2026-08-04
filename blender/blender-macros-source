@@ -1,0 +1,7 @@
+%blender_api @VERSION@
+
+%blender_datadir %{_datadir}/blender/%{blender_api}
+%blender_libdir %{_libdir}/blender/%{blender_api}
+%blender_extensions %{blender_datadir}/scripts/addons_core
+%blender_modules %{blender_datadir}/scripts/modules
+%blender_preset %{blender_datadir}/scripts/presets
