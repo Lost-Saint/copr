@@ -13,7 +13,7 @@
 
 Name:           eden
 Version:        0.2.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Nintendo Switch emulator/debugger (Eden)
 License:        GPL-3.0-or-later
 URL:            https://eden-emu.dev
@@ -51,7 +51,7 @@ BuildRequires:  cmake(Qt6WebEngineCore)
 BuildRequires:  cmake(Qt6WebEngineWidgets)
 BuildRequires:  cmake(Qt6Charts)
 # FFmpeg
-BuildRequires:  ffmpeg-devel
+BuildRequires:  ffmpeg-free-devel
 # Vulkan
 BuildRequires:  cmake(SPIRV-Headers)
 BuildRequires:  cmake(SPIRV-Tools)

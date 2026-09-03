@@ -178,11 +178,7 @@ jobs:
               fi
 
               for SPEC_ARCH in $SPEC_ARCHES; do
-                if [ "$FEDORA_VERSION" = "45" ]; then
-                  CHROOTS="${CHROOTS} fedora-rawhide-${SPEC_ARCH}"
-                else
-                  CHROOTS="${CHROOTS} fedora-${FEDORA_VERSION}-${SPEC_ARCH}"
-                fi
+                CHROOTS="${CHROOTS} fedora-${FEDORA_VERSION}-${SPEC_ARCH}"
               done
             done
             CHROOTS="$(xargs <<< "$CHROOTS")"
