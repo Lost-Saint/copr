@@ -194,6 +194,37 @@ func (m *Copr) BuildSpecFile(
 		Stdout(ctx)
 }
 
+// ValidateSpec checks that a spec parses before it is submitted to COPR.
+func (m *Copr) ValidateSpec(
+	ctx context.Context,
+	// repository root
+	// +defaultPath="/"
+	source *dagger.Directory,
+	// spec file to be built (e.g. "zed/zed.spec")
+	specFile string,
+) (string, error) {
+	cfg, err := loadBuildTargetConfig(ctx, source)
+	if err != nil {
+		return "", err
+	}
+	versions := fedoraVersionsForSpec(cfg, specFile)
+	if len(versions) == 0 {
+		return "", fmt.Errorf("no Fedora versions configured for %s", specFile)
+	}
+	if err := validateInputs(versions[0], specFile); err != nil {
+		return "", err
+	}
+
+	return dag.Container().
+		From(fmt.Sprintf("quay.io/fedora/fedora:%s", versions[0])).
+		WithExec([]string{"dnf", "install", "-y", "rpm-build"}).
+		WithMountedDirectory("/workspace", source).
+		WithWorkdir("/workspace").
+		WithExec([]string{"rpmspec", "-q", "--srpm", specFile}).
+		WithExec([]string{"echo", fmt.Sprintf("✓ %s", specFile)}).
+		Stdout(ctx)
+}
+
 // buildResult holds the outcome of a single spec file build.
 type buildResult struct {
 	specFile string

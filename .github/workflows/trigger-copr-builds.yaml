@@ -22,6 +22,7 @@ on:
 permissions: {}
 env:
   COPR_OWNER: myriad-sun
+  COPR_PROJECT: lazarus
 jobs:
   matrix_from_changed_specs:
     runs-on: ubuntu-latest
@@ -113,15 +114,6 @@ jobs:
 
             SEEN_SPEC_FILES="${SEEN_SPEC_FILES}${COPR_SPEC_FILE}"$'\n'
 
-            COPR_PROJECT="$(dirname "$COPR_SPEC_FILE")"
-            # Remove potential ./ prefix if present
-            #   (e.g. if find results included it)
-            COPR_PROJECT="${COPR_PROJECT#./}"
-            if ! [[ "$COPR_PROJECT" =~ ^[A-Za-z0-9._/-]+$ ]]; then
-              echo "::error file=$COPR_SPEC_FILE::Project path contains unsupported characters"
-              exit 1
-            fi
-
             # COPR package names match their spec filenames. Deriving the name
             # from the path avoids trying to expand RPM macros on the CI host.
             COPR_PACKAGE_NAME="$(basename "$COPR_SPEC_FILE" .spec)"
@@ -196,10 +188,10 @@ jobs:
             CHROOTS="$(xargs <<< "$CHROOTS")"
 
             INCLUDE_ARRAY=$(echo "$INCLUDE_ARRAY" | jq -c \
-              --arg project "$COPR_PROJECT" \
+              --arg spec "$COPR_SPEC_FILE" \
               --arg package "$COPR_PACKAGE_NAME" \
               --arg chroots "$CHROOTS" \
-              '. += [{"project": $project, "package": $package, "chroots": $chroots}]')
+              '. += [{"spec": $spec, "package": $package, "chroots": $chroots}]')
           done
 
           echo "::group::Generated build matrix"
@@ -210,10 +202,33 @@ jobs:
           # shellcheck disable=SC2086
           echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
         # yamllint enable rule:line-length
-  trigger-package-build:
+  validate-package:
     needs: matrix_from_changed_specs
     if: needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
+    name: validate ${{ matrix.spec }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      matrix: ${{ fromJson(needs.matrix_from_changed_specs.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Dagger validate ${{ matrix.spec }}
+        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
+        with:
+          version: "0.21.7"
+          verb: call
+          args: validate-spec --spec-file "${{ matrix.spec }}"
+
+  trigger-package-build:
+    needs: [matrix_from_changed_specs, validate-package]
+    if: needs.matrix_from_changed_specs.outputs.matrix != '{"include":[]}'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions: {}
     strategy:
       matrix: ${{ fromJson(needs.matrix_from_changed_specs.outputs.matrix) }}
@@ -244,7 +259,6 @@ jobs:
         env:
           CHROOTS: ${{ matrix.chroots }}
           PACKAGE: ${{ matrix.package }}
-          PROJECT: ${{ matrix.project }}
         run: |
           set -euo pipefail
           declare -a CHROOT_ARGS=()
@@ -252,11 +266,12 @@ jobs:
             CHROOT_ARGS+=(--chroot "$CHROOT")
           done
 
-          echo "::notice file=${PROJECT}/${PACKAGE}.spec::Building package ${PACKAGE} in project ${PROJECT}"
+          echo "::notice::Building package ${PACKAGE} in ${COPR_OWNER}/${COPR_PROJECT}"
           copr-cli build-package \
             "${CHROOT_ARGS[@]}" \
             --name "${PACKAGE}" \
-            "${COPR_OWNER}/${PROJECT}"
+            --nowait \
+            "${COPR_OWNER}/${COPR_PROJECT}"
         # yamllint enable rule:line-length
       - name: Cleanup configuration
         if: always()
