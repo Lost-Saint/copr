@@ -1,0 +1,48 @@
+---
+name: update lutris git snapshot
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: update-lutris-git
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Update Lutris snapshot
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          COMMIT_JSON=$(gh api repos/lutris/lutris/commits/master)
+          COMMIT=$(jq -r .sha <<< "$COMMIT_JSON")
+          GIT_DATE=$(date -u -d "$(jq -r .commit.committer.date <<< "$COMMIT_JSON")" +%Y%m%dT%H%M%SZ)
+          TAG=$(gh api repos/lutris/lutris/releases/latest --jq .tag_name)
+          scripts/update-lutris-git.sh "$COMMIT" "$GIT_DATE" "$TAG"
+
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --check
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Commit and build
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add lutris-git/lutris.spec
+          git commit -m "chore(lutris): update git snapshot"
+          git push
+          gh workflow run trigger-copr-builds.yaml --ref main \
+            -f spec_file=lutris-git/lutris.spec
