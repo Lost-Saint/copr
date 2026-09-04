@@ -255,8 +255,19 @@ jobs:
         env:
           CHROOTS: ${{ matrix.chroots }}
           PACKAGE: ${{ matrix.package }}
+          SPEC: ${{ matrix.spec }}
         run: |
           set -euo pipefail
+          if ! copr-cli get-package "${COPR_OWNER}/${COPR_PROJECT}" --name "${PACKAGE}" &>/dev/null; then
+            copr-cli add-package-scm \
+              --name "${PACKAGE}" \
+              --clone-url "https://github.com/Lost-Saint/copr.git" \
+              --commit main \
+              --subdir "$(dirname "${SPEC}")" \
+              --spec "$(basename "${SPEC}")" \
+              "${COPR_OWNER}/${COPR_PROJECT}"
+          fi
+
           declare -a CHROOT_ARGS=()
           for CHROOT in ${CHROOTS}; do
             CHROOT_ARGS+=(--chroot "$CHROOT")
