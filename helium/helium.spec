@@ -2,21 +2,15 @@
 
 Name:           helium
 Version:        0.16.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Private, fast, and honest web browser
 
 License:        GPL-3.0-only
 URL:            https://github.com/imputnet/helium-linux
 
-%ifarch x86_64
 Source0:        %{url}/releases/download/%{version}/helium-%{version}-x86_64_linux.tar.xz
-%endif
-
-%ifarch aarch64
-Source0:        %{url}/releases/download/%{version}/helium-%{version}-arm64_linux.tar.xz
-%endif
-
-Source1:        https://raw.githubusercontent.com/imputnet/helium-linux/%{version}/package/net.imput.helium.metainfo.xml
+Source1:        %{url}/releases/download/%{version}/helium-%{version}-arm64_linux.tar.xz
+Source2:        https://raw.githubusercontent.com/imputnet/helium-linux/%{version}/package/net.imput.helium.metainfo.xml
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -35,7 +29,7 @@ Helium is a private, fast, and honest Chromium-based web browser.
 %endif
 
 %ifarch aarch64
-%setup -q -n helium-%{version}-arm64_linux
+%setup -q -T -b 1 -n helium-%{version}-arm64_linux
 %endif
 
 
@@ -61,7 +55,7 @@ install -Dm0644 helium.desktop \
 install -Dm0644 product_logo_256.png \
     %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/helium.png
 
-install -Dm0644 %{SOURCE1} \
+install -Dm0644 %{SOURCE2} \
     %{buildroot}%{_metainfodir}/net.imput.helium.metainfo.xml
 
 
