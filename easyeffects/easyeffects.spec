@@ -1,5 +1,5 @@
 Name:           easyeffects
-Version:        8.2.8
+Version:        8.2.9
 Release:        1%{?dist}
 Summary:        Audio effects and filters for PipeWire applications
 

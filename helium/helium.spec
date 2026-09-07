@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           helium
-Version:        0.16.3.1
+Version:        0.16.5.1
 Release:        2%{?dist}
 Summary:        Private, fast, and honest web browser
 
