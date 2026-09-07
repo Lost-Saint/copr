@@ -1,86 +1,149 @@
 ---
-name: update package version
+name: update package versions
 on:
-  workflow_dispatch:
-    inputs:
-      package:
-        description: Package to update
-        required: true
-        type: choice
-        options:
-          - android-studio
-          - cava
-          - easyeffects
-          - eden
-          - ghostty
-          - gtk4-layer-shell
-          - helium
-          - herdr
-          - zed
-          - zen-browser
-      version:
-        description: New upstream version (without v prefix)
-        required: true
-        type: string
+  schedule:
+    - cron: "43 7 * * *"
 permissions:
   contents: write
   actions: write
+concurrency:
+  group: update-package-versions
+  cancel-in-progress: false
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - name: Update specs
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check and update versions
         id: update
         env:
-          PACKAGE: ${{ inputs.package }}
-          VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          [[ "$VERSION" =~ ^[0-9][0-9A-Za-z._+~-]*$ ]] || {
-            echo "::error::Invalid version: $VERSION"
-            exit 1
+
+          github_release() {
+            gh api "repos/$1/releases/latest" --jq .tag_name | sed 's/^v//'
           }
 
-          case "$PACKAGE" in
-            android-studio) SPECS="android-studio/android-studio.spec" ;;
-            cava) SPECS="cava/cava.spec" ;;
-            easyeffects) SPECS="easyeffects/easyeffects.spec" ;;
-            eden) SPECS="eden/eden.spec" ;;
-            ghostty) SPECS="ghostty/ghostty.spec" ;;
-            gtk4-layer-shell) SPECS="ghostty/gtk4-layer-shell.spec" ;;
-            helium) SPECS="helium/helium.spec" ;;
-            herdr) SPECS="herdr/herdr.spec" ;;
-            zed) SPECS="zed/zed.spec zed/zed-aarch64.spec" ;;
-            zen-browser) SPECS="zen-browser/zen-browser.spec zen-browser/zen-browser-aarch64.spec" ;;
-            *) echo "::error::Unknown package: $PACKAGE"; exit 1 ;;
-          esac
+          github_tag() {
+            gh api "repos/$1/tags?per_page=100" --jq '.[].name' |
+              sed 's/^v//' |
+              grep -E '^[0-9]+(\.[0-9]+)*$' |
+              sort -V |
+              tail -n 1
+          }
 
-          for SPEC in $SPECS; do
-            sed -Ei "0,/^Version:/s/^Version:.*/Version:        $VERSION/" "$SPEC"
-            sed -Ei '0,/^Release:[[:space:]]*[0-9]+/s/^Release:.*/Release:        1%{?dist}/' "$SPEC"
-          done
+          update() {
+            local package="$1" version="$2" suffix="${3:-}"
+            local specs current current_suffix newest spec
+
+            [[ "$version" =~ ^[0-9][0-9A-Za-z._+~-]*$ ]] || {
+              echo "::error::$package returned an invalid version: $version"
+              exit 1
+            }
+
+            case "$package" in
+              android-studio) specs="android-studio/android-studio.spec" ;;
+              cava) specs="cava/cava.spec" ;;
+              easyeffects) specs="easyeffects/easyeffects.spec" ;;
+              eden) specs="eden/eden.spec" ;;
+              ghostty) specs="ghostty/ghostty.spec" ;;
+              gtk4-layer-shell) specs="ghostty/gtk4-layer-shell.spec" ;;
+              helium) specs="helium/helium.spec" ;;
+              herdr) specs="herdr/herdr.spec" ;;
+              zed) specs="zed/zed.spec zed/zed-aarch64.spec" ;;
+              zed-lost-saint) specs="zed-lost-saint/zed-lost-saint.spec" ;;
+              zen-browser) specs="zen-browser/zen-browser.spec zen-browser/zen-browser-aarch64.spec" ;;
+              *) echo "::error::Unknown package: $package"; exit 1 ;;
+            esac
+
+            current=$(sed -nE '0,/^Version:/s/^Version:[[:space:]]*//p' ${specs%% *})
+            if [ "$current" != "$version" ]; then
+              newest=$(printf '%s\n%s\n' "$current" "$version" | sort -V | tail -n 1)
+              if [ "$newest" != "$version" ]; then
+                echo "::notice::$package is ahead of upstream ($current > $version)"
+                return
+              fi
+            fi
+
+            if [ "$current" = "$version" ]; then
+              if [ "$package" != android-studio ] || [ -z "$suffix" ]; then
+                return
+              fi
+              current_suffix=$(sed -nE 's/^%define suffixS[[:space:]]+//p' $specs)
+              [ "$current_suffix" != "$suffix" ] || return
+            fi
+
+            if [ "$current" != "$version" ]; then
+              for spec in $specs; do
+                sed -Ei "0,/^Version:/s/^(Version:[[:space:]]*).*/\\1$version/" "$spec"
+                sed -Ei '0,/^Release:[[:space:]]*[0-9]+/s/^Release:.*/Release:        1%{?dist}/' "$spec"
+              done
+            fi
+
+            if [ "$package" = android-studio ] && [ -n "$suffix" ]; then
+              [[ "$suffix" =~ ^[a-z0-9-]+$ ]] || {
+                echo "::error::Invalid Android Studio archive suffix: $suffix"
+                exit 1
+              }
+              sed -Ei "s/^%define suffixS .*/%define suffixS $suffix/" $specs
+            fi
+          }
+
+          studio_url() {
+            curl --retry 3 -fsSL https://developer.android.com/studio |
+              grep -oE 'https://[^" ]+/android/studio/ide-zips/[0-9.]+/android-studio-[a-z0-9-]+-linux\.tar\.gz' |
+              sed -n '1p'
+          }
+
+          STUDIO_URL=$(studio_url)
+          STUDIO_VERSION=$(sed -E 's|.*/ide-zips/([^/]+)/.*|\1|' <<< "$STUDIO_URL")
+          STUDIO_SUFFIX=$(sed -E 's|.*/android-studio-(.*)-linux\.tar\.gz|\1|' <<< "$STUDIO_URL")
+
+          update android-studio "$STUDIO_VERSION" "$STUDIO_SUFFIX"
+          update cava "$(github_release karlstav/cava)"
+          update easyeffects "$(github_tag wwmm/easyeffects)"
+          update eden "$(curl --retry 3 -fsSL https://git.eden-emu.dev/api/v1/repos/eden-emu/eden/releases/latest | jq -r .tag_name | sed 's/^v//')"
+          update ghostty "$(github_tag ghostty-org/ghostty)"
+          update gtk4-layer-shell "$(github_release wmww/gtk4-layer-shell)"
+          update helium "$(github_release imputnet/helium-linux)"
+          update herdr "$(github_release herdrdev/herdr)"
+          update zed "$(github_release zed-industries/zed)"
+          update zed-lost-saint "$(github_release Lost-Saint/zed)"
+          update zen-browser "$(github_release zen-browser/desktop)"
+
+          SPECS=$(git diff --name-only --diff-filter=ACM -- '*.spec')
+          if [ -z "$SPECS" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           git diff --check
-          git diff --exit-code && {
-            echo "::error::$PACKAGE is already at $VERSION"
-            exit 1
-          }
-          echo "specs=$SPECS" >> "$GITHUB_OUTPUT"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          {
+            echo "specs<<EOF"
+            printf '%s\n' "$SPECS"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Commit and build
+      - name: Commit and build changed specs
+        if: steps.update.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PACKAGE: ${{ inputs.package }}
-          VERSION: ${{ inputs.version }}
           SPECS: ${{ steps.update.outputs.specs }}
         run: |
           set -euo pipefail
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -- $SPECS
-          git commit -m "chore($PACKAGE): update to $VERSION"
+
+          while IFS= read -r spec; do
+            git add -- "$spec"
+          done <<< "$SPECS"
+
+          git commit -m "chore(specs): update package versions"
           git push
-          for SPEC in $SPECS; do
-            gh workflow run trigger-copr-builds.yaml --ref main -f spec_file="$SPEC"
-          done
+
+          while IFS= read -r spec; do
+            gh workflow run trigger-copr-builds.yaml --ref main -f spec_file="$spec"
+          done <<< "$SPECS"
