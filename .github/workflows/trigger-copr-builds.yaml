@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "**/*.spec"
+      - ".github/workflows/trigger-copr-builds.yaml"
   workflow_dispatch:
     inputs:
       # checkov:skip=CKV_GHA_7:arg passed to env and validated before use

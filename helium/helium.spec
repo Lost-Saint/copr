@@ -1,8 +1,8 @@
 %global debug_package %{nil}
 
 Name:           helium
-Version:        0.16.5.1
-Release:        2%{?dist}
+Version:        0.17.0.1
+Release:        1%{?dist}
 Summary:        Private, fast, and honest web browser
 
 License:        GPL-3.0-only
