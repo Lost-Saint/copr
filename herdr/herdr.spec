@@ -1,5 +1,5 @@
 Name:           herdr
-Version:        0.9.0
+Version:        0.9.1
 Release:        1%{?dist}
 Summary:        Terminal workspace manager for AI coding agents
 
