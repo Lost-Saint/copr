@@ -1,6 +1,6 @@
 Name:           zed-lost-saint
-Version:        1.22.0
-Release:        2%{?dist}
+Version:        1.23.0
+Release:        1%{?dist}
 Summary:        Feature-enhanced fork of the Zed code editor
 
 License:        AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-or-later
