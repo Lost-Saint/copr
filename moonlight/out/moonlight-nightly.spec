@@ -1,12 +1,12 @@
-%global commit 546cb72e32e5ac04bbc7e0b3a254176e5696685a
+%global commit 49bf1e80da945fc95547d8d64b40d54cbb2f3cb3
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global git_date 20260727T054837Z
+%global git_date 20260918T041400Z
 %global tag v6.1.0
 %global clean_tag %(echo %{tag} | sed 's/^v//')
 
 Name:           moonlight-nightly
 Version:        %{clean_tag}^%{git_date}.g%{shortcommit}
-Release:        3%{?dist}
+Release:        2%{?dist}
 Summary:        Nightly Moonlight game-streaming client
 
 License:        GPL-3.0-or-later
@@ -85,7 +85,7 @@ appstreamcli validate --no-net \
 %{_datadir}/metainfo/com.moonlight_stream.Moonlight.appdata.xml
 
 %changelog
-* Mon Jul 27 2026 Moonlight COPR <noreply@copr.invalid> - 6.1.0^20260727T054837Z.g546cb72-2
+* Fri Sep 18 2026 Moonlight COPR <noreply@copr.invalid> - 6.1.0^20260918T041400Z.g49bf1e8-2
 - Nightly snapshot.
 - Use upstream qmake install targets with Fedora paths.
 - Validate installed desktop and AppStream metadata from the buildroot.

@@ -1,9 +1,9 @@
-%global commit         9b6432a9a0791333828938ee19170595811eeb1d
+%global commit         4ecabf10c3678a4cb8009a5091b8361332ea13f2
 %global shortcommit    %(c=%{commit}; echo ${c:0:7})
 
 # Bump this alongside %%commit -- it records when the snapshot was taken
 # and does not need to match the commit date exactly.
-%global snapshot_date  20260721
+%global snapshot_date  20260918
 
 # Ladybird is a very large, mostly static C++ build. Fedora's default LTO
 # flags cause GCC's lto1 process to exceed the memory available on many
