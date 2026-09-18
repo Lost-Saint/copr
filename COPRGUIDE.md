@@ -35,9 +35,6 @@ sudo dnf install <package-name> --refresh
 | `zen-browser`         | Zen Browser for `x86_64`                      |                                                      |
 | `zen-browser-aarch64` | Zen Browser for `aarch64`                     | Architecture-specific package name                   |
 
-`gtk4-layer-shell` is also published in the COPR project, but it is a support
-package used by Ghostty rather than a normal end-user app.
-
 ## Examples
 
 Install Ghostty:

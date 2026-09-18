@@ -32,7 +32,6 @@ update() {
         easyeffects) specs=(easyeffects/easyeffects.spec) ;;
         eden) specs=(eden/eden.spec) ;;
         ghostty) specs=(ghostty/ghostty.spec) ;;
-        gtk4-layer-shell) specs=(ghostty/gtk4-layer-shell.spec) ;;
         helium) specs=(helium/helium.spec) ;;
         herdr) specs=(herdr/herdr.spec) ;;
         zed) specs=(zed/zed.spec zed/zed-aarch64.spec) ;;
@@ -92,7 +91,6 @@ update eden "$(curl --retry 3 -fsSL \
     https://git.eden-emu.dev/api/v1/repos/eden-emu/eden/releases/latest |
     jq -r .tag_name | sed 's/^v//')"
 update ghostty "$(github_tag ghostty-org/ghostty)"
-update gtk4-layer-shell "$(github_release wmww/gtk4-layer-shell)"
 update helium "$(github_release imputnet/helium-linux)"
 update herdr "$(github_release herdrdev/herdr)"
 update zed "$(github_release zed-industries/zed)"

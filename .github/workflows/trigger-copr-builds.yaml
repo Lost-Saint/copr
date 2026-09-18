@@ -88,8 +88,8 @@ jobs:
               exit 1
             fi
             if [ ! -f "$COPR_SPEC_FILE" ]; then
-              echo "::error file=$COPR_SPEC_FILE::Spec file does not exist"
-              exit 1
+              echo "::notice file=$COPR_SPEC_FILE::Skipping deleted spec file"
+              continue
             fi
 
             if echo "${SEEN_SPEC_FILES}" | grep -qxF "$COPR_SPEC_FILE"; then

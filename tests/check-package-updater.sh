@@ -23,7 +23,6 @@ case "$2" in
     repos/karlstav/cava/releases/latest) echo v1.0.0 ;;
     'repos/wwmm/easyeffects/tags?per_page=100') printf '%s\n' v8.2.8 v8.2.9 ;;
     'repos/ghostty-org/ghostty/tags?per_page=100') printf '%s\n' v1.3.0 v1.3.1 ;;
-    repos/wmww/gtk4-layer-shell/releases/latest) echo v1.3.0 ;;
     repos/imputnet/helium-linux/releases/latest) echo 0.17.0.1 ;;
     repos/herdrdev/herdr/releases/latest) echo v0.9.0 ;;
     repos/zed-industries/zed/releases/latest) echo v1.19.2 ;;
@@ -65,7 +64,6 @@ make_spec cava/cava.spec 0.1.0
 make_spec easyeffects/easyeffects.spec 8.0.0
 make_spec eden/eden.spec 0.1.0
 make_spec ghostty/ghostty.spec 1.0.0
-make_spec ghostty/gtk4-layer-shell.spec 1.0.0
 make_spec helium/helium.spec 0.1.0
 make_spec herdr/herdr.spec 0.1.0
 make_spec zed/zed.spec 1.0.0
@@ -85,7 +83,6 @@ check_version cava/cava.spec 1.0.0
 check_version easyeffects/easyeffects.spec 8.2.9
 check_version eden/eden.spec 0.2.1
 check_version ghostty/ghostty.spec 1.3.1
-check_version ghostty/gtk4-layer-shell.spec 1.3.0
 check_version helium/helium.spec 0.17.0.1
 check_version herdr/herdr.spec 0.9.0
 check_version zed/zed.spec 1.19.2

@@ -1,0 +1,37 @@
+name: remove obsolete gtk4-layer-shell package
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Install copr-cli
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y python3-dev libkrb5-dev
+          python3 -m pip install copr-cli requests_gssapi
+      - name: Configure copr-cli authentication
+        env:
+          COPR_CONFIG: ${{ secrets.COPR_CONFIG }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.config
+          touch ~/.config/copr
+          chmod 600 ~/.config/copr
+          echo "${COPR_CONFIG}" > ~/.config/copr
+      - name: Remove gtk4-layer-shell from legacy Ghostty project
+        run: |
+          set -euo pipefail
+          if copr-cli get-package myriad-sun/ghostty \
+            --name gtk4-layer-shell &>/dev/null; then
+            copr-cli delete-package myriad-sun/ghostty \
+              --name gtk4-layer-shell
+          else
+            echo "::notice::Package gtk4-layer-shell is already absent"
+          fi
+      - name: Cleanup configuration
+        if: always()
+        run: rm -f ~/.config/copr
