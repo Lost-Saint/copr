@@ -27,18 +27,11 @@ ExclusiveArch:  x86_64 aarch64
 
 BuildRequires:  clang
 BuildRequires:  lld
-BuildRequires:  mold
 BuildRequires:  ninja-build
 BuildRequires:  cmake
-BuildRequires:  autoconf
-BuildRequires:  libtool
-BuildRequires:  nasm
-BuildRequires:  jq
-BuildRequires:  cmake(LLVM)
 BuildRequires:  desktop-file-utils
 BuildRequires:  appstream
 # Qt6
-BuildRequires:  cmake(Qt6)
 BuildRequires:  cmake(Qt6Core)
 BuildRequires:  cmake(Qt6Concurrent)
 BuildRequires:  cmake(Qt6DBus)
@@ -51,23 +44,17 @@ BuildRequires:  cmake(Qt6WebEngineCore)
 BuildRequires:  cmake(Qt6WebEngineWidgets)
 BuildRequires:  cmake(Qt6Charts)
 # FFmpeg
-BuildRequires:  ffmpeg-free-devel
+BuildRequires:  ffmpeg-devel
 # Vulkan
 BuildRequires:  cmake(SPIRV-Headers)
-BuildRequires:  cmake(SPIRV-Tools)
 BuildRequires:  vulkan-utility-libraries-devel
 BuildRequires:  VulkanMemoryAllocator-devel
 BuildRequires:  glslang
 # Audio
 BuildRequires:  pkgconfig(opus)
-BuildRequires:  pkgconfig(speexdsp)
 BuildRequires:  pkgconfig(libpulse)
 # Input
-BuildRequires:  pkgconfig(libusb)
-BuildRequires:  pkgconfig(libudev)
-# Graphics / display
-BuildRequires:  pkgconfig(libva)
-BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(libusb-1.0)
 # Compression / serialization
 BuildRequires:  cmake(zlib)
 BuildRequires:  pkgconfig(liblz4)
@@ -83,15 +70,6 @@ BuildRequires:  cmake(SDL2)
 # Miscellaneous
 BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(gamemode)
-BuildRequires:  stb_image-devel
-BuildRequires:  stb_image_write-devel
-BuildRequires:  stb_image_resize-devel
-# Enable the RenderDoc COPR or disable ENABLE_RENDERDOC below.
-%if %{defined with_renderdoc}
-BuildRequires:  renderdoc-devel
-%endif
-
-Requires:       gamemode
 
 Recommends:     xorg-x11-server-Xwayland
 
@@ -121,11 +99,6 @@ Eden is an experimental open-source emulator for the Nintendo Switch, built with
     -DUSE_FASTER_LINKER=ON \
     -DENABLE_LTO=OFF \
     -DYUZU_BUILD_PRESET=%{build_preset} \
-    %if %{defined with_renderdoc}
-        -DENABLE_RENDERDOC=ON \
-    %else
-        -DENABLE_RENDERDOC=OFF \
-    %endif
     -DCMAKE_C_FLAGS="%{build_cflags} %{pgo_flags}" \
     -DCMAKE_CXX_FLAGS="%{build_cxxflags} %{pgo_flags}" \
     -Wno-dev
