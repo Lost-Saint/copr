@@ -11,7 +11,7 @@ A collection of Fedora COPR repositories for apps that aren't in the official Fe
 |---------|-------------|---------|
 | [android-studio](https://copr.fedorainfracloud.org/coprs/myriad-sun/android-studio/) | Google's official IDE for Android development | `dnf copr enable myriad-sun/android-studio` |
 | [easyeffects](https://copr.fedorainfracloud.org/coprs/myriad-sun/easyeffects/) | Audio effects and equalizer for PipeWire | `dnf copr enable myriad-sun/easyeffects` |
-| [eden](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/) | Nintendo Switch emulator | `dnf copr enable myriad-sun/eden` |
+| [eden](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/package/eden/) | Nintendo Switch emulator | `dnf copr enable myriad-sun/lazarus` |
 | [ghostty](https://copr.fedorainfracloud.org/coprs/myriad-sun/ghostty/) | Fast, feature-rich terminal emulator | `dnf copr enable myriad-sun/ghostty` |
 | [lutris-git](https://copr.fedorainfracloud.org/coprs/myriad-sun/lutris-git/) | Latest git builds of the Lutris game manager | `dnf copr enable myriad-sun/lutris-git` |
 | [zed](https://copr.fedorainfracloud.org/coprs/myriad-sun/zed/) | High-performance, multiplayer code editor | `dnf copr enable myriad-sun/zed` |

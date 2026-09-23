@@ -1,9 +1,9 @@
 # Eden
 
 [![⚡ Powered by COPR](https://img.shields.io/badge/⚡Powered%20by-COPR-blue?style=flat-square)](https://copr.fedorainfracloud.org/)
-[![Copr build status](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/)
+[![Copr build status](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/package/eden/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/package/eden/)
 
-[![Latest Version](https://img.shields.io/badge/dynamic/json?color=blue&label=Version&query=builds.latest.source_package.version&url=https%3A%2F%2Fcopr.fedorainfracloud.org%2Fapi_3%2Fpackage%3Fownername%3Dmyriad-sun%26projectname%3Deden%26packagename%3Deden%26with_latest_build%3DTrue&style=flat-square&logoColor=blue)](https://copr.fedorainfracloud.org/coprs/myriad-sun/eden/package/eden/)
+[![Latest Version](https://img.shields.io/badge/dynamic/json?color=blue&label=Version&query=builds.latest.source_package.version&url=https%3A%2F%2Fcopr.fedorainfracloud.org%2Fapi_3%2Fpackage%3Fownername%3Dmyriad-sun%26projectname%3Dlazarus%26packagename%3Deden%26with_latest_build%3DTrue&style=flat-square&logoColor=blue)](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/package/eden/)
 
 ## About Eden
 
@@ -13,9 +13,9 @@ This repository provides RPM packaging and distribution for Fedora systems throu
 
 ## ⚠ Special Note
 
-This package depends on `ffmpeg-devel`, which is provided through RPM Fusion in the COPR build environment.
+The build uses `ffmpeg-devel` from RPM Fusion Free. RPM Fusion Free must be enabled for the Fedora 44 COPR build chroots.
 
-If you encounter dependency-related issues, ensure RPM Fusion is enabled on your system.
+If installation reports missing FFmpeg dependencies, enable RPM Fusion Free on your system.
 
 ## Bug Reports
 
@@ -32,7 +32,7 @@ Issues related to installation, dependencies, COPR builds, or RPM packaging shou
 ### 1. Enable the COPR Repository
 
 ```bash
-sudo dnf copr enable myriad-sun/eden
+sudo dnf copr enable myriad-sun/lazarus
 ```
 
 ### 2. Install Eden
