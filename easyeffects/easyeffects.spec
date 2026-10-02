@@ -1,13 +1,11 @@
 Name:           easyeffects
 Version:        8.3.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Audio effects and filters for PipeWire applications
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/wwmm/easyeffects
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-
-ExclusiveArch: x86_64 aarch64
 
 # Preserve upgrade path from the historical PulseEffects package.
 Provides:       pulseeffects = 6.1.1-1
@@ -63,8 +61,6 @@ BuildRequires:  pkgconfig(samplerate)
 BuildRequires:  pkgconfig(sndfile)
 BuildRequires:  pkgconfig(rnnoise)
 BuildRequires:  pkgconfig(soundtouch)
-BuildRequires:  pkgconfig(libportal)
-BuildRequires:  pkgconfig(libportal-qt6)
 BuildRequires:  pkgconfig(webrtc-audio-processing-2)
 
 # Convolution engine
@@ -81,7 +77,7 @@ Requires:       breeze-icon-theme
 Requires:       kf6-qqc2-desktop-style%{?_isa}
 
 # Recommended Breeze Plasma styling
-Recommends:     plasma-breeze%{?_isa}
+Suggests:       plasma-breeze%{?_isa}
 
 # Runtime QML modules required by the UI
 Requires:       qt6qml(org.kde.kirigami)
@@ -93,11 +89,12 @@ Requires:       qt6qml(QtWebEngine)
 Requires:       hicolor-icon-theme
 Requires:       dbus-common
 
-# Optional LV2 plugin collections
-Recommends:     lv2-calf-plugins
-Recommends:     lv2-mdala-plugins
-Recommends:     lsp-plugins-lv2
-Recommends:     lv2-zam-plugins
+# Optional LV2 plugin collections (not installed by default; only used by the
+# "Plugins" tab. Opt in with: dnf install lsp-plugins-lv2)
+Suggests:       lv2-calf-plugins
+Suggests:       lv2-mdala-plugins
+Suggests:       lsp-plugins-lv2
+Suggests:       lv2-zam-plugins
 
 # QtWebEngine limits supported architectures
 ExclusiveArch:  %{qt6_qtwebengine_arches}
@@ -121,6 +118,7 @@ equalizer many more effects for PipeWire applications.
 %find_lang %{name}
 
 %check
+desktop-file-validate %{buildroot}%{_datadir}/applications/com.github.wwmm.%{name}.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_datadir}/metainfo/com.github.wwmm.%{name}.metainfo.xml
 
 
