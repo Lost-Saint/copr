@@ -25,7 +25,7 @@ BuildRequires:  desktop-file-utils
 PhotoCraft is a native raster image editor from the ArtCraft team.
 
 %prep
-%autosetup -c -T -n %{name}-%{version}
+%setup -q -c -T -n %{name}-%{version}
 
 %ifarch x86_64
 archive=%{name}-%{version}-linux-x86_64.tar.gz
