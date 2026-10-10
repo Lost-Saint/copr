@@ -24,12 +24,19 @@ sudo dnf install <package-name> --refresh
 | --------------------- | --------------------------------------------- | ---------------------------------------------------- |
 | `android-studio`      | Google's official IDE for Android development | `x86_64`                                             |
 | `cava`                | Terminal audio visualizer                     |                                                      |
+| `designcraft`         | Page layout and publishing app                 | `x86_64`, `aarch64`                                  |
 | `easyeffects`         | Audio effects and equalizer for PipeWire      |                                                      |
 | `eden`                | Nintendo Switch emulator                      |                                                      |
+| `effectcraft`         | Motion graphics and visual effects app         | `x86_64`, `aarch64`                                  |
+| `filmcraft`           | Video editor                                  | `x86_64`, `aarch64`                                  |
 | `ghostty`             | Fast, feature-rich terminal emulator          |                                                      |
 | `kew`                 | Terminal music player                         |                                                      |
+| `lightcraft`          | Photo library and RAW developer                | `x86_64`, `aarch64`                                  |
 | `lutris`              | Game manager built from the `lutris-git` spec | Install package name is `lutris`                     |
 | `moonlight-nightly`   | Nightly Moonlight game-streaming client       |                                                      |
+| `pdfcraft`            | PDF workbench                                 | `x86_64`, `aarch64`                                  |
+| `photocraft`          | Raster image editor                           | `x86_64`, `aarch64`                                  |
+| `vectorcraft`         | Vector illustration app                       | `x86_64`, `aarch64`                                  |
 | `zed`                 | Zed editor for `x86_64`                       |                                                      |
 | `zed-aarch64`         | Zed editor for `aarch64`                      | Architecture-specific package name                   |
 | `zen-browser`         | Zen Browser for `x86_64`                      |                                                      |

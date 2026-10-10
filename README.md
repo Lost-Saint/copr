@@ -10,10 +10,17 @@ A collection of Fedora COPR repositories for apps that aren't in the official Fe
 | Package | Description | Install |
 |---------|-------------|---------|
 | [android-studio](https://copr.fedorainfracloud.org/coprs/myriad-sun/android-studio/) | Google's official IDE for Android development | `dnf copr enable myriad-sun/android-studio` |
+| [designcraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | Page layout and publishing app | `dnf copr enable myriad-sun/lazarus` |
 | [easyeffects](https://copr.fedorainfracloud.org/coprs/myriad-sun/easyeffects/) | Audio effects and equalizer for PipeWire | `dnf copr enable myriad-sun/easyeffects` |
 | [eden](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/package/eden/) | Nintendo Switch emulator | `dnf copr enable myriad-sun/lazarus` |
+| [effectcraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | Motion graphics and visual effects app | `dnf copr enable myriad-sun/lazarus` |
+| [filmcraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | Video editor | `dnf copr enable myriad-sun/lazarus` |
 | [ghostty](https://copr.fedorainfracloud.org/coprs/myriad-sun/ghostty/) | Fast, feature-rich terminal emulator | `dnf copr enable myriad-sun/ghostty` |
+| [lightcraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | Photo library and RAW developer | `dnf copr enable myriad-sun/lazarus` |
 | [lutris-git](https://copr.fedorainfracloud.org/coprs/myriad-sun/lutris-git/) | Latest git builds of the Lutris game manager | `dnf copr enable myriad-sun/lutris-git` |
+| [pdfcraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | PDF workbench | `dnf copr enable myriad-sun/lazarus` |
+| [photocraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | Raster image editor | `dnf copr enable myriad-sun/lazarus` |
+| [vectorcraft](https://copr.fedorainfracloud.org/coprs/myriad-sun/lazarus/) | Vector illustration app | `dnf copr enable myriad-sun/lazarus` |
 | [zed](https://copr.fedorainfracloud.org/coprs/myriad-sun/zed/) | High-performance, multiplayer code editor | `dnf copr enable myriad-sun/zed` |
 | [zen-browser](https://copr.fedorainfracloud.org/coprs/myriad-sun/zen-browser/) | Firefox-based browser focused on privacy and UX | `dnf copr enable myriad-sun/zen-browser` |
 

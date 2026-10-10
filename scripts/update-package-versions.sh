@@ -29,6 +29,9 @@ update() {
     case $package in
         android-studio) specs=(android-studio/android-studio.spec) ;;
         cava) specs=(cava/cava.spec) ;;
+        designcraft|effectcraft|filmcraft|lightcraft|pdfcraft|photocraft|vectorcraft)
+            specs=("$package/$package.spec")
+            ;;
         easyeffects) specs=(easyeffects/easyeffects.spec) ;;
         eden) specs=(eden/eden.spec) ;;
         ghostty) specs=(ghostty/ghostty.spec) ;;
@@ -86,13 +89,20 @@ studio_suffix=$(sed -E 's|.*/android-studio-(.*)-linux\.tar\.gz|\1|' <<< "$studi
 
 update android-studio "$studio_version" "$studio_suffix"
 update cava "$(github_release karlstav/cava)"
+update designcraft "$(github_release storytold/designcraft)"
 update easyeffects "$(github_tag wwmm/easyeffects)"
 update eden "$(curl --retry 3 -fsSL \
     https://git.eden-emu.dev/api/v1/repos/eden-emu/eden/releases/latest |
     jq -r .tag_name | sed 's/^v//')"
+update effectcraft "$(github_release storytold/effectcraft)"
+update filmcraft "$(github_release storytold/filmcraft)"
 update ghostty "$(github_tag ghostty-org/ghostty)"
 update helium "$(github_release imputnet/helium-linux)"
 update herdr "$(github_release herdrdev/herdr)"
+update lightcraft "$(github_release storytold/lightcraft)"
+update pdfcraft "$(github_release storytold/pdfcraft)"
+update photocraft "$(github_release storytold/photocraft)"
+update vectorcraft "$(github_release storytold/vectorcraft)"
 update zed "$(github_release zed-industries/zed)"
 update zed-lost-saint "$(github_release Lost-Saint/zed)"
 update zen-browser "$(github_release zen-browser/desktop)"
