@@ -2,7 +2,7 @@
 
 srpm:
 	@set -eu; \
-	  dnf -y install rpm-build rpmdevtools rpmautospec rpmautospec-rpm-macros; \
+	  dnf -y install git rpm-build rpmdevtools rpmautospec; \
 	  sources_dir="$$(mktemp -d)"; \
 	  processed_spec="$$(mktemp --suffix=.spec)"; \
 	  trap 'rm -rf "$$sources_dir" "$$processed_spec"' EXIT; \
