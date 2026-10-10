@@ -15,12 +15,6 @@ License:        GPL-3.0-only
 URL:            https://github.com/lutris/lutris
 Source0:        %{url}/archive/%{commit}.tar.gz
 
-# Upstream's lutris/__init__.py calls gi.require_version() at import time.
-# setup.py imports the package to read __version__, which makes the package
-# un-importable during %%pyproject_buildrequires. Read the version string
-# from the file directly instead.
-Patch0:         setup-no-import.patch
-
 BuildRequires:  desktop-file-utils
 BuildRequires:  python3-devel
 Requires:       cabextract
