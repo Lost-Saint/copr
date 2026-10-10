@@ -242,13 +242,29 @@ jobs:
           SPEC: ${{ matrix.spec }}
         run: |
           set -euo pipefail
+          SOURCE_BUILD_METHOD=rpkg
+          case "${PACKAGE}" in
+            designcraft|effectcraft|filmcraft|lightcraft|pdfcraft|photocraft|vectorcraft)
+              SOURCE_BUILD_METHOD=make_srpm
+              ;;
+          esac
+
+          SCM_ARGS=(
+            --clone-url "https://github.com/Lost-Saint/copr.git"
+            --commit main
+            --subdir "$(dirname "${SPEC}")"
+            --spec "$(basename "${SPEC}")"
+            --method "${SOURCE_BUILD_METHOD}"
+          )
           if ! copr-cli get-package "${COPR_OWNER}/${COPR_PROJECT}" --name "${PACKAGE}" &>/dev/null; then
             copr-cli add-package-scm \
               --name "${PACKAGE}" \
-              --clone-url "https://github.com/Lost-Saint/copr.git" \
-              --commit main \
-              --subdir "$(dirname "${SPEC}")" \
-              --spec "$(basename "${SPEC}")" \
+              "${SCM_ARGS[@]}" \
+              "${COPR_OWNER}/${COPR_PROJECT}"
+          elif [ "${SOURCE_BUILD_METHOD}" = "make_srpm" ]; then
+            copr-cli edit-package-scm \
+              --name "${PACKAGE}" \
+              "${SCM_ARGS[@]}" \
               "${COPR_OWNER}/${COPR_PROJECT}"
           fi
 

@@ -7,8 +7,9 @@ Summary:        Native photo library and RAW developer
 
 License:        (MIT OR Apache-2.0) AND OFL-1.1
 URL:            https://getartcraft.com/apps/lightcraft
-Source0:        https://github.com/storytold/lightcraft/releases/download/v%{version}/lightcraft-%{version}-linux-%{_arch}.tar.gz
-Source1:        https://github.com/storytold/lightcraft/releases/download/v%{version}/SHA256SUMS.txt
+Source0:        https://github.com/storytold/lightcraft/releases/download/v%{version}/lightcraft-%{version}-linux-x86_64.tar.gz
+Source1:        https://github.com/storytold/lightcraft/releases/download/v%{version}/lightcraft-%{version}-linux-aarch64.tar.gz
+Source2:        https://github.com/storytold/lightcraft/releases/download/v%{version}/SHA256SUMS.txt
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -26,14 +27,20 @@ LightCraft is a native photo library and RAW developer from the ArtCraft team.
 %prep
 %autosetup -c -T -n %{name}-%{version}
 
-archive=%{name}-%{version}-linux-%{_arch}.tar.gz
-expected_checksum=$(awk -v filename="$archive" '$2 == filename { print $1 }' "%{SOURCE1}")
+%ifarch x86_64
+archive=%{name}-%{version}-linux-x86_64.tar.gz
+binary_archive=%{SOURCE0}
+%elifarch aarch64
+archive=%{name}-%{version}-linux-aarch64.tar.gz
+binary_archive=%{SOURCE1}
+%endif
+expected_checksum=$(awk -v filename="$archive" '$2 == filename { print $1 }' "%{SOURCE2}")
 if [ -z "$expected_checksum" ]; then
     echo "No checksum found for $archive" >&2
     exit 1
 fi
-printf '%s  %s\n' "$expected_checksum" "%{SOURCE0}" | sha256sum --check --strict -
-tar -xzf "%{SOURCE0}" --no-same-owner --no-same-permissions
+printf '%s  %s\n' "$expected_checksum" "$binary_archive" | sha256sum --check --strict -
+tar -xzf "$binary_archive" --no-same-owner --no-same-permissions
 
 %build
 # Upstream provides prebuilt Linux binaries.
