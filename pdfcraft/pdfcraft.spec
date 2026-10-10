@@ -5,7 +5,7 @@ Version:        0.5.0
 Release:        1%{?dist}
 Summary:        Native PDF workbench
 
-License:        (MIT OR Apache-2.0) AND OFL-1.1
+License:        (MIT OR Apache-2.0) AND OFL-1.1 AND CC-BY-SA-4.0
 URL:            https://getartcraft.com/apps/pdfcraft
 Source0:        https://github.com/storytold/pdfcraft/releases/download/v%{version}/pdfcraft-%{version}-linux-x86_64.tar.gz
 Source1:        https://github.com/storytold/pdfcraft/releases/download/v%{version}/pdfcraft-%{version}-linux-aarch64.tar.gz
@@ -58,6 +58,10 @@ mv %{buildroot}%{_docdir}/%{name}/LICENSE-APACHE \
     %{buildroot}%{_licensedir}/%{name}/
 mv %{buildroot}%{_docdir}/%{name}/LICENSE-MIT \
     %{buildroot}%{_licensedir}/%{name}/
+mv %{buildroot}%{_datadir}/%{name}/models/ATTRIBUTION.txt \
+    %{buildroot}%{_licensedir}/%{name}/
+mv %{buildroot}%{_datadir}/%{name}/models/*.LICENCE.txt \
+    %{buildroot}%{_licensedir}/%{name}/
 %if %{with_font_licenses}
 mv %{buildroot}%{_docdir}/%{name}/OFL-*.txt \
     %{buildroot}%{_licensedir}/%{name}/
@@ -71,6 +75,8 @@ appstreamcli validate --no-net \
 %files
 %license %{_licensedir}/%{name}/LICENSE-APACHE
 %license %{_licensedir}/%{name}/LICENSE-MIT
+%license %{_licensedir}/%{name}/ATTRIBUTION.txt
+%license %{_licensedir}/%{name}/*.LICENCE.txt
 %if %{with_font_licenses}
 %license %{_licensedir}/%{name}/OFL-*.txt
 %endif
@@ -85,6 +91,7 @@ appstreamcli validate --no-net \
 %{_datadir}/icons/hicolor/*/apps/%{appid}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/mime/packages/%{appid}.xml
+%{_datadir}/%{name}/models/*.rten
 
 %changelog
 %autochangelog

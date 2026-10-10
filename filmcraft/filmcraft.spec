@@ -58,6 +58,8 @@ mv %{buildroot}%{_docdir}/%{name}/LICENSE-APACHE \
     %{buildroot}%{_licensedir}/%{name}/
 mv %{buildroot}%{_docdir}/%{name}/LICENSE-MIT \
     %{buildroot}%{_licensedir}/%{name}/
+mv %{buildroot}%{_datadir}/icons/hicolor/*/apps/%{appid}*.attribution \
+    %{buildroot}%{_licensedir}/%{name}/
 %if %{with_font_licenses}
 mv %{buildroot}%{_docdir}/%{name}/OFL-*.txt \
     %{buildroot}%{_licensedir}/%{name}/
@@ -71,6 +73,7 @@ appstreamcli validate --no-net \
 %files
 %license %{_licensedir}/%{name}/LICENSE-APACHE
 %license %{_licensedir}/%{name}/LICENSE-MIT
+%license %{_licensedir}/%{name}/*.attribution
 %if %{with_font_licenses}
 %license %{_licensedir}/%{name}/OFL-*.txt
 %endif
