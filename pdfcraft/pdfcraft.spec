@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           pdfcraft
-Version:        0.6.0
+Version:        0.7.1
 Release:        1%{?dist}
 Summary:        Native PDF workbench
 
