@@ -19,7 +19,7 @@ BuildRequires:  desktop-file-utils
 %global appid ai.storyteller.%{name}
 %global app_root %{name}-%{version}-linux-%{_arch}
 %global with_font_licenses 1
-%global with_notice 0
+%global with_notice 1
 
 %description
 VectorCraft is a native vector illustration app from the ArtCraft team.
@@ -62,6 +62,8 @@ mv %{buildroot}%{_docdir}/%{name}/LICENSE-MIT \
 mv %{buildroot}%{_docdir}/%{name}/OFL-*.txt \
     %{buildroot}%{_licensedir}/%{name}/
 %endif
+mv %{buildroot}%{_docdir}/%{name}/licenses \
+    %{buildroot}%{_licensedir}/%{name}/third-party
 
 %check
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{appid}.desktop
@@ -74,7 +76,9 @@ appstreamcli validate --no-net \
 %if %{with_font_licenses}
 %license %{_licensedir}/%{name}/OFL-*.txt
 %endif
+%license %{_licensedir}/%{name}/third-party/
 %doc %{_docdir}/%{name}/README.md
+%doc %{_docdir}/%{name}/ASSETS.md
 %if %{with_notice}
 %doc %{_docdir}/%{name}/NOTICE
 %endif
