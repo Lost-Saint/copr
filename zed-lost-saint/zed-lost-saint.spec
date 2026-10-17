@@ -30,7 +30,7 @@ code editor.
 This package installs the prebuilt binary published by Lost-Saint.
 
 %prep
-%autosetup -n zed.app
+%autosetup -n zed-dev.app
 
 %build
 
@@ -50,12 +50,12 @@ install -Dm644 share/icons/hicolor/1024x1024/apps/zed.png \
 desktop-file-install \
     --dir=%{buildroot}%{_datadir}/applications \
     --set-icon=dev.zed.Zed \
-    share/applications/dev.zed.Zed.desktop
+    share/applications/dev.zed.Zed-Dev.desktop
 
 install -Dm644 licenses.md %{buildroot}%{_licensedir}/%{name}/licenses.md
 
 %check
-desktop-file-validate %{buildroot}%{_datadir}/applications/dev.zed.Zed.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/dev.zed.Zed-Dev.desktop
 test -x %{buildroot}%{zed_home}/bin/zed
 test -x %{buildroot}%{zed_home}/libexec/zed-editor
 test "$(readlink %{buildroot}%{_bindir}/zed)" = \
@@ -67,7 +67,7 @@ test "$(readlink %{buildroot}%{_bindir}/zed)" = \
 %{zed_home}/
 %{_iconsdir}/hicolor/512x512/apps/dev.zed.Zed.png
 %{_iconsdir}/hicolor/1024x1024/apps/dev.zed.Zed.png
-%{_datadir}/applications/dev.zed.Zed.desktop
+%{_datadir}/applications/dev.zed.Zed-Dev.desktop
 
 %changelog
 %autochangelog
