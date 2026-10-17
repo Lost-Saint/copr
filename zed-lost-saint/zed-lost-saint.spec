@@ -1,11 +1,11 @@
 Name:           zed-lost-saint
-Version:        1.24.2
+Version:        1.26.0
 Release:        1%{?dist}
-Summary:        Official Zed high-performance code editor
+Summary:        Feature-enhanced fork of the Zed code editor
 
 License:        AGPL-3.0-only AND Apache-2.0 AND GPL-3.0-or-later
-URL:            https://zed.dev/
-Source0:        https://github.com/zed-industries/zed/releases/download/v%{version}/zed-linux-x86_64.tar.gz
+URL:            https://github.com/Lost-Saint/zed
+Source0:        %{url}/releases/download/v%{version}/zed-linux-x86_64.tar.gz
 
 ExclusiveArch:  x86_64
 BuildRequires:  desktop-file-utils
@@ -24,10 +24,10 @@ Conflicts:      zed-aarch64
 %global __requires_exclude ^(libX11-xcb|libXau|libXdmcp|libbsd|libmd|libstdc\+\+|libxcb|libxcb-xkb|libxkbcommon|libxkbcommon-x11)\.so\.
 
 %description
-Zed is a high-performance, multiplayer code editor from the creators of Atom
-and Tree-sitter.
+An unofficial, feature-enhanced fork of Zed, a high-performance multiplayer
+code editor.
 
-This package installs the official prebuilt Linux binary from Zed Industries.
+This package installs the prebuilt binary published by Lost-Saint.
 
 %prep
 %autosetup -n zed.app
