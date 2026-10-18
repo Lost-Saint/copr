@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           designcraft
-Version:        0.8.0
+Version:        0.9.0
 Release:        1%{?dist}
 Summary:        Native page layout and publishing app
 

@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           vectorcraft
-Version:        0.12.0
+Version:        0.13.1
 Release:        1%{?dist}
 Summary:        Native vector illustration app
 
