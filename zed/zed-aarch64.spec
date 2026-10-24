@@ -1,5 +1,5 @@
 Name:           zed-aarch64
-Version:        1.25.2
+Version:        1.25.3
 Release:        1%{?dist}
 Summary:        Zed is a high-performance, multiplayer code editor
 
