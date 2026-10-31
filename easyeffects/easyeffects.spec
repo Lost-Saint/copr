@@ -1,6 +1,6 @@
 Name:           easyeffects
-Version:        8.3.0
-Release:        2%{?dist}
+Version:        8.3.1
+Release:        1%{?dist}
 Summary:        Audio effects and filters for PipeWire applications
 
 License:        GPL-3.0-or-later
