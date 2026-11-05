@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           photocraft
-Version:        0.20.1
+Version:        0.20.2
 Release:        1%{?dist}
 Summary:        Native raster image editor
 
