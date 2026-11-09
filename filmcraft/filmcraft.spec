@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           filmcraft
-Version:        0.18.0
+Version:        0.19.0
 Release:        1%{?dist}
 Summary:        Native video editor
 
