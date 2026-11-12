@@ -3,7 +3,7 @@
 %global             debug_package %{nil}
 
 Name:               zen-browser-aarch64
-Version:            1.24.1b
+Version:            1.24.2b
 Release:        1%{?dist}
 Summary:            Zen Browser
 

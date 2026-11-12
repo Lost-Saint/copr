@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           lightcraft
-Version:        0.20.0
+Version:        0.21.1
 Release:        1%{?dist}
 Summary:        Native photo library and RAW developer
 
