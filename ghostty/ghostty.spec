@@ -90,16 +90,20 @@ PATH="$PWD/.zig:$PATH" DESTDIR="%{_builddir}/%{name}-install" zig build \
 cp -a "%{_builddir}/%{name}-install/." "%{buildroot}/"
 
 # Keep Zig's build cache out of the RPM buildroot. The install tree can expose
-# it through a symlink below /usr/lib, which the normal find traversal skips.
-for cache in "%{buildroot}%{_prefix}/lib/"*/.zig-cache \
-             "%{buildroot}%{_libdir}/"*/.zig-cache; do
-    [ -e "$cache" ] || [ -L "$cache" ] || continue
-    cache_parent=${cache%/.zig-cache}
-    if [ -L "$cache_parent" ]; then
-        rm -f "$cache_parent"
-    else
-        rm -rf "$cache"
-    fi
+# it through a symlink below /usr/lib, which find and pathname globs won't
+# traverse when the cache path itself is part of the glob.
+for libdir in "%{buildroot}%{_prefix}/lib" "%{buildroot}%{_libdir}"; do
+    [ -d "$libdir" ] || continue
+    for parent in "$libdir"/*; do
+        [ -e "$parent" ] || [ -L "$parent" ] || continue
+        cache="$parent/.zig-cache"
+        [ -e "$cache" ] || [ -L "$cache" ] || continue
+        if [ -L "$parent" ]; then
+            rm -f "$parent"
+        else
+            rm -rf "$cache"
+        fi
+    done
 done
 
 # libghostty-vt is architecture-specific. Ghostty currently installs it below
