@@ -7,6 +7,9 @@
 
 # Zig does not emit the GNU build IDs required by Fedora's debug extractor.
 %global debug_package %{nil}
+# Zig does not emit GNU LTO objects; its transient cache objects should not be
+# processed by Fedora's GNU LTO stripping pass.
+%global __brp_strip_lto %{nil}
 
 Name:           ghostty
 Version:        1.4.0
@@ -88,23 +91,6 @@ PATH="$PWD/.zig:$PATH" DESTDIR="%{_builddir}/%{name}-install" zig build \
 
 %install
 cp -a "%{_builddir}/%{name}-install/." "%{buildroot}/"
-
-# Keep Zig's build cache out of the RPM buildroot. The install tree can expose
-# it through a symlink below /usr/lib, which find and pathname globs won't
-# traverse when the cache path itself is part of the glob.
-for libdir in "%{buildroot}%{_prefix}/lib" "%{buildroot}%{_libdir}"; do
-    [ -d "$libdir" ] || continue
-    for parent in "$libdir"/*; do
-        [ -e "$parent" ] || [ -L "$parent" ] || continue
-        cache="$parent/.zig-cache"
-        [ -e "$cache" ] || [ -L "$cache" ] || continue
-        if [ -L "$parent" ]; then
-            rm -f "$parent"
-        else
-            rm -rf "$cache"
-        fi
-    done
-done
 
 # libghostty-vt is architecture-specific. Ghostty currently installs it below
 # /usr/lib and puts its pkg-config metadata in /usr/share, so move both into
