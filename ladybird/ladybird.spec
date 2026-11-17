@@ -97,7 +97,14 @@ export VCPKG_MAX_CONCURRENCY=4
 export CMAKE_BUILD_PARALLEL_LEVEL=4
 
 # Clone vcpkg and check out the baseline pinned by vcpkg.json.
-python3 Meta/Utils/build_vcpkg.py
+python3 - <<'PY'
+from pathlib import Path
+from runpy import run_path
+
+run_path("Meta/Utils/build_vcpkg.py")["build_vcpkg"](
+    Path("Build/vcpkg").resolve()
+)
+PY
 
 %cmake \
     -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
