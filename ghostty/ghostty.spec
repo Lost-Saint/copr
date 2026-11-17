@@ -87,13 +87,11 @@ PATH="$PWD/.zig:$PATH" DESTDIR="%{_builddir}/%{name}-install" zig build \
 %endif
 
 %install
-# Keep temporary Zig object caches out of the package staging tree. RPM's
-# LTO post-processing scans these objects and can encounter cache entries
-# that Zig has already removed.
-find "%{_builddir}/%{name}-install" \
-    -type d -name .zig-cache -prune -exec rm -rf {} +
-
 cp -a "%{_builddir}/%{name}-install/." "%{buildroot}/"
+
+# Keep Zig's build cache out of the RPM buildroot. It is not part of the
+# runtime install and contains object files that RPM's strip phase can scan.
+find "%{buildroot}" -name .zig-cache -prune -exec rm -rf {} +
 
 # libghostty-vt is architecture-specific. Ghostty currently installs it below
 # /usr/lib and puts its pkg-config metadata in /usr/share, so move both into
