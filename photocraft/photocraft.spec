@@ -19,7 +19,7 @@ BuildRequires:  desktop-file-utils
 %global appid ai.storyteller.%{name}
 %global app_root %{name}-%{version}-linux-%{_arch}
 %global with_font_licenses 1
-%global with_notice 0
+%global with_notice 1
 
 %description
 PhotoCraft is a native raster image editor from the ArtCraft team.
@@ -76,6 +76,7 @@ appstreamcli validate --no-net \
 %endif
 %doc %{_docdir}/%{name}/README.md
 %doc %{_docdir}/%{name}/ATTRIBUTION.md
+%doc %{_docdir}/%{name}/control-protocol.md
 %if %{with_notice}
 %doc %{_docdir}/%{name}/NOTICE
 %endif
