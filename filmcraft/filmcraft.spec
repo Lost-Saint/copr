@@ -19,7 +19,7 @@ BuildRequires:  desktop-file-utils
 %global appid ai.storyteller.%{name}
 %global app_root %{name}-%{version}-linux-%{_arch}
 %global with_font_licenses 1
-%global with_notice 0
+%global with_notice 1
 
 %description
 FilmCraft is a native video editor from the ArtCraft team.

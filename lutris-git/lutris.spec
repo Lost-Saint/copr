@@ -27,6 +27,7 @@ Requires:       python3-certifi
 
 # Tests
 BuildRequires:  python3dist(pytest)
+BuildRequires:  7zip
 BuildRequires:  gobject-introspection
 BuildRequires:  gtk3-devel
 BuildRequires:  webkit2gtk4.1-devel

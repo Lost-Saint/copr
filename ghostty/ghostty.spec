@@ -1,6 +1,9 @@
 # Signing key from https://github.com/ghostty-org/ghostty/blob/main/PACKAGING.md
 %global public_key RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV
 %global appid com.mitchellh.ghostty
+%global zig_version 0.17.1
+%global zig_x86_64_sha256 3581863e3cbcfd0fce0efc682ce7e9e93da96668a977791d356a26d2a7e9b17a
+%global zig_aarch64_sha256 a1546d5646eb184437918d6635ca6b762a0e889eac09cef720ee7a1ed3fe7795
 
 # Zig does not emit the GNU build IDs required by Fedora's debug extractor.
 %global debug_package %{nil}
@@ -13,6 +16,8 @@ License:        MIT AND MPL-2.0 AND OFL-1.1 AND (WTFPL OR CC0-1.0) AND Apache-2.
 URL:            https://ghostty.org/
 Source0:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz
 Source1:        https://release.files.ghostty.org/%{version}/ghostty-%{version}.tar.gz.minisig
+Source2:        https://ziglang.org/download/%{zig_version}/zig-x86_64-linux-%{zig_version}.tar.xz
+Source3:        https://ziglang.org/download/%{zig_version}/zig-aarch64-linux-%{zig_version}.tar.xz
 
 ExclusiveArch: x86_64 aarch64
 
@@ -30,7 +35,6 @@ BuildRequires:  minisign
 BuildRequires:  pandoc-cli
 BuildRequires:  pkg-config
 BuildRequires:  wayland-protocols-devel
-BuildRequires:  zig = 0.15.2
 
 %description
 👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
@@ -46,6 +50,16 @@ This package provides the development files for libghostty-vt.
 %prep
 /usr/bin/minisign -V -m %{SOURCE0} -x %{SOURCE1} -P %{public_key}
 %setup -q -n ghostty-%{version}
+%ifarch x86_64
+zig_archive=%{SOURCE2}
+zig_sha256=%{zig_x86_64_sha256}
+%elifarch aarch64
+zig_archive=%{SOURCE3}
+zig_sha256=%{zig_aarch64_sha256}
+%endif
+printf '%s  %s\n' "$zig_sha256" "$zig_archive" | sha256sum --check --strict -
+mkdir .zig
+tar -xf "$zig_archive" --strip-components=1 -C .zig
 
 
 %build
@@ -53,7 +67,7 @@ This package provides the development files for libghostty-vt.
 # HarfBuzz. Link Ghostty against those same libraries instead of exporting
 # symbols from bundled static copies into the process.
 rm -rf "%{_builddir}/%{name}-install"
-DESTDIR="%{_builddir}/%{name}-install" zig build \
+PATH="$PWD/.zig:$PATH" DESTDIR="%{_builddir}/%{name}-install" zig build \
     --summary all \
     --prefix "%{_prefix}" \
     -fsys=fontconfig \

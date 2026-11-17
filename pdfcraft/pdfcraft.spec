@@ -91,7 +91,7 @@ appstreamcli validate --no-net \
 %{_datadir}/icons/hicolor/*/apps/%{appid}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/mime/packages/%{appid}.xml
-%{_datadir}/%{name}/models/*.rten
+%{_datadir}/%{name}/models/*.onnx
 
 %changelog
 %autochangelog

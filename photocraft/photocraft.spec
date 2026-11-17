@@ -75,6 +75,7 @@ appstreamcli validate --no-net \
 %license %{_licensedir}/%{name}/OFL-*.txt
 %endif
 %doc %{_docdir}/%{name}/README.md
+%doc %{_docdir}/%{name}/ATTRIBUTION.md
 %if %{with_notice}
 %doc %{_docdir}/%{name}/NOTICE
 %endif
@@ -85,6 +86,8 @@ appstreamcli validate --no-net \
 %{_datadir}/icons/hicolor/*/apps/%{appid}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/mime/packages/%{appid}.xml
+%{_datadir}/bash-completion/completions/photocraft-cli
+%{_datadir}/zsh/site-functions/_photocraft-cli
 
 %changelog
 %autochangelog

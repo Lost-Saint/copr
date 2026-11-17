@@ -19,7 +19,7 @@ BuildRequires:  desktop-file-utils
 %global appid ai.storyteller.%{name}
 %global app_root %{name}-%{version}-linux-%{_arch}
 %global with_font_licenses 1
-%global with_notice 0
+%global with_notice 1
 
 %description
 DesignCraft is a native page layout and publishing app from the ArtCraft team.
@@ -85,6 +85,7 @@ appstreamcli validate --no-net \
 %{_datadir}/icons/hicolor/*/apps/%{appid}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/mime/packages/%{appid}.xml
+%{_datadir}/thumbnailers/%{appid}.thumbnailer
 
 %changelog
 %autochangelog
