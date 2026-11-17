@@ -34,6 +34,7 @@ BuildRequires:  libadwaita-devel
 BuildRequires:  minisign
 BuildRequires:  pandoc-cli
 BuildRequires:  pkg-config
+BuildRequires:  pkgconfig(egl)
 BuildRequires:  wayland-protocols-devel
 
 %description
