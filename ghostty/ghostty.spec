@@ -109,16 +109,20 @@ PATH="$PWD/.zig:$PATH" \
 %install
 cp -a "%{_builddir}/%{name}-install/." "%{buildroot}/"
 
-# libghostty-vt is architecture-specific. Ghostty currently installs it below
-# /usr/lib and puts its pkg-config metadata in /usr/share, so move both into
-# Fedora's architecture-specific library directory.
+# libghostty-vt is architecture-specific. Ghostty currently installs its
+# libraries below /usr/lib and its pkg-config metadata in /usr/share, so move
+# them into Fedora's architecture-specific library directory.
 install -d "%{buildroot}%{_libdir}/pkgconfig"
-mv "%{buildroot}%{_prefix}/lib/libghostty-vt.so"* \
+mv "%{buildroot}%{_prefix}/lib/libghostty-vt.a" \
+   "%{buildroot}%{_prefix}/lib/libghostty-vt.so"* \
     "%{buildroot}%{_libdir}/"
 mv "%{buildroot}%{_datadir}/pkgconfig/libghostty-vt.pc" \
+   "%{buildroot}%{_datadir}/pkgconfig/libghostty-vt-static.pc" \
     "%{buildroot}%{_libdir}/pkgconfig/"
 sed -i 's|^libdir=.*|libdir=%{_libdir}|' \
     "%{buildroot}%{_libdir}/pkgconfig/libghostty-vt.pc"
+sed -i 's|^libdir=.*|libdir=%{_libdir}|' \
+    "%{buildroot}%{_libdir}/pkgconfig/libghostty-vt-static.pc"
 
 %find_lang %{appid}
 
@@ -175,8 +179,10 @@ appstreamcli validate --no-net \
 %files devel
 %{_prefix}/include/ghostty/vt.h
 %{_prefix}/include/ghostty/vt/
+%{_libdir}/libghostty-vt.a
 %{_libdir}/libghostty-vt.so
 %{_libdir}/pkgconfig/libghostty-vt.pc
+%{_libdir}/pkgconfig/libghostty-vt-static.pc
 
 %changelog
 %autochangelog
