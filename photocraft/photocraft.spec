@@ -77,6 +77,7 @@ appstreamcli validate --no-net \
 %doc %{_docdir}/%{name}/README.md
 %doc %{_docdir}/%{name}/ATTRIBUTION.md
 %doc %{_docdir}/%{name}/control-protocol.md
+%doc %{_docdir}/%{name}/mcp.md
 %if %{with_notice}
 %doc %{_docdir}/%{name}/NOTICE
 %endif
@@ -88,7 +89,9 @@ appstreamcli validate --no-net \
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/mime/packages/%{appid}.xml
 %{_datadir}/bash-completion/completions/photocraft-cli
+%{_datadir}/fish/vendor_completions.d/photocraft-cli.fish
 %{_datadir}/zsh/site-functions/_photocraft-cli
+%{_mandir}/man1/photocraft-cli*.1*
 
 %changelog
 %autochangelog
