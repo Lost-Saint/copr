@@ -55,6 +55,7 @@ BuildRequires:  zlib-ng-compat-static
 
 # System Qt frontend
 BuildRequires:  qt6-qtbase-devel >= 6.9
+BuildRequires:  qt6-qtbase-private-devel >= 6.9
 BuildRequires:  qt6-qtpositioning-devel >= 6.9
 BuildRequires:  qt6-qttools-devel >= 6.9
 BuildRequires:  qt6-qtwayland-devel >= 6.9
