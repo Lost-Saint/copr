@@ -49,6 +49,7 @@ BuildRequires:  perl-lib
 BuildRequires:  perl-Time-Piece
 
 # Linux graphics and platform headers
+BuildRequires:  glib2-devel
 BuildRequires:  mesa-libGL-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  zlib-ng-compat-static
