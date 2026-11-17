@@ -64,6 +64,21 @@ zig_sha256=%{zig_aarch64_sha256}
 printf '%s  %s\n' "$zig_sha256" "$zig_archive" | sha256sum --check --strict -
 mkdir .zig
 tar -xf "$zig_archive" --strip-components=1 -C .zig
+export PATH="$PWD/.zig:$PATH"
+export ZIG_GLOBAL_CACHE_DIR="%{_builddir}/%{name}-zig-cache"
+mkdir -p "$ZIG_GLOBAL_CACHE_DIR"
+# Ghostty's lazy Zig downloads are unreliable during parallel compilation.
+# Fetch the complete upstream cache first, retrying transient network resets.
+for attempt in 1 2 3; do
+    if ./nix/build-support/fetch-zig-cache.sh; then
+        break
+    fi
+    if [ "$attempt" -eq 3 ]; then
+        exit 1
+    fi
+    echo "Retrying Zig dependency fetch ($attempt/3)"
+    sleep "$attempt"
+done
 
 
 %build
@@ -71,7 +86,9 @@ tar -xf "$zig_archive" --strip-components=1 -C .zig
 # HarfBuzz. Link Ghostty against those same libraries instead of exporting
 # symbols from bundled static copies into the process.
 rm -rf "%{_builddir}/%{name}-install"
-PATH="$PWD/.zig:$PATH" DESTDIR="%{_builddir}/%{name}-install" zig build \
+PATH="$PWD/.zig:$PATH" \
+    ZIG_GLOBAL_CACHE_DIR="%{_builddir}/%{name}-zig-cache" \
+    DESTDIR="%{_builddir}/%{name}-install" zig build \
     --summary all \
     --prefix "%{_prefix}" \
     -fsys=fontconfig \
