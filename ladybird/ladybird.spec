@@ -18,6 +18,7 @@ Summary:        Truly independent web browser and engine
 License:        BSD-2-Clause
 URL:            https://ladybird.org
 Source0:        https://github.com/LadybirdBrowser/ladybird/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Patch0:         0001-fix-source-archive-build.patch
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -75,7 +76,7 @@ web standards, without basing its rendering engine on Blink, Gecko, or
 WebKit.
 
 %prep
-%autosetup -n %{name}-%{commit}
+%autosetup -n %{name}-%{commit} -p1
 
 # Ladybird enables -march=native for normal native builds. This is unsuitable
 # for distribution packages because it can generate binaries that require CPU

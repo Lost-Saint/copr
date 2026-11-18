@@ -1,0 +1,20 @@
+diff --git a/Meta/CMake/libjs_generators.cmake b/Meta/CMake/libjs_generators.cmake
+--- a/Meta/CMake/libjs_generators.cmake
++++ b/Meta/CMake/libjs_generators.cmake
+@@ -1,4 +1,5 @@
+ function(generate_libjs_bytecode)
++    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Bytecode")
+     set(bytecode_source "${CMAKE_CURRENT_SOURCE_DIR}/Interpreter/interpreter.flap")
+     set(op_header "Bytecode/Op.h")
+     set(opcodes_header "Bytecode/OpCodes.h")
+diff --git a/Meta/Generators/generate-build-information.py b/Meta/Generators/generate-build-information.py
+--- a/Meta/Generators/generate-build-information.py
++++ b/Meta/Generators/generate-build-information.py
+@@ -149,1 +149,6 @@
+-    tracked_files = subprocess.check_output(["git", "-C", str(source), "ls-files", "-z"]).split(b"\0")
++    try:
++        tracked_files = subprocess.check_output(
++            ["git", "-C", str(source), "ls-files", "-z"], stderr=subprocess.DEVNULL
++        ).split(b"\0")
++    except (OSError, subprocess.CalledProcessError):
++        tracked_files = []
