@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           effectcraft
-Version:        0.24.1
+Version:        0.25.1
 Release:        1%{?dist}
 Summary:        Native motion graphics and visual effects app
 
