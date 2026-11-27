@@ -1,5 +1,5 @@
 Name:           zed-lost-saint
-Version:        1.30.0
+Version:        1.32.1
 Release:        1%{?dist}
 Summary:        Feature-enhanced fork of the Zed code editor
 
